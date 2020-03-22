@@ -1,5 +1,7 @@
 
+<h1>Resource Management of Patients and Machines</h1>
 
+<h2>Registered Patients</h2>
 {% if latest_registered_patients %}
     <ul>
     {% for patient in latest_registered_patients %}
@@ -12,3 +14,16 @@
 
 
 
+<h2>Machines</h2>
+
+{% if latest_registered_patients %}
+    <ul>
+    {% for machine in machines %}
+        <li>
+        	<p>Model: <a href="{% url 'resourceManager:machine_detail' machine.id %}">{{ machine.model }}</a> &nbsp; Location: {{machine.location}}</p>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No registered patients.</p>
+{% endif %}

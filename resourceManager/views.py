@@ -13,11 +13,11 @@ from django.http import HttpResponse
 
 def index(request):
 	latest_registered_patients = Patient.objects.order_by('-admission_date')[:10]
-	output = ", ".join([p.name for p in latest_registered_patients])
-
+	machines = Machine.objects.all()
 	template = loader.get_template('resourceManager/index.html')
 	context = {
 		'latest_registered_patients': latest_registered_patients,
+		'machines': machines,
 	}
 	return render(request, 'resourceManager/index.html', context)
 
@@ -40,6 +40,14 @@ def machine_detail(request, machine_id):
 		machine = Machine.objects.get(pk=machine_id)
 	except Patient.DoesNotExist:
 		raise Http404("Machine does not exist")
-	loc_machines = Machine.objects.filter(location=machine.location)
-	return render(request, 'resourceManager/machine_detail.html', {'machine' : machine, 'loc_machines': loc_machines})
+	loc_machines = Machine.objects.filter(location=machine.location).exclude(id=machine_id)
+	model_machines = Machine.objects.filter(model=machine.model).exclude(id=machine_id)
+	return render(
+		request,
+		'resourceManager/machine_detail.html',
+		{
+			'machine' : machine,
+			'loc_machines': loc_machines,
+			'model_machines': model_machines,
+		})
 

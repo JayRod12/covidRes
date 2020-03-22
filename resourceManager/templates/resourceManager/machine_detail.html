@@ -6,23 +6,37 @@
 <h3>Machine Assignments</h3>
 <ul>
 {% for ma in machine.machineassignment_set.all %}
-	<li><a href="{% url 'reso
-		urceManager:patient_detail' ma.patient.id %}">{{ ma.patient.name }}</a></li>
+	<li><a href="{% url 'resourceManager:patient_detail' ma.patient.id %}">{{ ma.patient.name }}</a></li>
 	<ul>
 		<li>From: {{ma.start_date|date:'d-m-Y'}}</li>
 		<li>To: {{ma.end_date|date:'d-m-Y'}}</li>
 	</ul>
 {% endfor %}
 </ul>
-
+{% if loc_machines|length > 0 %}
+<h3>Other machines in this location</h3>
 <ul>
-{% for ma in machine.machineassignment_set.all %}
-	<li><a href="{% url 'reso
-		urceManager:patient_detail' ma.patient.id %}">{{ ma.patient.name }}</a></li>
-	<ul>
-		<li>From: {{ma.start_date|date:'d-m-Y'}}</li>
-		<li>To: {{ma.end_date|date:'d-m-Y'}}</li>
-	</ul>
+{% for m in loc_machines %}
+	<li><a href="{% url 'resourceManager:machine_detail' m.id %}">{{ m.model }}</a></li>
 {% endfor %}
 </ul>
+{% else %}
+<h3>No other machines in this location</h3>
 
+{% endif %}
+
+{% if model_machines|length > 0 %}
+
+<h3>Other machines of this model</h3>
+<ul>
+{% for m in model_machines %}
+	<li><a href="{% url 'resourceManager:machine_detail' m.id %}">{{ m.model }}</a></li>
+{% endfor %}
+</ul>
+{% else %}
+<h3>No other machines of this model</h3>
+
+{% endif %}
+
+
+<a href="{% url 'resourceManager:index' %}">Go back to Index</a>
