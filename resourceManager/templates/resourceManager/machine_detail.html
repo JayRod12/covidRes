@@ -6,10 +6,23 @@
 <h3>Machine Assignments</h3>
 <ul>
 {% for ma in machine.machineassignment_set.all %}
-	<li><a href="{% url 'resourceManager:patient_detail' ma.patient.id %}">{{ ma.patient.name }}</a></li>
+	<li><a href="{% url 'reso
+		urceManager:patient_detail' ma.patient.id %}">{{ ma.patient.name }}</a></li>
 	<ul>
 		<li>From: {{ma.start_date|date:'d-m-Y'}}</li>
 		<li>To: {{ma.end_date|date:'d-m-Y'}}</li>
 	</ul>
 {% endfor %}
 </ul>
+
+<ul>
+{% for ma in machine.machineassignment_set.all %}
+	<li><a href="{% url 'reso
+		urceManager:patient_detail' ma.patient.id %}">{{ ma.patient.name }}</a></li>
+	<ul>
+		<li>From: {{ma.start_date|date:'d-m-Y'}}</li>
+		<li>To: {{ma.end_date|date:'d-m-Y'}}</li>
+	</ul>
+{% endfor %}
+</ul>
+
