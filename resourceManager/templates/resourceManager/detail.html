@@ -1,6 +1,19 @@
 <h1>{{ patient.name }}</h1>
-<ul>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 {% if patient.machine is not None %}
+<ul>
     <li>{{ patient.machine.name }}</li>
-{% endif %}
 </ul>
+{% else %}
+
+<form action="{% url 'resourceManager:assign_machine' patient.id %}" method="post">
+{% csrf_token %}
+{% for choice in machines %}
+    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+{% endfor %}
+<input type="submit" value="Vote">
+</form>
+
+{% endif %}

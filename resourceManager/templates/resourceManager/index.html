@@ -1,7 +1,7 @@
 {% if latest_registered_patients %}
     <ul>
     {% for patient in latest_registered_patients %}
-        <li><a href="/resourceManager/{{ patient.id }}/">{{ patient.name }}</a></li>
+        <li><a href="{% url 'resourceManager:detail' patient.id %}">{{ patient.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

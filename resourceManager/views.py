@@ -31,3 +31,7 @@ def detail(request, patient_id):
 def assign_machine(request, patient_id):
 	return HttpResponse("Assigning machine to patient {}.".format(patient_id))
 
+def availability(request):
+	context = {}
+	return render(request, 'resourceManager/availability.html', context)
+
