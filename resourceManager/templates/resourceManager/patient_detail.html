@@ -1,5 +1,6 @@
 <h1>Patient: {{ patient.name }}</h1>
 
+{% if patient.machineassignment_set.count %}
 <h2>Machine Assignments</h2>
 <ul>
 {% for ma in patient.machineassignment_set.all %}
@@ -11,4 +12,8 @@
 {% endfor %}
 </ul>
 
+{% else %}
+<h2>No Machine Assignments</h2>
+
+{% endif %}
 <a href="{% url 'resourceManager:index' %}">Go back to Index</a>

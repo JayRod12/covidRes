@@ -21,15 +21,12 @@ def index(request):
 	}
 	return render(request, 'resourceManager/index.html', context)
 
-def detail(request, patient_id):
+def patient_detail(request, patient_id):
 	try:
 		patient = Patient.objects.get(pk=patient_id)
 	except Patient.DoesNotExist:
 		raise Http404("Patient does not exist")
 	return render(request, 'resourceManager/patient_detail.html', {'patient' : patient})
-
-def assign_machine(request, patient_id):
-	return HttpResponse("Assigning machine to patient {}.".format(patient_id))
 
 def availability(request):
 	context = {}
