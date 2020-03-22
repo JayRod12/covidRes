@@ -1,0 +1,6 @@
+<h1>{{ patient.name }}</h1>
+<ul>
+{% if patient.machine is not None %}
+    <li>{{ patient.machine.name }}</li>
+{% endif %}
+</ul>
