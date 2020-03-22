@@ -1,0 +1,12 @@
+<h1>Patient: {{ patient.name }}</h1>
+
+<h2>Machine Assignments</h2>
+<ul>
+{% for ma in patient.machineassignment_set.all %}
+	<li><a href="{% url 'resourceManager:machine_detail' ma.machine.id %}">{{ ma.machine.model }}</a></li>
+	<ul>
+		<li>From: {{ma.start_date|date:'d-m-Y'}}</li>
+		<li>To: {{ma.end_date|date:'d-m-Y'}}</li>
+	</ul>
+{% endfor %}
+</ul>

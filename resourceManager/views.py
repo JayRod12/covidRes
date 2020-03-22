@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import Http404
 from django.template import loader
 
-from .models import Patient
+from .models import Patient, Machine
 
 
 # Create your views here.
@@ -26,7 +26,7 @@ def detail(request, patient_id):
 		patient = Patient.objects.get(pk=patient_id)
 	except Patient.DoesNotExist:
 		raise Http404("Patient does not exist")
-	return render(request, 'resourceManager/detail.html', {'patient' : patient})
+	return render(request, 'resourceManager/patient_detail.html', {'patient' : patient})
 
 def assign_machine(request, patient_id):
 	return HttpResponse("Assigning machine to patient {}.".format(patient_id))
@@ -34,4 +34,12 @@ def assign_machine(request, patient_id):
 def availability(request):
 	context = {}
 	return render(request, 'resourceManager/availability.html', context)
+
+def machine_detail(request, machine_id):
+	try:
+		machine = Machine.objects.get(pk=machine_id)
+	except Patient.DoesNotExist:
+		raise Http404("Machine does not exist")
+	loc_machines = Machine.objects.filter(location=machine.location)
+	return render(request, 'resourceManager/machine_detail.html', {'machine' : machine, 'loc_machines': loc_machines})
 
