@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.http import Http404
 from django.template import loader
 
-from .models import Patient, Machine
-
-
+from .models import Patient, Machine,MachineAssignment
+from datetime import datetime,timedelta
+import numpy as np
 # Create your views here.
 
 
@@ -23,6 +23,7 @@ def index(request):
 		labels.append(patient.name)
 		data.append(patient.severity)
 	
+	# this is the data for the bar plot, total values of locations
 	locations_count=Machine.objects.values('location').distinct()
 	locations_distinct=[]
 	for i in range(len(locations_count)):
@@ -33,14 +34,31 @@ def index(request):
 		d=[]
 		d=Machine.objects.filter(location=loc)
 		data_loc.append(len(d))
+	#List of machines assigned today
+	date=datetime.now()
+	assig_today=MachineAssignment.objects.filter(start_date__lte=date, end_date__gte=date)
+	locations_of_machines_today=[]
+
+	for i in range(len(assig_today)):
+		locations_of_machines_today.append(assig_today[i].machine.location)
+
+	M_Tod_loc=[]
+	for loc in locations_distinct:
+		d=[]
+		for a in locations_of_machines_today:
+			d.append(a==loc)
+		M_Tod_loc.append(np.sum(d))
+
+
 
 	context = {
 		'latest_registered_patients': latest_registered_patients,
 		'machines': machines,
-		'labels':labels,
-		'data':data,
-		'da':locations_distinct,
-		'data_loc': data_loc,
+		'labels_patients':labels,
+		'data_patients':data,
+		'label_location_machines':locations_distinct,
+		'data_total_machines': data_loc,
+		'data_machinesUsed_today':M_Tod_loc,
 	}
 	return render(request, 'resourceManager/index.html', context)
 
