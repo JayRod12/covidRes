@@ -19,16 +19,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-with open('/home/covidres/secret.txt') as f:
-        SECRET_KEY = f.read().strip()
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-ALLOWED_HOSTS = ['178.62.120.24', '127.0.0.1', 'localhost']
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -70,21 +60,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'covidRes.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'covidres_prod',
-        'USER': 'u_covidres',
-        'PASSWORD': 'c0vid2847',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
-}
 
 
 # Password validation
