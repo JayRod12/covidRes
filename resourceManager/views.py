@@ -35,6 +35,7 @@ class HomeView(TemplateView):
             'data_total_machines': self.get_total_machines(locations),
             'data_machines_used_today': self.get_machines_used_today(locations),
         })
+        return context
 
 
 class PatientDetailView(DetailView):
