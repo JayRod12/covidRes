@@ -1,5 +1,12 @@
+{% extends 'resourceManager/base.html' %}
 
-<h1>Resource Management of Patients and Machines</h1>
+{% block head %}
+    <title>Covid Resource Manager</title>
+{% endblock %}
+
+{% block content %}
+
+<h1>Covid Resource Manager</h1>
 
 <h2>Registered Patients</h2>
 {% if latest_registered_patients %}
@@ -29,11 +36,10 @@
 {% endif %}
 
 
-<a href="{% url 'admin:index' %}">Go to Admin page</a>
 
 <h2>Projection</h2>
 
-{% block content %}
+
   <div id="container" style="width: 45%;">
     <canvas id="pie-chart"></canvas>
   </div>
@@ -88,5 +94,7 @@
     };
 
   </script>
+  
+<a href="{% url 'admin:index' %}">Go to Admin page</a>
 
 {% endblock %}

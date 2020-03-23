@@ -89,3 +89,10 @@ def machine_detail(request, machine_id):
 			'model_machines': model_machines,
 		})
 
+def machine_calendar(request):
+	machines = Machine.objects.all()
+	return render(
+		request,
+		'resourceManager/machine_calendar.html',
+		{})	
+
