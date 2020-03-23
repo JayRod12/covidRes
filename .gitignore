@@ -1,4 +1,7 @@
 venv/*
 **/*.pyc
 .DS_Store
+**/secret.txt
+**/*.swp
+**/*.swo
 *.sqlite3

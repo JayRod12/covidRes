@@ -50,11 +50,8 @@ def index(request):
 		M_Tod_loc.append(np.sum(d))
 
 	unused=[]
-
 	for i in range(len(data_loc)):
 		unused.append(data_loc[i]-M_Tod_loc[i])
-
-
 
 	context = {
 		'latest_registered_patients': latest_registered_patients,
