@@ -19,9 +19,9 @@ from django.core.exceptions import ImproperlyConfigured
 
 # Use secret-key-gen.py to generate a new one
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['178.62.120.24', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['covidmanager.ch', '178.62.120.24', '127.0.0.1', 'localhost']
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
