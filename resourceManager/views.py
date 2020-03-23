@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.views.generic import TemplateView, ListView, DetailView
-
+from django.utils import timezone
 from .models import Patient, Machine, MachineAssignment
 
 
@@ -9,8 +9,8 @@ class HomeView(TemplateView):
 
     @staticmethod
     def machines_available_today():
-        date = datetime.now()
-        assignments = MachineAssignment.objects.filter(start_date__lte=date, end_date__gte=date)
+        today = timezone.now()
+        assignments = MachineAssignment.objects.filter(start_date__lte=today, end_date__gte=today)
         return [assignment.machine.location for assignment in assignments]
 
     @staticmethod
@@ -26,7 +26,7 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         patients = Patient.objects.order_by('-admission_date')[:10]
-        locations = Machine.objects.values_list('location', flat=True).distinct()
+        locations = list(Machine.objects.values_list('location', flat=True).distinct())
         context.update({
             'machines': Machine.objects.all(),
             'latest_registered_patients': patients,
