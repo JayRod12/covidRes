@@ -1,5 +1,5 @@
 import os
-from .base import *
+from .base_settings import *
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/

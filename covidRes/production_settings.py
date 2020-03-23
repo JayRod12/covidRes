@@ -11,22 +11,15 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from .base import *
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+from .base_settings import *
+from django.core.exceptions import ImproperlyConfigured
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 # Use secret-key-gen.py to generate a new one
-with open('/home/covidres/secret.txt') as f:
-        SECRET_KEY = f.read().strip()
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['178.62.120.24', '127.0.0.1', 'localhost']
 
@@ -36,10 +29,12 @@ def get_env_value(env_variable):
     try:
       	return os.environ[env_variable]
     except KeyError:
-        error_msg = 'Set the {} environment variable'.format(var_name)
+        error_msg = 'Set the {} environment variable'.format(env_variable)
         raise ImproperlyConfigured(error_msg)
 
 # Set from Hypervisor config (/etc/supervisor/conf.d/covidres.conf)
+SECRET_KEY = get_env_value('DJANGO_SECRET_KEY')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
