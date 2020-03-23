@@ -49,6 +49,11 @@ def index(request):
 			d.append(a==loc)
 		M_Tod_loc.append(np.sum(d))
 
+	unused=[]
+
+	for i in range(len(data_loc)):
+		unused.append(data_loc[i]-M_Tod_loc[i])
+
 
 
 	context = {
@@ -57,7 +62,7 @@ def index(request):
 		'labels_patients':labels,
 		'data_patients':data,
 		'label_location_machines':locations_distinct,
-		'data_total_machines': data_loc,
+		'data_total_machines': unused,
 		'data_machinesUsed_today':M_Tod_loc,
 	}
 	return render(request, 'resourceManager/index.html', context)
