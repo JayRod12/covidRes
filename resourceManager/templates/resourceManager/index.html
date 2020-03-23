@@ -34,7 +34,7 @@
 <h2>Projection</h2>
 
 {% block content %}
-  <div id="container" style="width: 75%;">
+  <div id="container" style="width: 25%;">
     <canvas id="pie-chart"></canvas>
   </div>
 
@@ -45,16 +45,23 @@
       type: 'bar',
       data: {
         datasets: [{
-          data: {{ data_m|safe }},
+          data: {{ data|safe }},
           backgroundColor: [
             '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
           ],
           label: 'Population'
         }],
-        labels: {{ labels_m|safe }}
+        labels: {{ labels|safe }}
       },
       options: {
-        responsive: true
+        responsive: true,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    min: 0
+                }
+            }]
+        }
       }
     };
 
