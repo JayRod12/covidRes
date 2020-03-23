@@ -17,12 +17,14 @@ def index(request):
 	template = loader.get_template('resourceManager/index.html')
 	labels = []
 	data = []
+	labels_m = []
+	data_m = []
 	for patient in latest_registered_patients:
 		labels.append(patient.name)
 		data.append(patient.severity)
-	for machine in Machines:
+	for machine in machines:
 		labels_m.append(machine.location)
-		data_m.append(machine.model)
+		data_m.append(1)
 
 
 	context = {
