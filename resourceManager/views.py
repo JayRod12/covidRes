@@ -1,98 +1,66 @@
-from django.shortcuts import render
-from django.http import Http404
-from django.template import loader
+from datetime import datetime
+from django.views.generic import TemplateView, ListView, DetailView
 
-from .models import Patient, Machine,MachineAssignment
-from datetime import datetime,timedelta
-import numpy as np
-# Create your views here.
+from .models import Patient, Machine, MachineAssignment
 
 
-from django.http import HttpResponse
+class HomeView(TemplateView):
+    template_name = 'resourceManager/index.html'
+
+    @staticmethod
+    def machines_available_today():
+        date = datetime.now()
+        assignments = MachineAssignment.objects.filter(start_date__lte=date, end_date__gte=date)
+        return [assignment.machine.location for assignment in assignments]
+
+    @staticmethod
+    def get_total_machines(locations):
+        return [Machine.objects.filter(location=loc).count() for loc in locations]
+
+    def get_machines_used_today(self, locations):
+        machines_today = self.machines_available_today()
+        return [
+            sum(1 for machine in machines_today if machine == loc) for loc in locations
+        ]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        patients = Patient.objects.order_by('-admission_date')[:10]
+        locations = Machine.objects.values_list('location', flat=True).distinct()
+        context.update({
+            'machines': Machine.objects.all(),
+            'latest_registered_patients': patients,
+            'patients_graph': [(p.name, p.severity) for p in patients],
+            'label_location_machines': locations,
+            'data_total_machines': self.get_total_machines(locations),
+            'data_machines_used_today': self.get_machines_used_today(locations),
+        })
 
 
-def index(request):
-	latest_registered_patients = Patient.objects.order_by('-admission_date')[:10]
-	machines = Machine.objects.all()
-	template = loader.get_template('resourceManager/index.html')
-	labels = []
-	data = []
-	labels_m = []
-	data_m = []
-	for patient in latest_registered_patients:
-		labels.append(patient.name)
-		data.append(patient.severity)
-	
-	# this is the data for the bar plot, total values of locations
-	locations_count=Machine.objects.values('location').distinct()
-	locations_distinct=[]
-	for i in range(len(locations_count)):
-		locations_distinct.append(locations_count[i]['location'])
-	
-	data_loc=[]
-	for loc in locations_distinct:
-		d=[]
-		d=Machine.objects.filter(location=loc)
-		data_loc.append(len(d))
-	#List of machines assigned today
-	date=datetime.now()
-	assig_today=MachineAssignment.objects.filter(start_date__lte=date, end_date__gte=date)
-	locations_of_machines_today=[]
-
-	for i in range(len(assig_today)):
-		locations_of_machines_today.append(assig_today[i].machine.location)
-
-	M_Tod_loc=[]
-	for loc in locations_distinct:
-		d=[]
-		for a in locations_of_machines_today:
-			d.append(a==loc)
-		M_Tod_loc.append(np.sum(d))
+class PatientDetailView(DetailView):
+    model = Patient
+    context_object_name = 'patient'
 
 
+class AvailabilityView(TemplateView):
+    template_name = 'resourceManager/availability.html'
 
-	context = {
-		'latest_registered_patients': latest_registered_patients,
-		'machines': machines,
-		'labels_patients':labels,
-		'data_patients':data,
-		'label_location_machines':locations_distinct,
-		'data_total_machines': data_loc,
-		'data_machinesUsed_today':M_Tod_loc,
-	}
-	return render(request, 'resourceManager/index.html', context)
 
-def patient_detail(request, patient_id):
-	try:
-		patient = Patient.objects.get(pk=patient_id)
-	except Patient.DoesNotExist:
-		raise Http404("Patient does not exist")
-	return render(request, 'resourceManager/patient_detail.html', {'patient' : patient})
+class MachineDetailView(DetailView):
+    model = Machine
+    context_object_name = 'machine'
 
-def availability(request):
-	context = {}
-	return render(request, 'resourceManager/availability.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        machine = self.get_object()
+        context.update({
+            'loc_machines': Machine.objects.filter(location=machine.location).exclude(id=machine.pk),
+            'model_machines': Machine.objects.filter(model=machine.model).exclude(id=machine.pk)
+        })
+        return context
 
-def machine_detail(request, machine_id):
-	try:
-		machine = Machine.objects.get(pk=machine_id)
-	except Patient.DoesNotExist:
-		raise Http404("Machine does not exist")
-	loc_machines = Machine.objects.filter(location=machine.location).exclude(id=machine_id)
-	model_machines = Machine.objects.filter(model=machine.model).exclude(id=machine_id)
-	return render(
-		request,
-		'resourceManager/machine_detail.html',
-		{
-			'machine' : machine,
-			'loc_machines': loc_machines,
-			'model_machines': model_machines,
-		})
 
-def machine_calendar(request):
-	machines = Machine.objects.all()
-	return render(
-		request,
-		'resourceManager/machine_calendar.html',
-		{})	
-
+class MachineCalendarView(ListView):
+    template_name = 'resourceManager/machine_calendar.html'
+    queryset = Machine.objects.all()
+    context_object_name = 'machines'
