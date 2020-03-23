@@ -20,11 +20,18 @@ def index(request):
 	for patient in latest_registered_patients:
 		labels.append(patient.name)
 		data.append(patient.severity)
+	for machine in Machines:
+		labels_m.append(machine.location)
+		data_m.append(machine.model)
+
+
 	context = {
 		'latest_registered_patients': latest_registered_patients,
 		'machines': machines,
 		'labels':labels,
 		'data':data,
+		'labels_m':labels_m,
+		'data_m':data_m,
 	}
 	return render(request, 'resourceManager/index.html', context)
 
