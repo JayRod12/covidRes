@@ -4,3 +4,4 @@ venv/*
 **/secret.txt
 **/*.swp
 **/*.swo
+*.sqlite3

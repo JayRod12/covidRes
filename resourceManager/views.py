@@ -22,18 +22,25 @@ def index(request):
 	for patient in latest_registered_patients:
 		labels.append(patient.name)
 		data.append(patient.severity)
-	for machine in machines:
-		labels_m.append(machine.location)
-		data_m.append(1)
-
+	
+	locations_count=Machine.objects.values('location').distinct()
+	locations_distinct=[]
+	for i in range(len(locations_count)):
+		locations_distinct.append(locations_count[i]['location'])
+	
+	data_loc=[]
+	for loc in locations_distinct:
+		d=[]
+		d=Machine.objects.filter(location=loc)
+		data_loc.append(len(d))
 
 	context = {
 		'latest_registered_patients': latest_registered_patients,
 		'machines': machines,
 		'labels':labels,
 		'data':data,
-		'labels_m':labels_m,
-		'data_m':data_m,
+		'da':locations_distinct,
+		'data_loc': data_loc,
 	}
 	return render(request, 'resourceManager/index.html', context)
 
