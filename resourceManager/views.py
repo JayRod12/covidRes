@@ -15,9 +15,16 @@ def index(request):
 	latest_registered_patients = Patient.objects.order_by('-admission_date')[:10]
 	machines = Machine.objects.all()
 	template = loader.get_template('resourceManager/index.html')
+	labels = []
+	data = []
+	for patient in latest_registered_patients:
+		labels.append(patient.name)
+		data.append(patient.severity)
 	context = {
 		'latest_registered_patients': latest_registered_patients,
 		'machines': machines,
+		'labels':labels,
+		'data':data,
 	}
 	return render(request, 'resourceManager/index.html', context)
 
