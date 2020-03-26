@@ -1,9 +1,26 @@
 from datetime import datetime
 from django.views.generic import TemplateView, ListView, DetailView
 from django.utils import timezone
+from rest_framework import generics
+from rest_framework import permissions
+from rest_framework import viewsets
 from .models import Patient, Machine, MachineAssignment
+from .serializers import PatientSerializer, MachineSerializer
+
+# Rest API views
+
+class PatientViewSet(viewsets.ModelViewSet):
+    queryset = Patient.objects.all().order_by('-admission_date')
+    serializer_class = PatientSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class MachineViewSet(viewsets.ModelViewSet):
+    queryset = Machine.objects.all()
+    serializer_class = MachineSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
+# Class-based views using django templates
 class HomeView(TemplateView):
     template_name = 'resourceManager/index.html'
 

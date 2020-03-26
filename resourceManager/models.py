@@ -27,8 +27,8 @@ class Machine(models.Model):
 
 
 class MachineAssignment(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    machine = models.ForeignKey(Machine, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='machine_assignments')
+    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='machine_assignments')
     start_date = models.DateTimeField('start date')
     end_date = models.DateTimeField('end date')
 
