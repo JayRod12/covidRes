@@ -32,6 +32,8 @@ class Patient(models.Model):
         yy = [int(a) for a in self.history_severity_y.split(', ')]
         return [{'x': x, 'y': y} for x, y in zip(xx, yy)]
     def get_history_machine(self):
+        if len(self.history_machine_y) == 0:
+            return []
         xx = [datetime.strptime(a, "%Y-%m-%d %H:%M:%S.%f%z") for a in self.history_machine_x.split(', ')]
         yy = [int(a) for a in self.history_machine_y.split(', ')]
         return [{'x': x, 'y': y} for x, y in zip(xx, yy)]

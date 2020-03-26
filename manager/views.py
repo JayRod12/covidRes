@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.http import Http404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (
@@ -29,10 +30,10 @@ def patient(request, pk):
     try:
         patient = Patient.objects.get(pk=pk)
         if patient.machine_pk == 0:
-            return render(request, 'patient.html', {'patient': patient, 'history_severity': patient.get_history_severity()})
+            return render(request, 'patient.html', {'patient': patient, 'history_severity': patient.get_history_severity(), 'history_machine': patient.get_history_machine()})
         else:
             machine = Machine.objects.get(pk=patient.machine_pk)
-            return render(request, 'patient.html', {'patient': patient, 'history_severity': patient.get_history_severity(), 'machine': machine})
+            return render(request, 'patient.html', {'patient': patient, 'history_severity': patient.get_history_severity(), 'history_machine': patient.get_history_machine(), 'machine': machine})
     except Patient.DoesNotExist:
         raise Http404("Patient not found")
     except Machine.DoesNotExist:
@@ -127,7 +128,12 @@ def patient_assign(request, pk, machine_pk):
         raise Http404("Patient not found")
     except Machine.DoesNotExist:
         raise Http404("Machine not found")
-    if machine_pk == 0:
-        return render(request, 'patient.html', {'patient': patient})
-    else:
-        return render(request, 'patient.html', {'patient': patient, 'machine': machine})
+    if len(patient.history_machine_y)==0:
+        patient.history_machine_x = str(timezone.now())[:-3] + str(timezone.now())[-2:]
+        patient.history_machine_y = str(machine_pk)
+        patient.save()
+    elif not machine_pk == int(patient.history_machine_y.split(', ')[-1]):
+        patient.history_machine_x += ', ' + str(timezone.now())[:-3] + str(timezone.now())[-2:]
+        patient.history_machine_y += ', ' + str(machine_pk)
+        patient.save()
+    return redirect('patient', pk)

@@ -27,7 +27,14 @@
 			<h6>Severity history</h6>
 			<div class="">
 				{% for severity_time in history_severity %}
-				<li>{{ severity_time.x }}: {{ severity_time.y }}</li>
+				<li>{{ severity_time.x }} | severity index #{{ severity_time.y }}</li>
+				{% endfor %}
+			</div>
+			<hr>
+			<h6>Machine history</h6>
+			<div class="">
+				{% for machine_time in history_machine %}
+				<li>{{ machine_time.x }} | machine pk #{{ machine_time.y }}</li>
 				{% endfor %}
 			</div>
 	  </div>
