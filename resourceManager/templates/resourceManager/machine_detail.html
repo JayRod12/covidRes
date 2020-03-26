@@ -1,5 +1,11 @@
+{% extends 'resourceManager/base.html' %}
 
-<h1>Machine: {{ machine.model }}</h1>
+{% block head %}
+    <title>Machine Details</title>
+{% endblock %}
+{% block content %}
+
+<h2>Machine: {{ machine.model }}</h2>
 
 <p>Location: {{ machine.location }}</p>
 
@@ -40,3 +46,5 @@
 
 
 <a href="{% url 'resourceManager:index' %}">Go back to Index</a>
+
+{% endblock %}

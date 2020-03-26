@@ -1,0 +1,18 @@
+
+<!doctype html>
+<html>
+<head>
+	<!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'resourceManager/css/bootstrap.min.css' %}">
+	{% block head %}{% endblock %}
+</head>
+<body>
+{% block content %}{% endblock %}  
+
+<script src="{% static 'resourceManager/js/jquery-3.4.1.slim.min.js' %}"></script>
+<script src="{% static 'resourceManager/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

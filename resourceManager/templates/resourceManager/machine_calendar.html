@@ -1,0 +1,26 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	{% load static %}
+	<link rel="stylesheet" href="{% static 'resourceManager/css/timetablejs.css' %}">
+
+	<script src="{% static 'resourceManager/js/timetable.js' %}"></script>
+	
+	
+
+  	{% block title %}<title>Machines Calendar</title>{% endblock %}
+  	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+	
+<div class="timetable"></div>
+
+<script src="{% static 'resourceManager/js/machine_calendar.js' %}"></script>
+{% block body %} {% endblock %}
+</body>
+</html>
+
+

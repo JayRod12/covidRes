@@ -1,5 +1,12 @@
+{% extends 'resourceManager/base.html' %}
 
-<h1>Resource Management of Patients and Machines</h1>
+{% block head %}
+    <title>Covid Resource Manager</title>
+{% endblock %}
+
+{% block content %}
+
+<h1>Covid Resource Manager</h1>
 
 <h2>Registered Patients</h2>
 {% if latest_registered_patients %}
@@ -20,7 +27,7 @@
     <ul>
     {% for machine in machines %}
         <li>
-        	<p>Model: <a href="{% url 'resourceManager:machine_detail' machine.id %}">{{ machine.model }}</a> &nbsp; Location: {{machine.location}}</p>
+          <p>Model: <a href="{% url 'resourceManager:machine_detail' machine.id %}">{{ machine.model }}</a> &nbsp; Location: {{machine.location}}</p>
         </li>
     {% endfor %}
     </ul>
@@ -29,4 +36,65 @@
 {% endif %}
 
 
+
+<h2>Projection</h2>
+
+
+  <div id="container" style="width: 45%;">
+    <canvas id="pie-chart"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script>
+
+    var config = {
+      type: 'bar',
+      data: {
+        datasets: [{
+            data: {{ data_machines_used_today|safe }},
+            backgroundColor: ["rgb(255, 99, 132)","rgb(255, 159, 64)","rgb(255, 205, 86)","rgb(75, 192, 192)","rgb(54, 162, 235)","rgb(153, 102, 255)","rgb(201, 203, 207)"],
+            borderColor:["rgb(255, 99, 132)","rgb(255, 159, 64)","rgb(255, 205, 86)","rgb(75, 192, 192)","rgb(54, 162, 235)","rgb(153, 102, 255)","rgb(201, 203, 207)"],
+            borderWidth:1,
+          label: 'In use'
+        },{
+            data: {{ data_total_machines|safe }},
+            backgroundColor: ["rgba(255, 99, 132, 0.2)","rgba(255, 159, 64, 0.2)","rgba(255, 205, 86, 0.2)","rgba(75, 192, 192, 0.2)","rgba(54, 162, 235, 0.2)","rgba(153, 102, 255, 0.2)","rgba(201, 203, 207, 0.2)"],
+            borderColor:["rgb(255, 99, 132)","rgb(255, 159, 64)","rgb(255, 205, 86)","rgb(75, 192, 192)","rgb(54, 162, 235)","rgb(153, 102, 255)","rgb(201, 203, 207)"],
+            borderWidth:1,
+          label: 'Available'
+        }
+        ],
+        labels: {{label_location_machines|safe }}
+      },
+      options: {
+        responsive: true,
+        scales: {
+            xAxes: [{
+                stacked: true,
+            }],
+            yAxes: [{
+                ticks: {
+                    min: 0
+                },
+                stacked: true,
+            }]
+        },
+        title:{
+            display:true,
+            text:'Machines per unit'
+        },
+        //legend: { display: false },
+
+      }
+    };
+
+    window.onload = function() {
+      var ctx = document.getElementById('pie-chart').getContext('2d');
+      window.myPie = new Chart(ctx, config);
+    };
+
+  </script>
+  
 <a href="{% url 'admin:index' %}">Go to Admin page</a>
+
+{% endblock %}

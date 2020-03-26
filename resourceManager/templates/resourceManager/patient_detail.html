@@ -1,3 +1,11 @@
+{% extends 'resourceManager/base.html' %}
+
+{% block head %}
+    <title>Patient Details</title>
+{% endblock %}
+
+{% block content %}
+
 <h1>Patient: {{ patient.name }}</h1>
 
 {% if patient.machineassignment_set.count %}
@@ -17,3 +25,5 @@
 
 {% endif %}
 <a href="{% url 'resourceManager:index' %}">Go back to Index</a>
+
+{% endblock %}
