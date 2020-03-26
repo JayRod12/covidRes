@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'resourceManager.apps.ResourcemanagerConfig',
     'rest_framework',
+    'manager',
+    'crispy_forms',
     'frontend',
 ]
 

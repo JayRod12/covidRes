@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+  <h5><a href="{% url 'machine-create' %}">Create</a></h5>
+  {% for machine in machines %}
+      <article class="media content-section">
+        <div class="media-body">
+          <div class="article-metadata">
+            <small class="text-muted">{{ machine.location }}</small>
+          </div>
+          <a class="article-title" href="{% url 'machine' machine.pk %}">{{ machine }}</a>
+        </div>
+      </article>
+  {% endfor %}
+{% endblock content %}

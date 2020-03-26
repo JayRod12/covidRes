@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+  <article class="media content-section">
+    <div class="media-body">
+      <h2><a class="article-title" href="{% url 'patients' %}">Patients</a></h2>
+    </div>
+  </article>
+  <article class="media content-section">
+    <div class="media-body">
+      <h2><a class="article-title" href="{% url 'machines' %}">Machines</a></h2>
+    </div>
+  </article>
+{% endblock content %}
