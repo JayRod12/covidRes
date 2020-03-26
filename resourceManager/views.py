@@ -1,26 +1,41 @@
 from datetime import datetime
-from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic import TemplateView, ListView, DetailView, CreateView
 from django.utils import timezone
 from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import viewsets
-from .models import Patient, Machine, MachineAssignment
-from .serializers import PatientSerializer, MachineSerializer
+from .forms import NurseSignUpForm
+from .models import Patient, Machine, MachineAssignment, User
+from .serializers import PatientSerializer, MachineSerializer, MachineAssignmentSerializer
 
 # Rest API views
+class IsDoctor(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_doctor
+
+class IsFamily(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_family
+
+class IsNurse(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_nurse
 
 class PatientViewSet(viewsets.ModelViewSet):
     queryset = Patient.objects.all().order_by('-admission_date')
     serializer_class = PatientSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated & (permissions.IsAdminUser | IsDoctor | IsNurse)]
 
 class MachineViewSet(viewsets.ModelViewSet):
     queryset = Machine.objects.all()
     serializer_class = MachineSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser | IsDoctor | IsNurse]
 
+class MachineAssignmentViewSet(viewsets.ModelViewSet):
+    queryset = MachineAssignment.objects.all()
+    serializer_class = MachineAssignmentSerializer
+    permission_classes = [permissions.IsAdminUser | IsDoctor | IsNurse]
 
-# Class-based views using django templates
 class HomeView(TemplateView):
     template_name = 'resourceManager/index.html'
 

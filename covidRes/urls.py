@@ -21,6 +21,8 @@ from resourceManager import views
 router = routers.DefaultRouter()
 router.register(r'patients', views.PatientViewSet)
 router.register(r'machines', views.MachineViewSet)
+router.register(r'machine_assignments', views.MachineAssignmentViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
@@ -28,5 +30,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('rm', include('resourceManager.urls')), # template based views
-    path('manager/', include('manager.urls')) # template based views
+    # path('manager/', include('manager.urls')) # template based views
 ]
