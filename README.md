@@ -3,7 +3,7 @@
 
 The project uses Python3
 
-Use `pip3 install -r <DEP>` to install `django`, `virtualenv` and so on to install dependencies.
+Use `pip3 install -r <DEP>` to install `django`, `virtualenv`, `djangorestframework` and so on to install dependencies.
 
 ```
 virtualenv venv
