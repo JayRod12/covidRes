@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'manager',
     'crispy_forms',
+    'frontend',
 ]
 
 MIDDLEWARE = [
@@ -103,3 +104,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = 'static'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static/frontend'),
+)
