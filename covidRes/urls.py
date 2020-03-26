@@ -26,6 +26,6 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('', include('resourceManager.urls')) # template based views
+    path('', include('resourceManager.urls')), # template based views
     path('manager/', include('manager.urls')) # template based views
 ]
