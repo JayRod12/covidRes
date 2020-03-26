@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.urls import reverse
-import json
+from datetime import datetime
 
 class Patient(models.Model):
     name = models.CharField(max_length=100)
@@ -27,6 +27,14 @@ class Patient(models.Model):
     	return self.name + ' #' + str(self.pk)
     def get_absolute_url(self):
         return reverse('patient', kwargs={'pk': self.pk})
+    def get_history_severity(self):
+        xx = [datetime.strptime(a, "%Y-%m-%d %H:%M:%S.%f%z") for a in self.history_severity_x.split(', ')]
+        yy = [int(a) for a in self.history_severity_y.split(', ')]
+        return [{'x': x, 'y': y} for x, y in zip(xx, yy)]
+    def get_history_machine(self):
+        xx = [datetime.strptime(a, "%Y-%m-%d %H:%M:%S.%f%z") for a in self.history_machine_x.split(', ')]
+        yy = [int(a) for a in self.history_machine_y.split(', ')]
+        return [{'x': x, 'y': y} for x, y in zip(xx, yy)]
 
 class MachineType(models.Model):
     name = models.CharField(max_length=100)

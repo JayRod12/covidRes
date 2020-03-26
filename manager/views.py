@@ -28,15 +28,15 @@ def machines(request):
 def patient(request, pk):
     try:
         patient = Patient.objects.get(pk=pk)
+        if patient.machine_pk == 0:
+            return render(request, 'patient.html', {'patient': patient, 'history_severity': patient.get_history_severity()})
+        else:
+            machine = Machine.objects.get(pk=patient.machine_pk)
+            return render(request, 'patient.html', {'patient': patient, 'history_severity': patient.get_history_severity(), 'machine': machine})
     except Patient.DoesNotExist:
         raise Http404("Patient not found")
-    if patient.machine_pk == 0:
-        return render(request, 'patient.html', {'patient': patient})
-    else:
-        try:
-            return render(request, 'patient.html', {'patient': patient, 'machine': Machine.objects.get(pk=patient.machine_pk)})
-        except Machine.DoesNotExist:
-            raise Http404("Machine not found")
+    except Machine.DoesNotExist:
+        raise Http404("Machine not found")
 
 def machine(request, pk):
     try:
@@ -51,7 +51,7 @@ class patient_create(LoginRequiredMixin, CreateView):
     template_name = 'generic_form.html'
     fields = ['name', 'severity', 'description']
     def form_valid(self, form):
-        form.instance.history_severity_x = str(timezone.now())
+        form.instance.history_severity_x = str(timezone.now())[:-3] + str(timezone.now())[-2:]
         form.instance.history_severity_y = str(form.instance.severity)
         return super().form_valid(form)
 
@@ -66,8 +66,9 @@ class patient_update(LoginRequiredMixin, UpdateView):
     template_name = 'generic_form.html'
     fields = ['name', 'severity', 'description']
     def form_valid(self, form):
-        form.instance.history_severity_x += ', ' + str(timezone.now())
-        form.instance.history_severity_y += ', ' + str(form.instance.severity)
+        if not form.instance.severity == int(form.instance.history_severity_y.split(', ')[-1]):
+            form.instance.history_severity_x += ', ' + str(timezone.now())[:-3] + str(timezone.now())[-2:]
+            form.instance.history_severity_y += ', ' + str(form.instance.severity)
         return super().form_valid(form)
 
 class machine_update(LoginRequiredMixin, UpdateView):
@@ -75,6 +76,7 @@ class machine_update(LoginRequiredMixin, UpdateView):
     template_name = 'generic_form.html'
     fields = ['model', 'location', 'description']
 
+# Assign machine to patient
 def patient_machinetype(request, pk):
     try:
         patient = Patient.objects.get(pk=pk)
