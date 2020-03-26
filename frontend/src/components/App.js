@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import AdminLayout from "../../../black-dashboard-react/layouts/Admin/Admin.js";
 import { render } from "react-dom";
 
 var base64 = require("base-64");
@@ -37,7 +36,8 @@ class App extends Component {
 
     render() {
         return (
-            <AdminLayout />
+            <ul>
+            </ul>
         );
     }
 }
