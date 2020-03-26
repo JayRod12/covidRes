@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+  <h5><a href="{% url 'patient-create' %}">Create</a></h5>
+  {% for patient in patients %}
+      <article class="media content-section">
+        <div class="media-body">
+          <div class="article-metadata">
+            <small class="text-muted">{{ patient.admission_date }}</small>
+            <small class="text-muted">Severity: </small>
+            <small class="text-muted">{{ patient.severity }}</small>
+          </div>
+          <h3><a class="article-title" href="{% url 'patient' patient.pk %}">{{ patient.name }}</a></h3>
+        </div>
+      </article>
+  {% endfor %}
+{% endblock content %}

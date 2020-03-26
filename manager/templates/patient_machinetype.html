@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="media content-section">
+	<div class="media-body">
+		<div class="article-metadata">
+			<small class="text-muted"></small>
+		</div>
+		<a class="article-title" href="{% url 'patient-assign' pk 0 %}">None</a>
+	</div>
+</article>
+{% for machinetype_p in machinetypes_plus %}
+		<article class="media content-section">
+			<div class="media-body">
+				<div class="article-metadata">
+					<small class="text-muted">#</small>
+				</div>
+				<a class="article-title" href="{% url 'patient-machine' pk machinetype_p.machinetype.pk %}">{{ machinetype_p.machinetype }} Available({{machinetype_p.count}})</a>
+			</div>
+		</article>
+{% endfor %}
+{% endblock content %}
