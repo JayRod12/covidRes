@@ -10,13 +10,32 @@ from django.views.generic import (
     DeleteView
 )
 
+from rest_framework import generics, permissions, viewsets
+
 from .models import Patient, MachineType, Machine
+from .serializers import PatientSerializer, MachineTypeSerializer, MachineSerializer
 from django.utils import timezone
 import json
 
 # Home
 def home(request):
     return render(request, 'home.html')
+
+# REST
+class PatientViewSet(viewsets.ModelViewSet):
+    queryset = Patient.objects.all().order_by('-admission_date')
+    serializer_class = PatientSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class MachineTypeViewSet(viewsets.ModelViewSet):
+    queryset = MachineType.objects.all()
+    serializer_class = MachineTypeSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class MachineViewSet(viewsets.ModelViewSet):
+    queryset = Machine.objects.all()
+    serializer_class = MachineSerializer
+    permission_classes = [permissions.IsAdminUser]
 
 # Main pages
 def patients(request):
