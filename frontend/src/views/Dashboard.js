@@ -57,7 +57,7 @@ class Dashboard extends React.Component {
     super(props);
     this.state = {
       bigChartData: "data1",
-      data:[]
+      data:{ datasets:[], labels:[] }
     }
     this.updateData = this.updateData.bind(this);
   }
@@ -67,7 +67,7 @@ class Dashboard extends React.Component {
     });
   };
 
-  componentWillMount() {
+  componentDidMount() {
     var csvFilePath = "data.csv";
     Papa.parse(csvFilePath, {
       header: true,
@@ -83,6 +83,10 @@ class Dashboard extends React.Component {
   }
 
   render() {
+
+    if(this.state.data.length)
+      console.log('FileErrorRZ');
+
     return (
       <>
         <div className="content">
@@ -232,7 +236,7 @@ class Dashboard extends React.Component {
                 <CardBody>
                   <div className="chart-area">
                     <Line
-                      data={this.state.data.people}
+                      data={this.state.data}
                       options={chartExample4.options}
                     />
                   </div>
