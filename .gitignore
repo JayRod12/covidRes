@@ -8,3 +8,5 @@ venv/*
 frontend/node_modules/node-sass/*
 frontend/static/frontend/*
 frontend/src/react-calendar-timeline/node-modules/*
+db.sqlite3
+db.sqlite3
