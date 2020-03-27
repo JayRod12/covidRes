@@ -67,8 +67,12 @@ class Ventilators extends React.Component {
     }
 
     handleItemMove = (itemId, dragTime, newGroupOrder) => {
-        const { items, groups } = this.state;
+        var answer = window.confirm("Move ventilator?");
+        if (!answer) {
+            return;
+        }
 
+        const { items, groups } = this.state;
         const group = groups[newGroupOrder];
 
         this.setState((prevState, props) => {
@@ -88,8 +92,12 @@ class Ventilators extends React.Component {
     };
 
     handleItemResize = (itemId, time, edge) => {
-        const { items } = this.state;
+        var answer = window.confirm("Edit ventilator assignment?");
+        if (!answer) {
+            return;
+        }
 
+        const { items } = this.state;
         this.setState({
             items: items.map(item =>
                 item.id === itemId
