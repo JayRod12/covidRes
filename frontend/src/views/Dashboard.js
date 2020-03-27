@@ -21,6 +21,8 @@ import classNames from "classnames";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
 
+import Papa from "papaparse"
+
 // reactstrap components
 import {
   Button,
@@ -54,14 +56,32 @@ class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      bigChartData: "data1"
-    };
+      bigChartData: "data1",
+      data:[]
+    }
+    this.updateData = this.updateData.bind(this);
   }
   setBgChartData = name => {
     this.setState({
       bigChartData: name
     });
   };
+
+  componentWillMount() {
+    var csvFilePath = "data.csv";
+    Papa.parse(csvFilePath, {
+      header: true,
+      download: true,
+      skipEmptyLines: true,
+      complete: this.updateData
+    });
+  }
+
+  updateData(result) {
+    const data = result.data;
+    this.setState({data: data}); 
+  }
+
   render() {
     return (
       <>
@@ -212,7 +232,7 @@ class Dashboard extends React.Component {
                 <CardBody>
                   <div className="chart-area">
                     <Line
-                      data={chartExample4.data}
+                      data={this.state.data.people}
                       options={chartExample4.options}
                     />
                   </div>
