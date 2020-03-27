@@ -1,7 +1,1 @@
-from django.urls import path
-from . import views
-
-
-urlpatterns = [
-    path('', views.index),
-]
+# The React url is added in the main project urls file

@@ -35,7 +35,6 @@ router.register(r'manager/messages/rest', views_manager.MessageViewSet),
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', react_views.index),
-    path('', include('frontend.urls')),
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     #path('', include('resourceManager.urls')), # template based views
