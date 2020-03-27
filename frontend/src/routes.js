@@ -37,6 +37,13 @@ var routes = [
     layout: "/"
   },
   {
+    path: "/family-notifications",
+    name: "Family notifications",
+    icon: "tim-icons icon-single-02",
+    component: FamilyNotifications,
+    layout: "/"
+  },
+  {
     path: "/dashboard",
     name: "Dashboard",
     rtlName: "لوحة القيادة",
@@ -53,14 +60,6 @@ var routes = [
     layout: "/"
   },
   {
-    path: "/map",
-    name: "Map",
-    rtlName: "خرائط",
-    icon: "tim-icons icon-pin",
-    component: Map,
-    layout: "/"
-  },
-  {
     path: "/notifications",
     name: "Notifications",
     rtlName: "إخطارات",
@@ -68,44 +67,5 @@ var routes = [
     component: Notifications,
     layout: "/"
   },
-  {
-    path: "/user-profile",
-    name: "User Profile",
-    rtlName: "ملف تعريفي للمستخدم",
-    icon: "tim-icons icon-single-02",
-    component: UserProfile,
-    layout: "/"
-  },
-  {
-    path: "/family-notifications",
-    name: "Family notifications",
-    icon: "tim-icons icon-single-02",
-    component: FamilyNotifications,
-    layout: "/"
-  },
-  {
-    path: "/tables",
-    name: "Table List",
-    rtlName: "قائمة الجدول",
-    icon: "tim-icons icon-puzzle-10",
-    component: TableList,
-    layout: "/"
-  },
-  {
-    path: "/typography",
-    name: "Typography",
-    rtlName: "طباعة",
-    icon: "tim-icons icon-align-center",
-    component: Typography,
-    layout: "/"
-  },
-  {
-    path: "/rtl-support",
-    name: "RTL Support",
-    rtlName: "ار تي ال",
-    icon: "tim-icons icon-world",
-    component: Rtl,
-    layout: "/"
-  }
 ];
 export default routes;
