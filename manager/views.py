@@ -176,14 +176,8 @@ def patient_assign(request, pk, machine_pk):
         raise Http404("Patient not found")
     except Machine.DoesNotExist:
         raise Http404("Machine not found")
-    if len(patient.history_machine_y)==0:
-        patient.history_machine_x = str(timezone.now())[:-3] + str(timezone.now())[-2:]
-        patient.history_machine_y = str(machine_pk)
-        patient.save()
-    elif not machine_pk == int(patient.history_machine_y.split(', ')[-1]):
-        patient.history_machine_x += ', ' + str(timezone.now())[:-3] + str(timezone.now())[-2:]
-        patient.history_machine_y += ', ' + str(machine_pk)
-        patient.save()
+    patient.assign_machine(machine_pk)
+    patient.save()
     return redirect('patient', pk)
 
 # Tast completion
@@ -192,12 +186,20 @@ def assignment_task_complete(request, pk):
         task = AssignmetTask.objects.get(pk=pk)
         if task.bool_completed:
             raise Http404("Task was already completed")
-        if not task.bool_install:
+        patient = Patient.objects.get(pk=task.patient.pk) ######### THER MUST BE A BETTER WAY #########
+        machine = Machine.objects.get(pk=task.machine.pk) #############################################
+        if not task.bool_install: # We assume both patient and machine are unassigned
+            patient.assign_machine(machine.pk)
+            machine.patient_pk = patient.pk
             task.bool_install = True
             task.date = task.end_date
         else:
+            patient.assign_machine(machine.pk)
+            machine.patient_pk = 0
             task.bool_completed = True
         task.save()
+        patient.save()
+        machine.save()
         return redirect('tasks')
     except AssignmetTask.DoesNotExist:
         raise Http404("Task not found")
