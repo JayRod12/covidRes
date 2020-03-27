@@ -12,7 +12,7 @@ from django.views.generic import (
 
 from rest_framework import generics, permissions, viewsets
 
-from .models import Patient, MachineType, Machine
+from .models import Patient, MachineType, Machine, AssignmetTask
 from .serializers import PatientSerializer, MachineTypeSerializer, MachineSerializer
 from django.utils import timezone
 import json
@@ -44,6 +44,9 @@ def patients(request):
 def machines(request):
     return render(request, 'machines.html', {'machines': Machine.objects.all()})
 
+def tasks(request):
+    return render(request, 'tasks.html', {'assignment_tasks': AssignmetTask.objects.all()})
+
 # Details
 def patient(request, pk):
     try:
@@ -65,6 +68,13 @@ def machine(request, pk):
         raise Http404("Machine not found")
     return render(request, 'machine.html', {'machine': machine})
 
+def assignment_task(request, pk):
+    try:
+        task = AssignmetTask.objects.get(pk=pk)
+    except AssignmetTask.DoesNotExist:
+        raise Http404("AssignmetTask not found")
+    return render(request, 'assignment_task.html', {'task': task})
+
 # Create
 class patient_create(LoginRequiredMixin, CreateView):
     model = Patient
@@ -79,6 +89,14 @@ class machine_create(LoginRequiredMixin, CreateView):
     model = Machine
     template_name = 'generic_form.html'
     fields = ['model', 'location', 'description']
+
+class assignment_task_create(LoginRequiredMixin, CreateView):
+    model = AssignmetTask
+    template_name = 'generic_form.html'
+    fields = ['patient', 'machine', 'start_date', 'end_date']
+    def form_valid(self, form):
+        form.instance.date = form.instance.start_date
+        return super().form_valid(form)
 
 # Edit
 class patient_update(LoginRequiredMixin, UpdateView):
@@ -95,6 +113,17 @@ class machine_update(LoginRequiredMixin, UpdateView):
     model = Machine
     template_name = 'generic_form.html'
     fields = ['model', 'location', 'description']
+
+class assignment_task_update(LoginRequiredMixin, UpdateView):
+    model = AssignmetTask
+    template_name = 'generic_form.html'
+    fields = ['patient', 'machine', 'bool_install', 'start_date', 'end_date']
+    def form_valid(self, form):
+        if form.instance.bool_install:
+            form.instance.date = form.instance.end_date
+        else:
+            form.instance.date = form.instance.start_date
+        return super().form_valid(form)
 
 # Assign machine to patient
 def patient_machinetype(request, pk):
@@ -147,12 +176,30 @@ def patient_assign(request, pk, machine_pk):
         raise Http404("Patient not found")
     except Machine.DoesNotExist:
         raise Http404("Machine not found")
-    if len(patient.history_machine_y)==0:
-        patient.history_machine_x = str(timezone.now())[:-3] + str(timezone.now())[-2:]
-        patient.history_machine_y = str(machine_pk)
-        patient.save()
-    elif not machine_pk == int(patient.history_machine_y.split(', ')[-1]):
-        patient.history_machine_x += ', ' + str(timezone.now())[:-3] + str(timezone.now())[-2:]
-        patient.history_machine_y += ', ' + str(machine_pk)
-        patient.save()
+    patient.assign_machine(machine_pk)
+    patient.save()
     return redirect('patient', pk)
+
+# Tast completion
+def assignment_task_complete(request, pk):
+    try:
+        task = AssignmetTask.objects.get(pk=pk)
+        if task.bool_completed:
+            raise Http404("Task was already completed")
+        patient = Patient.objects.get(pk=task.patient.pk) ######### THER MUST BE A BETTER WAY #########
+        machine = Machine.objects.get(pk=task.machine.pk) #############################################
+        if not task.bool_install: # We assume both patient and machine are unassigned
+            patient.assign_machine(machine.pk)
+            machine.patient_pk = patient.pk
+            task.bool_install = True
+            task.date = task.end_date
+        else:
+            patient.assign_machine(machine.pk)
+            machine.patient_pk = 0
+            task.bool_completed = True
+        task.save()
+        patient.save()
+        machine.save()
+        return redirect('tasks')
+    except AssignmetTask.DoesNotExist:
+        raise Http404("Task not found")

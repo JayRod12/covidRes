@@ -28,6 +28,14 @@ class Patient(models.Model):
     	return self.name + ' #' + str(self.pk)
     def get_absolute_url(self):
         return reverse('patient', kwargs={'pk': self.pk})
+    def assign_machine(self, machine_pk):
+        self.machine_pk = machine_pk
+        if len(self.history_machine_y)==0:
+            self.history_machine_x = str(timezone.now())[:-3] + str(timezone.now())[-2:]
+            self.history_machine_y = str(0)
+        elif not machine_pk == int(self.history_machine_y.split(', ')[-1]):
+            self.history_machine_x += ', ' + str(timezone.now())[:-3] + str(timezone.now())[-2:]
+            self.history_machine_y += ', ' + str(0)
     def get_history_severity(self):
         xx = [datetime.strptime(a, "%Y-%m-%d %H:%M:%S.%f%z") for a in self.history_severity_x.split(', ')]
         yy = [int(a) for a in self.history_severity_y.split(', ')]
@@ -55,6 +63,18 @@ class Machine(models.Model):
     	return self.model.name + ' #' + str(self.pk)
     def get_absolute_url(self):
         return reverse('machine', kwargs={'pk': self.pk})
+
+class AssignmetTask(models.Model):
+    date = models.DateTimeField('Task by:', default=timezone.now)
+    bool_completed = models.BooleanField(default=False)
+
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='machine_assignments')
+    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='machine_assignments')
+    start_date = models.DateTimeField('initial date:', default=timezone.now)
+    end_date = models.DateTimeField('end date:', default=timezone.now)
+    bool_install = models.BooleanField('installed', default=False)
+    def get_absolute_url(self):
+        return reverse('assignment_task', kwargs={'pk': self.pk})
 
 # Users
 class Role(models.Model):
