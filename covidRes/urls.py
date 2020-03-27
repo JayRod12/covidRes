@@ -14,8 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from rest_framework import routers
+from frontend import views as react_views
 #from resourceManager import views
 from manager import views as views_manager
 
@@ -33,9 +34,11 @@ router.register(r'manager/messages/rest', views_manager.MessageViewSet),
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
+    path('', react_views.index),
     path('', include('frontend.urls')),
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     #path('', include('resourceManager.urls')), # template based views
-    path('manager/', include('manager.urls')) # template based views
+    path('manager/', include('manager.urls')), # template based views
+    re_path(r'^(?:.*)/?$', react_views.index),
 ]
