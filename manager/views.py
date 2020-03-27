@@ -164,7 +164,7 @@ def patient_machine(request, pk, machinetype_pk):
         patient = Patient.objects.get(pk=pk)
     except Patient.DoesNotExist:
         raise Http404("Patient not found")
-    machines = [machine for machine in Machine.objects.all() if machine.model.pk == machinetype_pk and machine.patient_pk == 0]
+    machines = Machine.objects.filter(model__pk=machinetype_pk).filter(patient_pk=0)
     return render(request, 'patient_machine.html', {'pk': pk, 'machines': machines})
 
 def patient_assign(request, pk, machine_pk):
@@ -212,7 +212,7 @@ def assignment_task_complete(request, pk):
             task.bool_install = True
             task.date = task.end_date
         else:
-            patient.assign_machine(machine.pk)
+            patient.assign_machine(0)
             machine.patient_pk = 0
             task.bool_completed = True
         task.save()

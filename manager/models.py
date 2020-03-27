@@ -33,10 +33,10 @@ class Patient(models.Model):
         self.machine_pk = machine_pk
         if len(self.history_machine_y)==0:
             self.history_machine_x = str(timezone.now())[:-3] + str(timezone.now())[-2:]
-            self.history_machine_y = str(0)
+            self.history_machine_y = str(machine_pk)
         elif not machine_pk == int(self.history_machine_y.split(', ')[-1]):
             self.history_machine_x += ', ' + str(timezone.now())[:-3] + str(timezone.now())[-2:]
-            self.history_machine_y += ', ' + str(0)
+            self.history_machine_y += ', ' + str(machine_pk)
     def get_history_severity(self):
         xx = [datetime.strptime(a, "%Y-%m-%d %H:%M:%S.%f%z") for a in self.history_severity_x.split(', ')]
         yy = [int(a) for a in self.history_severity_y.split(', ')]
@@ -74,6 +74,8 @@ class AssignmetTask(models.Model):
     start_date = models.DateTimeField('initial date:', default=timezone.now)
     end_date = models.DateTimeField('end date:', default=timezone.now)
     bool_install = models.BooleanField('installed', default=False)
+    def __str__(self):
+    	return str(self.machine) + '->' + str(self.patient) + ' | ' + str(self.start_date) + ' --- ' + str(self.end_date)
     def get_absolute_url(self):
         return reverse('assignment_task', kwargs={'pk': self.pk})
 
