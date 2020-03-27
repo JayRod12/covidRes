@@ -63,7 +63,7 @@ def machines(request):
     return render(request, 'machines.html', {'machines': Machine.objects.all()})
 
 def tasks(request):
-    return render(request, 'tasks.html', {'assignment_tasks': AssignmetTask.objects.all()})
+    return render(request, 'tasks.html', {'assignment_tasks': AssignmetTask.objects.filter(bool_completed=False).order_by('date')})
 
 # Details
 def patient(request, pk):
