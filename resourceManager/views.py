@@ -29,12 +29,12 @@ class PatientViewSet(viewsets.ModelViewSet):
 class MachineViewSet(viewsets.ModelViewSet):
     queryset = Machine.objects.all()
     serializer_class = MachineSerializer
-    permission_classes = [permissions.IsAdminUser | IsDoctor | IsNurse]
+    permission_classes = [permissions.IsAuthenticated & (permissions.IsAdminUser | IsDoctor | IsNurse)]
 
 class MachineAssignmentViewSet(viewsets.ModelViewSet):
     queryset = MachineAssignment.objects.all()
     serializer_class = MachineAssignmentSerializer
-    permission_classes = [permissions.IsAdminUser | IsDoctor | IsNurse]
+    permission_classes = [permissions.IsAuthenticated & (permissions.IsAdminUser | IsDoctor | IsNurse)]
 
 class HomeView(TemplateView):
     template_name = 'resourceManager/index.html'
