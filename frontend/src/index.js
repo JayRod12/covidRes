@@ -29,6 +29,9 @@ import "assets/css/nucleo-icons.css";
 
 const hist = createBrowserHistory();
 
+// force the light team, we can always disable this
+document.body.classList.add("white-content");
+
 ReactDOM.render(
     <Router history={hist}>
         <Switch>
