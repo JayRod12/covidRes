@@ -21,5 +21,14 @@
 				</small>
 			</div>
 	  </div>
+		{% if task.bool_completed == 1 %}
+			<a class="btn" href="{% url 'tasks' %}">Completed</a>
+		{% else %}
+			{% if task.bool_install == 0 %}
+				<a class="btn" href="{% url 'assignment_task-complete' task.pk %}">Install</a>
+			{% else %}
+				<a class="btn" href="{% url 'assignment_task-complete' task.pk %}">Remove</a>
+			{% endif %}
+		{% endif %}
 	</article>
 {% endblock content %}

@@ -19,4 +19,5 @@ urlpatterns = [
     path('assignment_task/<int:pk>/', views.assignment_task, name='assignment_task'),
     path('assignment_task/create/', views.assignment_task_create.as_view(), name='assignment_task-create'),
     path('assignment_task/<int:pk>/update/', views.assignment_task_update.as_view(), name='assignment_task-update'),
+    path('assignment_task/<int:pk>/complete/', views.assignment_task_complete, name='assignment_task-complete'),
 ]

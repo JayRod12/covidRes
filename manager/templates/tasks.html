@@ -5,10 +5,14 @@
       <article class="media content-section">
         <div class="media-body">
           <div class="article-metadata">
-            {% if assignment_task.bool_install == 1 %}
-              <small class="text-muted">Install</small>
+            {% if assignment_task.bool_completed == 1 %}
+              <small class="text-muted"">Completed</small>
             {% else %}
-              <small class="text-muted">Remove</small>
+              {% if assignment_task.bool_install == 0 %}
+                <small class="text-muted">Install</small>
+              {% else %}
+                <small class="text-muted">Remove</small>
+              {% endif %}
             {% endif %}
           </div>
           <a class="article-title" href="{% url 'assignment_task' assignment_task.pk %}">{{ assignment_task.machine }} | {{ assignment_task.patient }} | by {{ assignment_task.date }}</a>

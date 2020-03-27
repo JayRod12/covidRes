@@ -57,12 +57,14 @@ class Machine(models.Model):
         return reverse('machine', kwargs={'pk': self.pk})
 
 class AssignmetTask(models.Model):
+    date = models.DateTimeField('Task by:', default=timezone.now)
+    bool_completed = models.BooleanField(default=False)
+    
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='machine_assignments')
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='machine_assignments')
-    date = models.DateTimeField('Due by:', default=timezone.now)
-    CHOICES = ((True, 'Install'), (False, 'Remove'))
-    bool_install = models.BooleanField('task', choices=CHOICES)
-    bool_completed = models.BooleanField(default=False)
+    start_date = models.DateTimeField('initial date:', default=timezone.now)
+    end_date = models.DateTimeField('end date:', default=timezone.now)
+    bool_install = models.BooleanField('installed', default=False)
     def get_absolute_url(self):
         return reverse('assignment_task', kwargs={'pk': self.pk})
 
