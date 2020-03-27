@@ -42,7 +42,7 @@ class DoctorMessage extends React.Component {
                 <CardText>Doctor {this.props.doctorName}</CardText>
               </Col>
               <Col md="6">
-                <span class="pull-right">
+                <span className="pull-right">
                   <CardText>{this.props.time}</CardText>
                 </span>
               </Col>
@@ -65,15 +65,14 @@ class FamilyNotifications extends React.Component {
       data: [],
       loaded: false,
       placeholder: "Loading",
+      error_message: "",
     };
   }
   componentDidMount() {
     fetch("manager/messages/rest")
             .then(response => {
                 if (response.status > 400) {
-                    return this.setState(() => {
-                        return { placeholder: "Something went wrong!" };
-                    });
+                  throw new Error(response.status);
                 }
                 return response.json();
             })
@@ -85,6 +84,15 @@ class FamilyNotifications extends React.Component {
                         loaded: true
                     };
                 });
+            })
+            .catch(error => {
+              this.setState(() => {
+                return {
+                  loaded: true,
+                  placeholder: "Failed to load",
+                  error_message: "You don't have permission to view these messages.",
+                };
+              });
             });
   };
   notify = place => {
@@ -134,10 +142,14 @@ class FamilyNotifications extends React.Component {
         </CardHeader>
       );
     }
-
     let messages;
-    var raw_data = this.state.data.results;
-    if (raw_data.length > 0) {
+    if (this.state.error_message.length > 0) {
+      messages = (
+        <Alert color="danger">
+          {this.state.error_message} Are you <a href="/admin" className="alert-link"> logged in?</a>
+        </Alert>
+      );
+    } else if (this.state.data.results.length > 0) {
       messages = this.state.data.results.map((entry, index) => (
         <DoctorMessage
           key={entry.id}
