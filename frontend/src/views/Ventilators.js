@@ -56,7 +56,7 @@ class Ventilators extends React.Component {
                 title: "Patient Name: " + assignment.patientName + ", Location: " + assignment.location,
                 start_time: moment(assignment.startDate).valueOf(),
                 end_time: moment(assignment.endDate).valueOf(),
-                canChangeGroup: false,
+                canChangeGroup: true,
             });
         });
 
