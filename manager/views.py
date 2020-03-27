@@ -13,7 +13,10 @@ from django.views.generic import (
 from rest_framework import generics, permissions, viewsets
 
 from .models import Patient, MachineType, Machine, AssignmetTask
-from .serializers import PatientSerializer, MachineTypeSerializer, MachineSerializer
+from .models import User, Message
+from .serializers import PatientSerializer, MachineTypeSerializer, MachineSerializer, AssignmetTaskSerializer
+from .serializers import UserSerializer, MessageSerializer
+from .serializers import User, Message
 from django.utils import timezone
 import json
 
@@ -35,6 +38,21 @@ class MachineTypeViewSet(viewsets.ModelViewSet):
 class MachineViewSet(viewsets.ModelViewSet):
     queryset = Machine.objects.all()
     serializer_class = MachineSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class AssignmetTaskViewSet(viewsets.ModelViewSet):
+    queryset = AssignmetTask.objects.all()
+    serializer_class = AssignmetTaskSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class MessageViewSet(viewsets.ModelViewSet):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
     permission_classes = [permissions.IsAdminUser]
 
 # Main pages
@@ -180,7 +198,7 @@ def patient_assign(request, pk, machine_pk):
     patient.save()
     return redirect('patient', pk)
 
-# Tast completion
+# Task completion
 def assignment_task_complete(request, pk):
     try:
         task = AssignmetTask.objects.get(pk=pk)

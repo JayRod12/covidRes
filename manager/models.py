@@ -4,6 +4,7 @@ from django.urls import reverse
 from datetime import datetime
 from django.contrib.auth.models import AbstractUser
 
+# Manage
 class Patient(models.Model):
     name = models.CharField(max_length=100)
     SEVERITY = (
@@ -78,8 +79,20 @@ class AssignmetTask(models.Model):
 
 # Users
 class Role(models.Model):
+    name = models.CharField(max_length=100)
     # permission fields defined here
-    bool_permission_edit = models.BooleanField(default=False)
+    permission_message = models.BooleanField(default=False)
+    def __str__(self):
+    	return self.name
 
 class User(models.Model):
     role = models.ForeignKey(Role, null=True, on_delete=models.CASCADE)
+
+# Messages
+class Message(models.Model):
+    sender = models.ForeignKey(User, related_name='%(class)s_sender', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name='%(class)s_receiver', on_delete=models.CASCADE)
+    date = models.DateTimeField(default=timezone.now)
+    message = models.TextField()
+    def __str__(self):
+    	return str(self.sender) + '->' + str(self.receiver) + ' | ' + str(self.date)
