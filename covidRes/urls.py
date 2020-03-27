@@ -26,6 +26,9 @@ router.register(r'machine_assignments', views.MachineAssignmentViewSet)
 router.register(r'manager/patients/rest', views_manager.PatientViewSet),
 router.register(r'manager/machinetypes/rest', views_manager.MachineTypeViewSet),
 router.register(r'manager/machines/rest', views_manager.MachineViewSet),
+router.register(r'manager/assignment_tasks/rest', views_manager.AssignmetTaskViewSet),
+router.register(r'manager/users/rest', views_manager.UserViewSet),
+router.register(r'manager/messages/rest', views_manager.MessageViewSet),
 
 
 urlpatterns = [
