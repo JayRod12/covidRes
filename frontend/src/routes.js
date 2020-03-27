@@ -23,6 +23,8 @@ import Rtl from "views/Rtl.js";
 import TableList from "views/TableList.js";
 import Typography from "views/Typography.js";
 import UserProfile from "views/UserProfile.js";
+import FamilyNotifications from "views/FamilyNotifications.js";
+
 
 var routes = [
   {
@@ -63,6 +65,13 @@ var routes = [
     rtlName: "ملف تعريفي للمستخدم",
     icon: "tim-icons icon-single-02",
     component: UserProfile,
+    layout: "/"
+  },
+  {
+    path: "/family-notifications",
+    name: "Family notifications",
+    icon: "tim-icons icon-single-02",
+    component: FamilyNotifications,
     layout: "/"
   },
   {
