@@ -16,13 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
-from resourceManager import views
+#from resourceManager import views
 from manager import views as views_manager
 
 router = routers.DefaultRouter()
-router.register(r'patients', views.PatientViewSet)
-router.register(r'machines', views.MachineViewSet)
-router.register(r'machine_assignments', views.MachineAssignmentViewSet)
+#router.register(r'patients', views.PatientViewSet)
+#router.register(r'machines', views.MachineViewSet)
+#router.register(r'machine_assignments', views.MachineAssignmentViewSet)
 router.register(r'manager/patients/rest', views_manager.PatientViewSet),
 router.register(r'manager/machinetypes/rest', views_manager.MachineTypeViewSet),
 router.register(r'manager/machines/rest', views_manager.MachineViewSet),
@@ -36,6 +36,6 @@ urlpatterns = [
     path('', include('frontend.urls')),
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('', include('resourceManager.urls')), # template based views
+    #path('', include('resourceManager.urls')), # template based views
     path('manager/', include('manager.urls')) # template based views
 ]
