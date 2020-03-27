@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.urls import reverse
 from datetime import datetime
+from django.contrib.auth.models import AbstractUser
 
 class Patient(models.Model):
     name = models.CharField(max_length=100)
@@ -54,3 +55,11 @@ class Machine(models.Model):
     	return self.model.name + ' #' + str(self.pk)
     def get_absolute_url(self):
         return reverse('machine', kwargs={'pk': self.pk})
+
+# Users
+class Role(models.Model):
+    # permission fields defined here
+    bool_permission_edit = models.BooleanField(default=False)
+
+class User(models.Model):
+    role = models.ForeignKey(Role, null=True, on_delete=models.CASCADE)
