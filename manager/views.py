@@ -76,7 +76,7 @@ def patient(request, pk):
                 'patient': patient,
                 'history_severity': patient.get_history_severity(),
                 'history_machine': patient.get_history_machine(),
-                'tasks': functions.get_assignment_tasks(patient)
+                'tasks': functions.get_assignment_tasks_patient(patient)
             })
         else:
             machine = Machine.objects.get(pk=patient.machine_pk)
@@ -84,7 +84,7 @@ def patient(request, pk):
                 'patient': patient,
                 'history_severity': patient.get_history_severity(),
                 'history_machine': patient.get_history_machine(),
-                'tasks': functions.get_assignment_tasks(patient),
+                'tasks': functions.get_assignment_tasks_patient(patient),
                 'machine': machine
             })
     except Patient.DoesNotExist:
@@ -97,7 +97,7 @@ def machine(request, pk):
         machine = Machine.objects.get(pk=pk)
     except Machine.DoesNotExist:
         raise Http404("Machine not found")
-    return render(request, 'machine.html', {'machine': machine})
+    return render(request, 'machine.html', {'machine': machine, 'tasks': functions.get_assignment_tasks_machine(machine)})
 
 def assignment_task(request, pk):
     try:
