@@ -11,3 +11,12 @@ source venv/bin/activate
 pip install -r requirements.txt
 python manage.py runserver
 ```
+
+# Developing React
+```
+cd frontend/
+npm install
+npm run dev
+# If server isn't already running
+python manage.py runserver
+```
