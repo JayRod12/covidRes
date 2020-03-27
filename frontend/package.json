@@ -17,9 +17,15 @@
     "@material-ui/core": "^4.9.7",
     "@types/react": "16.9.23",
     "babel-loader": "^8.1.0",
+    "babel-plugin-root-import": "^6.5.0",
+    "babel-preset-es2015": "^6.24.1",
     "base-64": "^0.1.0",
     "chart.js": "2.9.3",
     "classnames": "2.2.6",
+    "css-loader": "^3.4.2",
+    "file-loader": "^6.0.0",
+    "gulp": "4.0.2",
+    "gulp-append-prepend": "1.0.8",
     "history": "4.10.1",
     "interactjs": "^1.9.7",
     "lodash.isequal": "^4.5.0",
@@ -27,6 +33,7 @@
     "perfect-scrollbar": "1.5.0",
     "prop-types": "15.7.2",
     "react": "^16.13.1",
+    "react-app-rewired": "^2.1.5",
     "react-chartjs-2": "2.9.0",
     "react-dom": "^16.13.1",
     "react-google-maps": "9.4.5",
@@ -34,6 +41,9 @@
     "react-router-dom": "5.1.2",
     "react-scripts": "3.4.0",
     "reactstrap": "8.4.1",
+    "sass-loader": "^8.0.2",
+    "style-loader": "^1.1.3",
+    "ts-loader": "^6.2.2",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   },
@@ -43,18 +53,5 @@
     "eslint-plugin-flowtype": "3.13.0",
     "typescript": "3.8.3"
   },
-  "devDependencies": {
-    "babel-plugin-root-import": "^6.5.0",
-    "babel-preset-es2015": "^6.24.1",
-    "css-loader": "^3.4.2",
-    "file-loader": "^6.0.0",
-    "gulp": "4.0.2",
-    "gulp-append-prepend": "1.0.8",
-    "mini-css-extract-plugin": "^0.9.0",
-    "node-sass": "^4.13.1",
-    "react-app-rewired": "^2.1.5",
-    "sass-loader": "^8.0.2",
-    "style-loader": "^1.1.3",
-    "ts-loader": "^6.2.2"
-  }
+  "devDependencies": {}
 }
