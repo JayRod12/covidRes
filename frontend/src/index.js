@@ -33,6 +33,7 @@ ReactDOM.render(
     <Router history={hist}>
         <Switch>
             <Route path="/" render={props => <AdminLayout {...props} />} />
+            <Redirect from="/" to="/dashboard" />
         </Switch>
     </Router>,
     document.getElementById("app")

@@ -79,24 +79,29 @@ class Admin extends React.Component {
   };
   getRoutes = routes => {
     return routes.map((prop, key) => {
-      if (prop.layout === "/") {
-        return (
-          <Route
-            path={prop.layout}
-            component={prop.component}
-            key={key}
-          />
-        );
-      } else {
-        return null;
-      }
+      return (
+        <Route
+          path={prop.path}
+          component={prop.component}
+          key={key}
+        />
+      );
     });
   };
   handleBgClick = color => {
     this.setState({ backgroundColor: color });
   };
   getBrandText = path => {
-    return "Covid Resource Manager";
+    for (let i = 0; i < routes.length; i++) {
+      if (
+        this.props.location.pathname.indexOf(
+          routes[i].layout + routes[i].path
+        ) !== -1
+      ) {
+        return routes[i].name;
+      }
+    }
+    return "Brand";
   };
   render() {
     return (
@@ -107,7 +112,8 @@ class Admin extends React.Component {
             routes={routes}
             bgColor={this.state.backgroundColor}
             logo={{
-              text: "Doctor Name",
+              outterLink: "https://www.creative-tim.com/",
+              text: "Creative Tim",
               imgSrc: logo
             }}
             toggleSidebar={this.toggleSidebar}
@@ -125,7 +131,7 @@ class Admin extends React.Component {
             />
             <Switch>
               {this.getRoutes(routes)}
-              <Redirect from="*" to="/admin/dashboard" />
+              <Redirect from="*" to="/dashboard" />
             </Switch>
             {// we don't want the Footer to be rendered on map page
               this.props.location.pathname.indexOf("maps") !== -1 ? null : (
