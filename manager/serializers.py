@@ -31,6 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class MessageSerializer(serializers.ModelSerializer):
 	sender_username = serializers.CharField(source='sender.username', read_only=True)
+	sender_role = serializers.CharField(source='sender.role', read_only=True)
 	class Meta:
 		model = Message
-		fields = ('sender', 'receiver', 'date', 'message', 'sender_username')
+		fields = ('sender', 'receiver', 'date', 'message', 'sender_username', 'sender_role')
