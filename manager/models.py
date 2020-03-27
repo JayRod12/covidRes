@@ -56,6 +56,16 @@ class Machine(models.Model):
     def get_absolute_url(self):
         return reverse('machine', kwargs={'pk': self.pk})
 
+class AssignmetTask(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='machine_assignments')
+    machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='machine_assignments')
+    date = models.DateTimeField('Due by:', default=timezone.now)
+    CHOICES = ((True, 'Install'), (False, 'Remove'))
+    bool_install = models.BooleanField('task', choices=CHOICES)
+    bool_completed = models.BooleanField(default=False)
+    def get_absolute_url(self):
+        return reverse('assignment_task', kwargs={'pk': self.pk})
+
 # Users
 class Role(models.Model):
     # permission fields defined here

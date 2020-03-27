@@ -12,7 +12,7 @@ from django.views.generic import (
 
 from rest_framework import generics, permissions, viewsets
 
-from .models import Patient, MachineType, Machine
+from .models import Patient, MachineType, Machine, AssignmetTask
 from .serializers import PatientSerializer, MachineTypeSerializer, MachineSerializer
 from django.utils import timezone
 import json
@@ -44,6 +44,9 @@ def patients(request):
 def machines(request):
     return render(request, 'machines.html', {'machines': Machine.objects.all()})
 
+def tasks(request):
+    return render(request, 'tasks.html', {'assignment_tasks': AssignmetTask.objects.all()})
+
 # Details
 def patient(request, pk):
     try:
@@ -65,6 +68,13 @@ def machine(request, pk):
         raise Http404("Machine not found")
     return render(request, 'machine.html', {'machine': machine})
 
+def assignment_task(request, pk):
+    try:
+        task = AssignmetTask.objects.get(pk=pk)
+    except AssignmetTask.DoesNotExist:
+        raise Http404("AssignmetTask not found")
+    return render(request, 'assignment_task.html', {'task': task})
+
 # Create
 class patient_create(LoginRequiredMixin, CreateView):
     model = Patient
@@ -79,6 +89,11 @@ class machine_create(LoginRequiredMixin, CreateView):
     model = Machine
     template_name = 'generic_form.html'
     fields = ['model', 'location', 'description']
+
+class assignment_task_create(LoginRequiredMixin, CreateView):
+    model = AssignmetTask
+    template_name = 'generic_form.html'
+    fields = ['patient', 'machine', 'bool_install', 'date']
 
 # Edit
 class patient_update(LoginRequiredMixin, UpdateView):
@@ -95,6 +110,11 @@ class machine_update(LoginRequiredMixin, UpdateView):
     model = Machine
     template_name = 'generic_form.html'
     fields = ['model', 'location', 'description']
+
+class assignment_task_update(LoginRequiredMixin, UpdateView):
+    model = AssignmetTask
+    template_name = 'generic_form.html'
+    fields = ['patient', 'machine', 'bool_install', 'date']
 
 # Assign machine to patient
 def patient_machinetype(request, pk):

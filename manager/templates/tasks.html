@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+  <h5><a href="{% url 'assignment_task-create' %}">Create</a></h5>
+  {% for assignment_task in assignment_tasks %}
+      <article class="media content-section">
+        <div class="media-body">
+          <div class="article-metadata">
+            {% if assignment_task.bool_install == 1 %}
+              <small class="text-muted">Install</small>
+            {% else %}
+              <small class="text-muted">Remove</small>
+            {% endif %}
+          </div>
+          <a class="article-title" href="{% url 'assignment_task' assignment_task.pk %}">{{ assignment_task.machine }} | {{ assignment_task.patient }} | by {{ assignment_task.date }}</a>
+        </div>
+      </article>
+  {% endfor %}
+{% endblock content %}

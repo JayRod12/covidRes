@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+	<article class="media content-section">
+	  <div class="media-body">
+			<div class="article-metadata">
+				<a class="btn" href="{% url 'assignment_task-update' task.pk %}">Edit</a>
+			</div>
+			<h3>Task by {{ task.date }}</h3>
+			<div class="article-metadata">
+				<h1><a href="{% url 'patient' task.patient.pk %}">{{ task.patient.name }}</a></h1>
+				<h6>ID: {{ task.patient.pk }}</h6>
+				<small class="text-muted">
+					<small>{{ task.patient.admission_date }}</small>
+					<small>Severity: {{task.patient.severity}}</small>
+				</small>
+			</div>
+			<div class="article-metadata">
+				<h1><a href="{% url 'machine' task.machine.pk %}">{{ task.machine }}</a></h1>
+				<small class="text-muted">
+					<small>{{ task.machine.location }}</small>
+				</small>
+			</div>
+	  </div>
+	</article>
+{% endblock content %}
