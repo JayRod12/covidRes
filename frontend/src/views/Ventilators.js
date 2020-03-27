@@ -8,6 +8,13 @@ import moment from 'moment'
 
 import { Card } from "reactstrap"
 
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
 const groups = [{ id: 1, title: 'group 1' }, { id: 2, title: 'group 2' }]
 
 const ventilators = [
@@ -63,56 +70,109 @@ class Ventilators extends React.Component {
         this.state = {
             groups: groups,
             items: items,
+            dialogState: { showDialog: false, dialogTitle: "", dialogText: "" },
+            pendingItemMove: null,
+            pendingItemResize: null,
         };
     }
 
-    handleItemMove = (itemId, dragTime, newGroupOrder) => {
-        var answer = window.confirm("Move ventilator?");
-        if (!answer) {
-            return;
+    _handleItemMove = (itemId, dragTime, newGroupOrder) => {
+        this.setState(prevState => ({
+            ...prevState,
+            dialogState: {
+                showDialog: true,
+                dialogTitle: "Move ventilator?",
+                dialogText: "You are about to change the assignment of this ventilator. Please confirm."
+            },
+            pendingItemMove: { itemId: itemId, dragTime: dragTime, newGroupOrder: newGroupOrder }
+        }));
+    }
+
+    _handleItemResize = (itemId, time, edge) => {
+        this.setState(prevState => ({
+            ...prevState,
+            dialogState: {
+                showDialog: true,
+                dialogTitle: "Edit ventilator assignment?",
+                dialogText: "You are about to change the assignment of this ventilator. Please confirm."
+            },
+            pendingItemResize: { itemId: itemId, time: time, edge: edge }
+        }));
+    }
+
+    _applyPendingChanges = () => {
+        if (this.state.pendingItemMove !== null) {
+            const { items, groups } = this.state;
+            const { itemId, dragTime, newGroupOrder } = this.state.pendingItemMove;
+            const group = groups[newGroupOrder];
+
+            this.setState(prevState => {
+                return {
+                    ...prevState,
+                    items: items.map(item =>
+                        item.id === itemId
+                            ? Object.assign({}, item, {
+                                start_time: dragTime,
+                                end_time: dragTime + (item.end_time - item.start_time),
+                                group: group.id
+                            })
+                            : item
+                    ),
+                    pendingItemMove: null,
+                };
+            })
         }
 
-        const { items, groups } = this.state;
-        const group = groups[newGroupOrder];
-
-        this.setState((prevState, props) => {
-            return {
+        if (this.state.pendingItemResize !== null) {
+            const { items } = this.state;
+            const { itemId, time, edge } = this.state.pendingItemResize;
+            this.setState(prevState => ({
                 ...prevState,
                 items: items.map(item =>
                     item.id === itemId
                         ? Object.assign({}, item, {
-                            start_time: dragTime,
-                            end_time: dragTime + (item.end_time - item.start_time),
-                            group: group.id
+                            start_time: edge === "left" ? time : item.start_time,
+                            end_time: edge === "left" ? item.end_time : time
                         })
                         : item
-                )
-            };
-        })
-    };
-
-    handleItemResize = (itemId, time, edge) => {
-        var answer = window.confirm("Edit ventilator assignment?");
-        if (!answer) {
-            return;
+                ),
+                pendingItemResize: null
+            }));
         }
+    }
 
-        const { items } = this.state;
-        this.setState({
-            items: items.map(item =>
-                item.id === itemId
-                    ? Object.assign({}, item, {
-                        start_time: edge === "left" ? time : item.start_time,
-                        end_time: edge === "left" ? item.end_time : time
-                    })
-                    : item
-            )
+    _closeDialog = (isConfirm) => {
+        this.setState(prevState => ({ ...prevState, dialogState: { showDialog: false } }), () => {
+            if (isConfirm) {
+                this._applyPendingChanges();
+            }
         });
-    };
+    }
 
     render() {
         return (
             <div className="content">
+                <Dialog
+                    open={this.state.dialogState.showDialog}
+                    onClose={() => this._closeDialog(false)}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{this.state.dialogState.dialogTitle}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            {this.state.dialogState.dialogText}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => this._closeDialog(false)} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={() => this._closeDialog(true)} color="primary" autoFocus>
+                            Ok
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <Card className="card-chart">
                     <Timeline
                         groups={this.state.groups}
@@ -123,8 +183,8 @@ class Ventilators extends React.Component {
                         canResize={"both"}
                         defaultTimeStart={moment().add(-12, 'day')}
                         defaultTimeEnd={moment().add(12, 'day')}
-                        onItemMove={this.handleItemMove}
-                        onItemResize={this.handleItemResize}
+                        onItemMove={this._handleItemMove}
+                        onItemResize={this._handleItemResize}
                     />
                 </Card>
             </div>
