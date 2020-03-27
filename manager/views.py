@@ -20,6 +20,8 @@ from .serializers import User, Message
 from django.utils import timezone
 import json
 
+from . import functions
+
 # Home
 def home(request):
     return render(request, 'home.html')
@@ -63,17 +65,28 @@ def machines(request):
     return render(request, 'machines.html', {'machines': Machine.objects.all()})
 
 def tasks(request):
-    return render(request, 'tasks.html', {'assignment_tasks': AssignmetTask.objects.all()})
+    return render(request, 'tasks.html', {'assignment_tasks': AssignmetTask.objects.filter(bool_completed=False).order_by('date')})
 
 # Details
 def patient(request, pk):
     try:
         patient = Patient.objects.get(pk=pk)
         if patient.machine_pk == 0:
-            return render(request, 'patient.html', {'patient': patient, 'history_severity': patient.get_history_severity(), 'history_machine': patient.get_history_machine()})
+            return render(request, 'patient.html', {
+                'patient': patient,
+                'history_severity': patient.get_history_severity(),
+                'history_machine': patient.get_history_machine(),
+                'tasks': functions.get_assignment_tasks_patient(patient)
+            })
         else:
             machine = Machine.objects.get(pk=patient.machine_pk)
-            return render(request, 'patient.html', {'patient': patient, 'history_severity': patient.get_history_severity(), 'history_machine': patient.get_history_machine(), 'machine': machine})
+            return render(request, 'patient.html', {
+                'patient': patient,
+                'history_severity': patient.get_history_severity(),
+                'history_machine': patient.get_history_machine(),
+                'tasks': functions.get_assignment_tasks_patient(patient),
+                'machine': machine
+            })
     except Patient.DoesNotExist:
         raise Http404("Patient not found")
     except Machine.DoesNotExist:
@@ -84,7 +97,7 @@ def machine(request, pk):
         machine = Machine.objects.get(pk=pk)
     except Machine.DoesNotExist:
         raise Http404("Machine not found")
-    return render(request, 'machine.html', {'machine': machine})
+    return render(request, 'machine.html', {'machine': machine, 'tasks': functions.get_assignment_tasks_machine(machine)})
 
 def assignment_task(request, pk):
     try:
@@ -164,7 +177,7 @@ def patient_machine(request, pk, machinetype_pk):
         patient = Patient.objects.get(pk=pk)
     except Patient.DoesNotExist:
         raise Http404("Patient not found")
-    machines = [machine for machine in Machine.objects.all() if machine.model.pk == machinetype_pk and machine.patient_pk == 0]
+    machines = Machine.objects.filter(model__pk=machinetype_pk).filter(patient_pk=0)
     return render(request, 'patient_machine.html', {'pk': pk, 'machines': machines})
 
 def patient_assign(request, pk, machine_pk):
@@ -212,7 +225,7 @@ def assignment_task_complete(request, pk):
             task.bool_install = True
             task.date = task.end_date
         else:
-            patient.assign_machine(machine.pk)
+            patient.assign_machine(0)
             machine.patient_pk = 0
             task.bool_completed = True
         task.save()

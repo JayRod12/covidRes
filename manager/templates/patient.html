@@ -4,7 +4,7 @@
 	  <div class="media-body">
 			<div class="article-metadata">
 				<a class="btn" href="{% url 'patient-update' patient.pk %}">Edit</a>
-				<a class="btn" href="{% url 'patient-machinetype' patient.pk %}">Assign</a>
+				<!--<a class="btn" href="{% url 'patient-machinetype' patient.pk %}">Assign</a>-->
 			</div>
 			<div class="article-metadata">
 				<h1>{{ patient.name }}</h1>
@@ -23,6 +23,17 @@
 				</div>
 			</div>
 			<p class="article-content">{{ patient.description }}</p>
+			<hr>
+			<h6>Pending assignment tasks</h6>
+			<div class="">
+				{% for task in tasks %}
+					{% if task.bool_install == 0 %}
+						<li><a href="{% url 'assignment_task' task.pk %}">Install {{ task }}</a></li>
+					{% else %}
+						<li><a href="{% url 'assignment_task' task.pk %}">Remove {{ task }}</a></li>
+					{% endif %}
+				{% endfor %}
+			</div>
 			<hr>
 			<h6>Severity history</h6>
 			<div class="">
