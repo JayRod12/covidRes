@@ -24,6 +24,17 @@
 			</div>
 			<p class="article-content">{{ patient.description }}</p>
 			<hr>
+			<h6>Pending assignment tasks</h6>
+			<div class="">
+				{% for task in tasks %}
+					{% if task.bool_install == 0 %}
+						<li><a href="{% url 'assignment_task' task.pk %}">Install {{ task }}</a></li>
+					{% else %}
+						<li><a href="{% url 'assignment_task' task.pk %}">Remove {{ task }}</a></li>
+					{% endif %}
+				{% endfor %}
+			</div>
+			<hr>
 			<h6>Severity history</h6>
 			<div class="">
 				{% for severity_time in history_severity %}

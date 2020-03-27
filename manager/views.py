@@ -20,6 +20,8 @@ from .serializers import User, Message
 from django.utils import timezone
 import json
 
+from . import functions
+
 # Home
 def home(request):
     return render(request, 'home.html')
@@ -70,10 +72,21 @@ def patient(request, pk):
     try:
         patient = Patient.objects.get(pk=pk)
         if patient.machine_pk == 0:
-            return render(request, 'patient.html', {'patient': patient, 'history_severity': patient.get_history_severity(), 'history_machine': patient.get_history_machine()})
+            return render(request, 'patient.html', {
+                'patient': patient,
+                'history_severity': patient.get_history_severity(),
+                'history_machine': patient.get_history_machine(),
+                'tasks': functions.get_assignment_tasks(patient)
+            })
         else:
             machine = Machine.objects.get(pk=patient.machine_pk)
-            return render(request, 'patient.html', {'patient': patient, 'history_severity': patient.get_history_severity(), 'history_machine': patient.get_history_machine(), 'machine': machine})
+            return render(request, 'patient.html', {
+                'patient': patient,
+                'history_severity': patient.get_history_severity(),
+                'history_machine': patient.get_history_machine(),
+                'tasks': functions.get_assignment_tasks(patient),
+                'machine': machine
+            })
     except Patient.DoesNotExist:
         raise Http404("Patient not found")
     except Machine.DoesNotExist:
