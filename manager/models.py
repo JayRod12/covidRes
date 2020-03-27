@@ -83,7 +83,12 @@ class AssignmetTask(models.Model):
 class Role(models.Model):
     name = models.CharField(max_length=100)
     # permission fields defined here
-    permission_message = models.BooleanField(default=False)
+    permission_user_edit = models.BooleanField(default=False)
+    permission_machinetype_edit = models.BooleanField(default=False)
+    permission_machine_edit = models.BooleanField(default=False)
+    permission_task_edit = models.BooleanField(default=False)
+    permission_user_edit = models.BooleanField(default=False)
+    permission_message_edit = models.BooleanField(default=False)
     def __str__(self):
     	return self.name
 

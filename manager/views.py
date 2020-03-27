@@ -27,31 +27,49 @@ def home(request):
     return render(request, 'home.html')
 
 # REST
+class PermissionUserEdit(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.permission_user_edit
 class PatientViewSet(viewsets.ModelViewSet):
     queryset = Patient.objects.all().order_by('-admission_date')
     serializer_class = PatientSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated & PermissionUserEdit]
 
+class PermissionMachineTypeEdit(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.permission_machinetype_edit
 class MachineTypeViewSet(viewsets.ModelViewSet):
     queryset = MachineType.objects.all()
     serializer_class = MachineTypeSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated & PermissionMachineTypeEdit]
 
+class PermissionMachineEdit(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.permission_machine_edit
 class MachineViewSet(viewsets.ModelViewSet):
     queryset = Machine.objects.all()
     serializer_class = MachineSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated & PermissionMachineEdit]
 
+class PermissionTaskEdit(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.permission_task_edit
 class AssignmetTaskViewSet(viewsets.ModelViewSet):
     queryset = AssignmetTask.objects.all()
     serializer_class = AssignmetTaskSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
 
+class PermissionUserEdit(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.permission_user_edit
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser]
 
+class PermissionMessageEdit(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.permission_message_edit
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
