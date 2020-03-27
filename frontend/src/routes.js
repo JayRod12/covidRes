@@ -15,6 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+import Ventilators from "views/Ventilators.js";
 import Dashboard from "views/Dashboard.js";
 import Icons from "views/Icons.js";
 import Map from "views/Map.js";
@@ -27,6 +28,14 @@ import FamilyNotifications from "views/FamilyNotifications.js";
 
 
 var routes = [
+  {
+    path: "/ventilators",
+    name: "Ventilators",
+    rtlName: "لوحة القيادة",
+    icon: "tim-icons icon-chart-pie-36",
+    component: Ventilators,
+    layout: "/"
+  },
   {
     path: "/dashboard",
     name: "Dashboard",

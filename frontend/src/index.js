@@ -36,7 +36,7 @@ ReactDOM.render(
     <Router history={hist}>
         <Switch>
             <Route path="/" render={props => <AdminLayout {...props} />} />
-            <Redirect from="/" to="/dashboard" />
+            <Redirect from="/" to="/ventilators" />
         </Switch>
     </Router>,
     document.getElementById("app")
