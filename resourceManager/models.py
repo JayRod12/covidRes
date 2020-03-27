@@ -42,4 +42,3 @@ class Doctor(models.Model):
 
 class Family(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-

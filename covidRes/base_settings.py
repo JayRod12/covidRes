@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'resourceManager',
+    #'resourceManager',
     'rest_framework',
     'manager',
     'crispy_forms',
@@ -84,7 +84,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = "resourceManager.User" 
+AUTH_USER_MODEL = "manager.User"
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/

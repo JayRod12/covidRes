@@ -87,8 +87,10 @@ class Role(models.Model):
     def __str__(self):
     	return self.name
 
-class User(models.Model):
+class User(AbstractUser):
     role = models.ForeignKey(Role, null=True, on_delete=models.CASCADE)
+    def __str__(self):
+    	return str(self.username)
 
 # Messages
 class Message(models.Model):
