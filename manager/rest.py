@@ -5,6 +5,7 @@ from .models import User, Message
 from .serializers import PatientSerializer, MachineTypeSerializer, MachineSerializer, AssignmetTaskSerializer
 from .serializers import UserSerializer, MessageSerializer
 from .serializers import User, Message
+from . import functions
 
 class PermissionUserEdit(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -44,7 +45,7 @@ class PermissionUserEdit(permissions.BasePermission):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
 
 class PermissionMessageEdit(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -52,4 +53,14 @@ class PermissionMessageEdit(permissions.BasePermission):
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
+    def get_queryset(self):
+        return Message.objects.filter(receiver=self.request.user)
+class MessageConvViewSet(viewsets.ModelViewSet):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
+    def get_queryset(self):
+        value = self.kwargs['you_pk']
+        conversation = functions.get_messages(self.request.user, User.objects.get(pk=value))
+        return conversation['received'] | conversation['sent']

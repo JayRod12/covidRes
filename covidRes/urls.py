@@ -29,7 +29,8 @@ router.register(r'rest/machinetypes', views_manager.MachineTypeViewSet),
 router.register(r'rest/machines', views_manager.MachineViewSet),
 router.register(r'rest/assignment_tasks', views_manager.AssignmetTaskViewSet),
 router.register(r'rest/users', views_manager.UserViewSet),
-router.register(r'rest/messages', views_manager.MessageViewSet),
+router.register(r'rest/messages/received', views_manager.MessageViewSet),
+router.register(r'^rest/messages/(?P<you_pk>.+)', views_manager.MessageConvViewSet),
 
 
 urlpatterns = [
