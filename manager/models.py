@@ -37,6 +37,7 @@ class Patient(models.Model):
     )
     severity = models.IntegerField(default=1, choices=SEVERITY)
     admission_date = models.DateTimeField('Admission date: ', default=timezone.now)
+    location = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
     machine_pk = models.IntegerField(default=0)
     # History
