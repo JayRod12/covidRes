@@ -59,7 +59,7 @@ class Dashboard extends React.Component {
     super(props);
     this.state = {
       bigChartData: "data1",
-      data: { datasets: [], labels: [] }
+      data: { datasets: [], labels: [], total: 0 }
     }
     this.updateData = this.updateData.bind(this);
   }
@@ -82,8 +82,11 @@ class Dashboard extends React.Component {
     const labels = result.data.map(point => point.month);
     const datasets = result.data.map(point => parseInt(point.people));
 
-    const data = result.data;
-    this.setState(prevState => ({ ...prevState, data: { datasets: datasets, labels: labels } }));
+    var total = 0;
+    result.data.forEach(point => {
+      total += parseInt(point.people);
+    });
+    this.setState(prevState => ({ ...prevState, data: { datasets: datasets, labels: labels, total: total } }));
   }
 
   render() {
@@ -101,7 +104,7 @@ class Dashboard extends React.Component {
           labels: this.state.data.labels,
           datasets: [
             {
-              label: "My First dataset",
+              label: "Number of patients",
               fill: true,
               backgroundColor: gradientStroke,
               borderColor: "#00d6b4",
@@ -314,9 +317,9 @@ class Dashboard extends React.Component {
             <Col lg="4">
               <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">Completed Tasks</h5>
+                  <h5 className="card-categor">Patient Numbers</h5>
                   <CardTitle tag="h3">
-                    <i className="tim-icons icon-send text-success" /> 12,100K
+                    <i className="tim-icons icon-send text-success" /> {this.state.data.total + " total patients"}
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
