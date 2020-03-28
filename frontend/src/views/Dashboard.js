@@ -65,8 +65,7 @@ class Dashboard extends React.Component {
       placeholder: "Loading",      
       error_message: "",
       bigChartData: "data1",
-      data: { datasets: [], labels: [], total: 0 },
-//      date: '',
+      data: { datasets: [], labels: [], total: 0 }
       //plotmachine: { datasets: [], labels: [], total: 0 }
     }
     this.updateData = this.updateData.bind(this);
