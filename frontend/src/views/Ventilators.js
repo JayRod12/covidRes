@@ -39,7 +39,25 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import DatePicker from "react-datepicker";
 
+import $ from 'jquery';
+
 const FIVE_SECONDS_MS = 5 * 1000;
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = $.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 
 class Ventilators extends React.Component {
     constructor(props) {
@@ -53,6 +71,7 @@ class Ventilators extends React.Component {
             pendingItemResize: null,
             selected: [],
             allPatients: [],
+            allMachines: [],
             selectedPatient: -1,
             selectedMachine: -1,
             selectedStartDate: null,
@@ -71,7 +90,7 @@ class Ventilators extends React.Component {
                 return response.json();
             })
             .then(data => {
-                const allPatients = data.results.map(patient => patient.name);
+                const allPatients = data.results.map(patient => { return { id: patient.pk, name: patient.name } });
                 this.setState(prevState => ({
                     ...prevState, allPatients: allPatients
                 }));
@@ -89,12 +108,14 @@ class Ventilators extends React.Component {
                 return response.json();
             })
             .then(data => {
-                const groups = [];
+                const groups = []; const allMachines = [];
                 data.results.forEach(ventilator => {
-                    groups.push({ id: ventilator.pk, title: ventilator.model_name + " #" + ventilator.pk });
+                    const ventilatorName = ventilator.model_name + " #" + ventilator.pk;
+                    groups.push({ id: ventilator.pk, title: ventilatorName });
+                    allMachines.push({ id: ventilator.pk, name: ventilatorName })
                 });
                 this.setState(prevState => ({
-                    ...prevState, groups: groups
+                    ...prevState, groups: groups, allMachines: allMachines
                 }));
             })
             .catch(error => {
@@ -207,7 +228,6 @@ class Ventilators extends React.Component {
     _handleItemSelect = (itemId, e, time) => {
         const selectedItem = this.state.items.find(item => item.id === itemId);
 
-        // TODO IMPORTANT!! DO THIS BY PATIENT ID, NAME IS PRONE TO ALL SORTS OF BUGS
         var selected = this.state.items.filter(item => item.patient_id === selectedItem.patient_id);
         selected = selected.map(item => item.id);
 
@@ -225,7 +245,80 @@ class Ventilators extends React.Component {
         }));
     }
 
+    _onPatientSelected = (e) => {
+        const value = e.target.value;
+        this.setState(prevState => ({
+            ...prevState, selectedPatient: value
+        }));
+    }
+
+    _onMachineSelected = (e) => {
+        const value = e.target.value;
+        this.setState(prevState => ({
+            ...prevState, selectedMachine: value
+        }));
+    }
+
+    _commitNewAssignment = () => {
+        // OK, now let's see if this is actually a valid assignment
+        const startDate = moment(this.state.selectedStartDate).valueOf();
+        const endDate = moment(this.state.selectedEndDate).valueOf();
+
+        for (var i = 0; i < this.state.items.length; i++) {
+            // check if the current patient already has an assignment for those days or if the machine is assigned
+            const item = this.state.items[i];
+            if (this._datesIntersect(startDate, endDate, item.start_time, item.end_time)) {
+                if (item.patient_id == this.state.selectedPatient) {
+                    alert("Patient is alredy assigned a machine during the selected time interval");
+                    return;
+                }
+                if (item.group == this.state.selectedMachine) {
+                    alert("The machine you are trying to assign is already assigned during the selected time interval.");
+                    return;
+                }
+            }
+        };
+
+        const selectedPatient = this.state.allPatients.find(patient => patient.id == this.state.selectedPatient);
+
+        // actually commit
+        fetch('rest/assignment_tasks/', {
+            method: 'POST',
+            body: JSON.stringify({
+                patient: this.state.selectedPatient,
+                machine: this.state.selectedMachine,
+                patient_name: selectedPatient.name,
+                start_date: this.state.selectedStartDate.toISOString(),
+                end_date: this.state.selectedEndDate.toISOString(),
+                date: new Date().toISOString(),
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+            }
+        }).then(response => {
+            return response.json();
+        }).then(json => {
+            console.log(json);
+        }).catch(error => {
+            console.log("Something bad happened while trying to create a new assgiment." + error);
+        });
+    }
+
+    _datesIntersect = (startDate1, endDate1, startDate2, endDate2) => {
+        return startDate1 < endDate2 && endDate1 > startDate2;
+    }
+
     render() {
+        var patient_list = this.state.allPatients.map(patient => {
+            return (
+                <option value={patient.id}>{patient.name}</option>
+            );
+        });
+        var machine_list = this.state.allMachines.map(machine => {
+            return (
+                <option value={machine.id}>{machine.name}</option>
+            );
+        });
         const isLoaded = this.state.groups.length > 0 &&
             this.state.items.length > 0 &&
             this.state.allPatients.length > 0;
@@ -304,21 +397,19 @@ class Ventilators extends React.Component {
                                     <Col className="pr-md-1" md="3">
                                         <FormGroup>
                                             <label>Select Patient</label>
-                                            <Input
-                                                defaultValue="Mike"
-                                                placeholder="Company"
-                                                type="text"
-                                            />
+                                            <Input type="select" id="patientSelect" onChange={this._onPatientSelected}>
+                                                <option disabled selected value> -- Select a patient -- </option>
+                                                {patient_list}
+                                            </Input>
                                         </FormGroup>
                                     </Col>
                                     <Col className="pl-md-1" md="3">
                                         <FormGroup>
                                             <label>Machine</label>
-                                            <Input
-                                                defaultValue="Andrew"
-                                                placeholder="Last Name"
-                                                type="dropdown"
-                                            />
+                                            <Input type="select" id="machineSelect" onChange={this._onMachineSelected}>
+                                                <option disabled selected value> -- Select a machine -- </option>
+                                                {machine_list}
+                                            </Input>
                                         </FormGroup>
                                     </Col>
                                     <Col className="pl-md-1" md="2">
@@ -351,7 +442,16 @@ class Ventilators extends React.Component {
                                     </Col>
                                 </Row>
                             </Form>
-                            <Button variant="outlined" type="submit">
+                            <Button
+                                variant="outlined"
+                                type="submit"
+                                disabled={
+                                    this.state.selectedPatient === -1
+                                    || this.state.selectedMachine === -1
+                                    || this.state.selectedStartDate === null
+                                    || this.state.selectedEndDate === null}
+                                onClick={this._commitNewAssignment}
+                            >
                                 Save
                             </Button>
                         </CardBody>
