@@ -154,11 +154,11 @@ class FamilyNotifications extends React.Component {
     if (this.state.error_message.length > 0) {
       messages = (
         <Alert color="danger">
-          {this.state.error_message} Are you <a href="/admin" className="alert-link"> logged in?</a>
+          {this.state.error_message} Are you <a href="/admin/" className="alert-link"> logged in?</a>
         </Alert>
       );
-    } else if (this.state.data?.length > 0) {
-      messages = this.state.data.map((entry, index) => (
+    } else if (this.state.data.results?.length > 0) {
+      messages = this.state.results.data.map((entry, index) => (
         <DoctorMessage
           key={entry.id}
           doctorName={entry.sender_username}
