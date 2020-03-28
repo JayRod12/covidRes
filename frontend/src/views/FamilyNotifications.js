@@ -69,7 +69,7 @@ class FamilyNotifications extends React.Component {
     };
   }
   componentDidMount() {
-    fetch("manager/messages/rest/")
+    fetch("rest/messages/")
             .then(response => {
                 if (response.status > 400) {
                   throw new Error(response.status);

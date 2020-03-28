@@ -18,18 +18,18 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 from frontend import views as react_views
 #from resourceManager import views
-from manager import views as views_manager
+from manager import rest as views_manager
 
 router = routers.DefaultRouter()
 #router.register(r'patients', views.PatientViewSet)
 #router.register(r'machines', views.MachineViewSet)
 #router.register(r'machine_assignments', views.MachineAssignmentViewSet)
-router.register(r'manager/patients/rest', views_manager.PatientViewSet),
-router.register(r'manager/machinetypes/rest', views_manager.MachineTypeViewSet),
-router.register(r'manager/machines/rest', views_manager.MachineViewSet),
-router.register(r'manager/assignment_tasks/rest', views_manager.AssignmetTaskViewSet),
-router.register(r'manager/users/rest', views_manager.UserViewSet),
-router.register(r'manager/messages/rest', views_manager.MessageViewSet),
+router.register(r'rest/patients', views_manager.PatientViewSet),
+router.register(r'rest/machinetypes', views_manager.MachineTypeViewSet),
+router.register(r'rest/machines', views_manager.MachineViewSet),
+router.register(r'rest/assignment_tasks', views_manager.AssignmetTaskViewSet),
+router.register(r'rest/users', views_manager.UserViewSet),
+router.register(r'rest/messages', views_manager.MessageViewSet),
 
 
 urlpatterns = [
