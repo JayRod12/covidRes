@@ -34,6 +34,7 @@ class Ventilators extends React.Component {
             dialogState: { showDialog: false, dialogTitle: "", dialogText: "" },
             pendingItemMove: null,
             pendingItemResize: null,
+            selected: [],
         };
     }
 
@@ -76,6 +77,7 @@ class Ventilators extends React.Component {
                             start_time: moment(assignment.start_date).valueOf(),
                             end_time: moment(assignment.end_date).valueOf(),
                             canChangeGroup: true,
+                            patient_name: "Dolo",
                         });
                     });
                     this.setState(prevState => ({
@@ -160,6 +162,27 @@ class Ventilators extends React.Component {
         });
     }
 
+    _handleItemSelect = (itemId, e, time) => {
+        const selectedItem = this.state.items.find(item => item.id === itemId);
+
+        // TODO IMPORTANT!! DO THIS BY PATIENT ID, NAME IS PRONE TO ALL SORTS OF BUGS
+        var selected = this.state.items.filter(item => item.patient_name === selectedItem.patient_name);
+        selected = selected.map(item => item.id);
+
+        // select all items with the same patient, so we highlight the history of the patient
+        this.setState(prevState => ({
+            ...prevState,
+            selected: selected
+        }));
+    }
+
+    _handleItemDeselect = (e) => {
+        this.setState(prevState => ({
+            ...prevState,
+            selected: []
+        }));
+    }
+
     render() {
         const isLoaded = this.state.groups.length > 0 && this.state.items.length > 0;
 
@@ -200,11 +223,14 @@ class Ventilators extends React.Component {
                             defaultTimeEnd={moment().add(12, 'day')}
                             onItemMove={this._handleItemMove}
                             onItemResize={this._handleItemResize}
+                            onItemSelect={this._handleItemSelect}
+                            onItemDeselect={this._handleItemDeselect}
+                            selected={this.state.selected}
                         >
                             <TimelineHeaders className="sticky">
                                 <SidebarHeader>
                                     {({ _ }) => {
-                                        return <div style={{ alignSelf: "center", color: "white", textAlign: "center", width: "150px" }}>Ventilators</div>;
+                                        return <div style={{ alignSelf: "center", color: "white", textAlign: "center", width: "150px" }}>Machine</div>;
                                     }}
                                 </SidebarHeader>
                                 <DateHeader unit="primaryHeader" />
