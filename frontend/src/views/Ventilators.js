@@ -1,5 +1,6 @@
 import React from "react";
 import classNames from "classnames";
+import Select from '@material-ui/core/Select';
 
 import Timeline, {
     TimelineHeaders,
@@ -9,11 +10,25 @@ import Timeline, {
     TodayMarker,
 } from 'src/react-calendar-timeline'
 
+import {
+    Card,
+    CardHeader,
+    CardBody,
+    CardFooter,
+    CardText,
+    FormGroup,
+    Form,
+    Input,
+    Row,
+    Col,
+    DropdownList
+} from "reactstrap";
+
 // make sure you include the timeline stylesheet or the timeline will not be styled
 import 'src/react-calendar-timeline/src/lib/Timeline.scss'
-import moment from 'moment'
+import "react-datepicker/dist/react-datepicker.css";
 
-import { Card } from "reactstrap"
+import moment from 'moment'
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -21,6 +36,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+
+import DatePicker from "react-datepicker";
 
 const FIVE_SECONDS_MS = 5 * 1000;
 
@@ -35,10 +52,35 @@ class Ventilators extends React.Component {
             pendingItemMove: null,
             pendingItemResize: null,
             selected: [],
+            allPatients: [],
+            selectedPatient: -1,
+            selectedMachine: -1,
+            selectedStartDate: null,
+            selectedEndDate: null,
         };
     }
 
     componentDidMount() {
+        // we need to fetch patients, machines and assignemnts
+
+        fetch("/rest/patients/")
+            .then(response => {
+                if (response.status > 400) {
+                    throw new Error(response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const allPatients = data.results.map(patient => patient.name);
+                this.setState(prevState => ({
+                    ...prevState, allPatients: allPatients
+                }));
+            })
+            .catch(error => {
+                console.log("Something bad happened while trying to fetch patient data :( " + error);
+            });
+
+
         var ventilatorPromise = fetch("rest/machines/")
             .then(response => {
                 if (response.status > 400) {
@@ -49,7 +91,7 @@ class Ventilators extends React.Component {
             .then(data => {
                 const groups = [];
                 data.results.forEach(ventilator => {
-                    groups.push({ id: ventilator.pk, title: ventilator.model_name });
+                    groups.push({ id: ventilator.pk, title: ventilator.model_name + " #" + ventilator.pk });
                 });
                 this.setState(prevState => ({
                     ...prevState, groups: groups
@@ -77,7 +119,7 @@ class Ventilators extends React.Component {
                             start_time: moment(assignment.start_date).valueOf(),
                             end_time: moment(assignment.end_date).valueOf(),
                             canChangeGroup: true,
-                            patient_name: assignment.patient_name,
+                            patient_id: assignment.patient,
                         });
                     });
                     this.setState(prevState => ({
@@ -85,7 +127,7 @@ class Ventilators extends React.Component {
                     }));
                 })
                 .catch(error => {
-                    console.log("Something bad happened while trying to fetch ventilator data :( " + error);
+                    console.log("Something bad happened while trying to fetch assignemnt data :( " + error);
                 }));
     }
 
@@ -166,7 +208,7 @@ class Ventilators extends React.Component {
         const selectedItem = this.state.items.find(item => item.id === itemId);
 
         // TODO IMPORTANT!! DO THIS BY PATIENT ID, NAME IS PRONE TO ALL SORTS OF BUGS
-        var selected = this.state.items.filter(item => item.patient_name === selectedItem.patient_name);
+        var selected = this.state.items.filter(item => item.patient_id === selectedItem.patient_id);
         selected = selected.map(item => item.id);
 
         // select all items with the same patient, so we highlight the history of the patient
@@ -184,68 +226,138 @@ class Ventilators extends React.Component {
     }
 
     render() {
-        const isLoaded = this.state.groups.length > 0 && this.state.items.length > 0;
+        const isLoaded = this.state.groups.length > 0 &&
+            this.state.items.length > 0 &&
+            this.state.allPatients.length > 0;
 
         return (
             <div className="content">
-                <Dialog
-                    open={this.state.dialogState.showDialog}
-                    onClose={() => this._closeDialog(false)}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">{this.state.dialogState.dialogTitle}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            {this.state.dialogState.dialogText}
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => this._closeDialog(false)} color="primary">
-                            Cancel
+                <Row>
+                    <Dialog
+                        open={this.state.dialogState.showDialog}
+                        onClose={() => this._closeDialog(false)}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">{this.state.dialogState.dialogTitle}</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                {this.state.dialogState.dialogText}
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => this._closeDialog(false)} color="primary">
+                                Cancel
                         </Button>
-                        <Button onClick={() => this._closeDialog(true)} color="primary" autoFocus>
-                            Ok
+                            <Button onClick={() => this._closeDialog(true)} color="primary" autoFocus>
+                                Ok
                         </Button>
-                    </DialogActions>
-                </Dialog>
+                        </DialogActions>
+                    </Dialog>
 
-                {!isLoaded ? <div>Loading...</div> :
-                    <Card className="card-chart">
-                        <Timeline
-                            groups={this.state.groups}
-                            items={this.state.items}
-                            traditionalZoom
-                            itemTouchSendsClick={true}
-                            canMove={true}
-                            canResize={"both"}
-                            defaultTimeStart={moment().add(-12, 'day')}
-                            defaultTimeEnd={moment().add(12, 'day')}
-                            onItemMove={this._handleItemMove}
-                            onItemResize={this._handleItemResize}
-                            onItemSelect={this._handleItemSelect}
-                            onItemDeselect={this._handleItemDeselect}
-                            selected={this.state.selected}
-                        >
-                            <TimelineHeaders className="sticky">
-                                <SidebarHeader>
-                                    {({ _ }) => {
-                                        return <div style={{ alignSelf: "center", color: "white", textAlign: "center", width: "150px" }}>Machine</div>;
-                                    }}
-                                </SidebarHeader>
-                                <DateHeader unit="primaryHeader" />
-                                <DateHeader />
-                            </TimelineHeaders>
-                            <TimelineMarkers>
-                                <TodayMarker interval={FIVE_SECONDS_MS}>
-                                    {({ styles, date }) =>
-                                        <div style={{ ...styles, backgroundColor: 'red' }} />
-                                    }
-                                </TodayMarker>
-                            </TimelineMarkers>
-                        </Timeline>
-                    </Card>}
-            </div>
+
+                    <Card className="card-chart" style={{ zIndex: 1 }}>
+                        {!isLoaded ? <div>Loading...</div> :
+                            <Timeline
+                                groups={this.state.groups}
+                                items={this.state.items}
+                                traditionalZoom
+                                itemTouchSendsClick={true}
+                                canMove={true}
+                                canResize={"both"}
+                                defaultTimeStart={moment().add(-12, 'day')}
+                                defaultTimeEnd={moment().add(12, 'day')}
+                                onItemMove={this._handleItemMove}
+                                onItemResize={this._handleItemResize}
+                                onItemSelect={this._handleItemSelect}
+                                onItemDeselect={this._handleItemDeselect}
+                                selected={this.state.selected}
+                            >
+                                <TimelineHeaders className="sticky">
+                                    <SidebarHeader>
+                                        {({ _ }) => {
+                                            return <div style={{ alignSelf: "center", color: "white", textAlign: "center", width: "150px" }}>Machine</div>;
+                                        }}
+                                    </SidebarHeader>
+                                    <DateHeader unit="primaryHeader" />
+                                    <DateHeader />
+                                </TimelineHeaders>
+                                <TimelineMarkers>
+                                    <TodayMarker interval={FIVE_SECONDS_MS}>
+                                        {({ styles, date }) =>
+                                            <div style={{ ...styles, backgroundColor: 'red' }} />
+                                        }
+                                    </TodayMarker>
+                                </TimelineMarkers>
+                            </Timeline>}
+                    </Card>
+                </Row>
+
+                <Row>
+                    <Card>
+                        <CardHeader>
+                            <h5 className="title">New Machine Assignment</h5>
+                        </CardHeader>
+                        <CardBody>
+                            <Form>
+                                <Row>
+                                    <Col className="pr-md-1" md="3">
+                                        <FormGroup>
+                                            <label>Select Patient</label>
+                                            <Input
+                                                defaultValue="Mike"
+                                                placeholder="Company"
+                                                type="text"
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col className="pl-md-1" md="3">
+                                        <FormGroup>
+                                            <label>Machine</label>
+                                            <Input
+                                                defaultValue="Andrew"
+                                                placeholder="Last Name"
+                                                type="dropdown"
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col className="pl-md-1" md="2">
+                                        <FormGroup>
+                                            <label>Start Date</label>
+                                            <DatePicker
+                                                selected={this.state.selectedStartDate}
+                                                showPopperArrow={false}
+                                                onChange={date => {
+                                                    this.setState(prevState => ({
+                                                        ...prevState, selectedStartDate: date
+                                                    }));
+                                                }}
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col className="pl-md-1" md="2">
+                                        <FormGroup>
+                                            <label>End Date</label>
+                                            <DatePicker
+                                                selected={this.state.selectedEndDate}
+                                                showPopperArrow={false}
+                                                onChange={date => {
+                                                    this.setState(prevState => ({
+                                                        ...prevState, selectedEndDate: date
+                                                    }));
+                                                }}
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                            </Form>
+                            <Button variant="outlined" type="submit">
+                                Save
+                            </Button>
+                        </CardBody>
+                    </Card>
+                </Row>
+            </div >
         );
     }
 }
