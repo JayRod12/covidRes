@@ -50,30 +50,63 @@ class Ventilators extends React.Component {
     constructor(props) {
         super(props);
 
-        const groups = [];
-        ventilators.forEach(ventilator => {
-            groups.push({ id: ventilator.id, title: ventilator.name });
-        });
-
-        const items = [];
-        assignments.forEach(assignment => {
-            items.push({
-                id: assignment.assignmentId,
-                group: assignment.ventilatorID,
-                title: "Patient Name: " + assignment.patientName + ", Location: " + assignment.location,
-                start_time: moment(assignment.startDate).valueOf(),
-                end_time: moment(assignment.endDate).valueOf(),
-                canChangeGroup: true,
-            });
-        });
-
         this.state = {
-            groups: groups,
-            items: items,
+            groups: [],
+            items: [],
             dialogState: { showDialog: false, dialogTitle: "", dialogText: "" },
             pendingItemMove: null,
             pendingItemResize: null,
         };
+    }
+
+    componentDidMount() {
+        var ventilatorPromise = fetch("rest/machines/")
+            .then(response => {
+                if (response.status > 400) {
+                    throw new Error(response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const groups = [];
+                data.results.forEach(ventilator => {
+                    groups.push({ id: ventilator.pk, title: ventilator.model_name });
+                });
+                this.setState(prevState => ({
+                    ...prevState, groups: groups
+                }));
+            })
+            .catch(error => {
+                console.log("Something bad happened while trying to fetch ventilator data :( " + error);
+            });
+
+        ventilatorPromise.then(() =>
+            fetch("rest/assignment_tasks/")
+                .then(response => {
+                    if (response.status > 400) {
+                        throw new Error(response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const items = [];
+                    data.results.forEach(assignment => {
+                        items.push({
+                            id: assignment.pk,
+                            group: assignment.machine,
+                            title: "Patient Name: " + assignment.patient_name,
+                            start_time: moment(assignment.start_date).valueOf(),
+                            end_time: moment(assignment.end_date).valueOf(),
+                            canChangeGroup: true,
+                        });
+                    });
+                    this.setState(prevState => ({
+                        ...prevState, items: items
+                    }));
+                })
+                .catch(error => {
+                    console.log("Something bad happened while trying to fetch ventilator data :( " + error);
+                }));
     }
 
     _handleItemMove = (itemId, dragTime, newGroupOrder) => {
@@ -150,6 +183,8 @@ class Ventilators extends React.Component {
     }
 
     render() {
+        const isLoaded = this.state.groups.length > 0 && this.state.items.length > 0;
+
         return (
             <div className="content">
                 <Dialog
@@ -173,20 +208,22 @@ class Ventilators extends React.Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
-                <Card className="card-chart">
-                    <Timeline
-                        groups={this.state.groups}
-                        items={this.state.items}
-                        showCursorLine
-                        itemTouchSendsClick={true}
-                        canMove={true}
-                        canResize={"both"}
-                        defaultTimeStart={moment().add(-12, 'day')}
-                        defaultTimeEnd={moment().add(12, 'day')}
-                        onItemMove={this._handleItemMove}
-                        onItemResize={this._handleItemResize}
-                    />
-                </Card>
+
+                {!isLoaded ? <div>Loading...</div> :
+                    <Card className="card-chart">
+                        <Timeline
+                            groups={this.state.groups}
+                            items={this.state.items}
+                            showCursorLine
+                            itemTouchSendsClick={true}
+                            canMove={true}
+                            canResize={"both"}
+                            defaultTimeStart={moment().add(-12, 'day')}
+                            defaultTimeEnd={moment().add(12, 'day')}
+                            onItemMove={this._handleItemMove}
+                            onItemResize={this._handleItemResize}
+                        />
+                    </Card>}
             </div>
         );
     }
