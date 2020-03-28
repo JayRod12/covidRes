@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState } from "react";
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
 
@@ -24,11 +24,20 @@ import {
   Alert,
   UncontrolledAlert,
   Button,
+  Form,
+  FormGroup,
+  Label,
+  Input,
   Card,
   CardHeader,
   CardBody,
   CardText,
   CardTitle,
+  CardSubtitle,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
   Row,
   Col
 } from "reactstrap";
@@ -58,7 +67,65 @@ function prettifyDate(raw_date) {
   return new Date(raw_date).toGMTString();
 };
 
+const PatientDropdown = (props) => {
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    const toggle = () => setDropdownOpen(prevState => !prevState);
+
+    console.log('Props');
+    console.log(props);
+    if (!props.patient_data) {
+      return null;
+    }
+
+    var list = props.patient_data.map((entry, index) => {
+      return (
+        <DropdownItem key={entry.pk}>{entry.name}</DropdownItem>
+      );
+    });
+
+    return (
+      <CardSubtitle>
+        <Dropdown isOpen={dropdownOpen} toggle={toggle}>
+          <DropdownToggle caret>
+            Filter messages of a patient
+          </DropdownToggle>
+          <DropdownMenu>
+            <DropdownItem>All patients</DropdownItem>
+            <DropdownItem divider />
+            {list}
+          </DropdownMenu>
+        </Dropdown>
+      </CardSubtitle>
+    );
+}
+
+const MessageForm = (props) => {
+  var patient_list = props.patient_data.map((entry, index) => {
+    return (
+      <option key={entry.pk}>{entry.name}</option>
+    );
+  });
+
+  return (
+    <Form>
+    <FormGroup>
+      <Label for="patientSelect">Select Patient</Label>
+      <Input type="select" name="select" id="patientSelect">
+        {patient_list}
+      </Input>
+    </FormGroup>
+    <FormGroup>
+      <Label for="messageText">Message</Label>
+      <Input type="textarea" name="text" id="messageText" />
+    </FormGroup>
+    </Form>
+  );
+  
+}
+
 class FamilyNotifications extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -66,10 +133,11 @@ class FamilyNotifications extends React.Component {
       loaded: false,
       placeholder: "Loading",
       error_message: "",
+      patient_data: [],
     };
   }
   componentDidMount() {
-    fetch("rest/messages/received/")
+    fetch("/rest/messages/received/")
             .then(response => {
                 console.log('Response');
                 console.log(response);
@@ -99,6 +167,21 @@ class FamilyNotifications extends React.Component {
                 };
               });
             });
+    fetch("/rest/patients/")
+      .then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        this.setState({
+          patient_data: data.results,
+        });
+      })
+      .catch(error => {
+        console.log("Error fetching patients " + error);
+      })
   };
   notify = place => {
     var color = Math.floor(Math.random() * 5 + 1);
@@ -147,6 +230,7 @@ class FamilyNotifications extends React.Component {
         </CardHeader>
       );
     }
+
     console.log('here');
     console.log(this.state.data);
     console.log(this.state.data.length);
@@ -160,7 +244,7 @@ class FamilyNotifications extends React.Component {
     } else if (this.state.data.results?.length > 0) {
       messages = this.state.data.results.map((entry, index) => (
         <DoctorMessage
-          key={entry.id}
+          key={entry.pk}
           doctorName={entry.sender_username}
           time={prettifyDate(entry.date)}
           message={entry.message}
@@ -186,6 +270,9 @@ class FamilyNotifications extends React.Component {
                   <CardTitle tag="h4">Family Messages</CardTitle>
                 </CardHeader>
                 <CardBody>
+                  <MessageForm patient_data={this.state.patient_data} />
+
+                  <PatientDropdown patient_data={this.state.patient_data} />
                   {messages}
                 </CardBody>
               </Card>
@@ -196,6 +283,7 @@ class FamilyNotifications extends React.Component {
     );
   }
 }
+
 
 // <DoctorMessage
 //                     doctorName="Smith"
