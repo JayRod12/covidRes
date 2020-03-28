@@ -74,45 +74,6 @@ class PatientProfile extends React.Component {
               });
             });
   };
-  notify = place => {
-    var color = Math.floor(Math.random() * 5 + 1);
-    var type;
-    switch (color) {
-      case 1:
-        type = "primary";
-        break;
-      case 2:
-        type = "success";
-        break;
-      case 3:
-        type = "danger";
-        break;
-      case 4:
-        type = "warning";
-        break;
-      case 5:
-        type = "info";
-        break;
-      default:
-        break;
-    }
-    var options = {};
-    options = {
-      place: place,
-      message: (
-        <div>
-          <div>
-            Welcome to <b>Black Dashboard React</b> - a beautiful freebie for
-            every web developer.
-          </div>
-        </div>
-      ),
-      type: type,
-      icon: "tim-icons icon-bell-55",
-      autoDismiss: 7
-    };
-    this.refs.notificationAlert.notificationAlert(options);
-  };
   render() {
     if (!this.state.loaded) {
       return (
@@ -130,133 +91,119 @@ class PatientProfile extends React.Component {
       );
     } else if (this.state.data.pk) {
       patient = (
-        <CardBody>
-          <Form>
-            <Row>
-              <Col className="pr-md-1" md="2">
-                <FormGroup>
-                  <label>ID</label>
-                  <Input
-                    defaultValue={this.state.data.pk}
-                    disabled
-                    placeholder="Company"
-                    type="text"
-                  />
-                </FormGroup>
-              </Col>
-              <Col className="px-md-1" md="4">
-                <FormGroup>
-                  <label>Username</label>
-                  <Input
-                    defaultValue={this.state.data.name}
-                    placeholder="Username"
-                    type="text"
-                  />
-                </FormGroup>
-              </Col>
-              <Col className="pl-md-1" md="1">
-                <FormGroup>
-                  <label htmlFor="exampleInputEmail1">
-                    Severity
-                  </label>
-                  <Input
-                    defaultValue={this.state.data.severity}
-                    placeholder="Severity"
-                    type="number"
-                  />
-                </FormGroup>
-              </Col>
-              <Col className="pl-md-1" md="5">
-                <FormGroup>
-                  <label htmlFor="exampleInputEmail1">
-                    Location
-                  </label>
-                  <Input
-                    defaultValue={this.state.data.location}
-                    placeholder="Location"
-                    type="text"
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col className="pr-md-1" md="6">
-                <FormGroup>
-                  <label>First Name</label>
-                  <Input
-                    defaultValue={this.state.data.first_name}
-                    placeholder="First Name"
-                    type="text"
-                  />
-                </FormGroup>
-              </Col>
-              <Col className="pl-md-1" md="6">
-                <FormGroup>
-                  <label>Last Name</label>
-                  <Input
-                    defaultValue={this.state.data.last_name}
-                    placeholder="Last Name"
-                    type="text"
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md="12">
-                <FormGroup>
-                  <label>Address</label>
-                  <Input
-                    defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                    placeholder="Home Address"
-                    type="text"
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col className="pr-md-1" md="4">
-                <FormGroup>
-                  <label>City</label>
-                  <Input
-                    defaultValue="Mike"
-                    placeholder="City"
-                    type="text"
-                  />
-                </FormGroup>
-              </Col>
-              <Col className="px-md-1" md="4">
-                <FormGroup>
-                  <label>Country</label>
-                  <Input
-                    defaultValue="Andrew"
-                    placeholder="Country"
-                    type="text"
-                  />
-                </FormGroup>
-              </Col>
-              <Col className="pl-md-1" md="4">
-                <FormGroup>
-                  <label>Postal Code</label>
-                  <Input placeholder="ZIP Code" type="number" />
-                </FormGroup>
-              </Col>
-            </Row>
-            <Row>
-              <Col md="8">
-                <FormGroup>
-                  <label>Description</label>
-                  <Input
-                    cols="80"
-                    defaultValue={this.state.data.description}
-                    placeholder="Patient description"
-                    rows="4"
-                    type="textarea"
-                  />
-                </FormGroup>
-              </Col>
-            </Row>
-          </Form>
-        </CardBody>
+        <Col md="8">
+          <Card>
+            <CardHeader>
+              <th className="title">Machine Profile</th>
+            </CardHeader>
+            <CardBody>
+              <Form>
+                <Row>
+                  <Col className="pr-md-1" md="1">
+                    <FormGroup>
+                      <label>ID</label>
+                      <Input
+                        defaultValue={this.state.data.pk}
+                        disabled
+                        placeholder="ID"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col className="px-md-1" md="4">
+                    <FormGroup>
+                      <label>Username</label>
+                      <Input
+                        defaultValue={this.state.data.name}
+                        placeholder="Username"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col className="pl-md-1" md="2">
+                    <FormGroup>
+                      <label>Severity</label>
+                      <Input
+                        defaultValue={this.state.data.severity}
+                        placeholder="Severity"
+                        type="number"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col className="pl-md-1" md="5">
+                    <FormGroup>
+                      <label>Location</label>
+                      <Input
+                        defaultValue={this.state.data.location}
+                        placeholder="Location"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="pr-md-1" md="6">
+                    <FormGroup>
+                      <label>First Name</label>
+                      <Input
+                        defaultValue={this.state.data.first_name}
+                        placeholder="First Name"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col className="pl-md-1" md="6">
+                    <FormGroup>
+                      <label>Last Name</label>
+                      <Input
+                        defaultValue={this.state.data.last_name}
+                        placeholder="Last Name"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md="8">
+                    <FormGroup>
+                      <label>Description</label>
+                      <Input
+                        cols="80"
+                        defaultValue={this.state.data.description}
+                        placeholder="Patient description"
+                        rows="6"
+                        type="textarea"
+                      />
+                    </FormGroup>
+                  </Col>
+                    <Col md="4">
+                      <label>Assigned to</label>
+                      <CardBody>
+                        {this.state.data.machine_assigned === null
+                          ?
+                          <Row><th>None</th></Row>
+                          :
+                          <div>
+                            <Row>
+                              <th><Link to={'/machine/'+this.state.data.machine_assigned}>{this.state.data.machine_assigned_model}</Link></th>
+                            </Row>
+                            <Row>
+                              <th><small>ID: {this.state.data.machine_assigned}</small></th>
+                            </Row>
+                          </div>
+                        }
+                      </CardBody>
+                    </Col>
+                </Row>
+              </Form>
+            </CardBody>
+            <CardFooter>
+              <Button className="btn-fill" color="primary" type="submit" value="Submit">
+                Save
+              </Button>
+            </CardFooter>
+          </Card>
+        </Col>
       );
     } else {
       patient = (
@@ -268,19 +215,7 @@ class PatientProfile extends React.Component {
       <>
         <div className="content">
           <Row>
-            <Col md="8">
-              <Card>
-                <CardHeader>
-                  <h5 className="title">Patient Profile</h5>
-                </CardHeader>
-                {patient}
-                <CardFooter>
-                  <Button className="btn-fill" color="primary" type="submit">
-                    Save
-                  </Button>
-                </CardFooter>
-              </Card>
-            </Col>
+            {patient}
             <Col md="4">
               <Card className="card-user">
                 <CardBody>
