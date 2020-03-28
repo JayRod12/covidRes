@@ -69,7 +69,7 @@ class PatientProfile extends React.Component {
                 return {
                   loaded: true,
                   placeholder: "Failed to load",
-                  error_message: "You don't have permission to view this patient."+pk+error,
+                  error_message: error,
                 };
               });
             });
@@ -144,9 +144,9 @@ class PatientProfile extends React.Component {
                   />
                 </FormGroup>
               </Col>
-              <Col className="px-md-1" md="7">
+              <Col className="px-md-1" md="4">
                 <FormGroup>
-                  <label>Name</label>
+                  <label>Username</label>
                   <Input
                     defaultValue={this.state.data.name}
                     placeholder="Username"
@@ -154,12 +154,28 @@ class PatientProfile extends React.Component {
                   />
                 </FormGroup>
               </Col>
+              <Col className="pl-md-1" md="2">
+                <FormGroup>
+                  <label htmlFor="exampleInputEmail1">
+                    Severity
+                  </label>
+                  <Input
+                    defaultValue={this.state.data.severity}
+                    placeholder="Severity"
+                    type="number"
+                  />
+                </FormGroup>
+              </Col>
               <Col className="pl-md-1" md="4">
                 <FormGroup>
                   <label htmlFor="exampleInputEmail1">
-                    Email address
+                    Location
                   </label>
-                  <Input placeholder="mike@email.com" type="email" />
+                  <Input
+                    defaultValue={this.state.data.location}
+                    placeholder="Location"
+                    type="text"
+                  />
                 </FormGroup>
               </Col>
             </Row>
@@ -168,8 +184,8 @@ class PatientProfile extends React.Component {
                 <FormGroup>
                   <label>First Name</label>
                   <Input
-                    defaultValue="Mike"
-                    placeholder="Company"
+                    defaultValue={this.state.data.first_name}
+                    placeholder="First Name"
                     type="text"
                   />
                 </FormGroup>
@@ -178,7 +194,7 @@ class PatientProfile extends React.Component {
                 <FormGroup>
                   <label>Last Name</label>
                   <Input
-                    defaultValue="Andrew"
+                    defaultValue={this.state.data.last_name}
                     placeholder="Last Name"
                     type="text"
                   />
