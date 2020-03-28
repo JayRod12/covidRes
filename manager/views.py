@@ -40,7 +40,7 @@ def tasks(request):
 def patient(request, pk):
     try:
         patient = Patient.objects.get(pk=pk)
-        if patient.machine_pk == 0:
+        if patient.machine in None:
             return render(request, 'patient.html', {
                 'patient': patient,
                 'history_severity': patient.get_history_severity(),
@@ -153,21 +153,21 @@ def patient_assign(request, pk, machine_pk):
     try:
         patient = Patient.objects.get(pk=pk)
         if machine_pk == 0:
-            if not patient.machine_pk == 0:
-                machine_old = Machine.objects.get(pk=patient.machine_pk)
-                machine_old.patient_pk = 0 # Unassign from old machine
+            if not patient.machine_assigned is None:
+                machine_old = patient.machine_assigned
+                machine_old.patient_assigned = None # Unassign from old machine
                 machine_old.save()
-            patient.machine_pk = 0
+            patient.machine_assigned = None
             patient.save()
         else:
             machine = Machine.objects.get(pk=machine_pk)
-            if machine.patient_pk == 0:
-                if not patient.machine_pk == 0:
-                    machine_old = Machine.objects.get(pk=patient.machine_pk)
-                    machine_old.patient_pk = 0 # Unassign from old machine
+            if machine.patient_assigned is None:
+                if not patient.machine is None:
+                    machine_old = patient.machine_assigned
+                    machine_old.patient_assigned = None # Unassign from old machine
                     machine_old.save()
-                patient.machine_pk = machine_pk # Assign new machine
-                machine.patient_pk = pk # Assign to new machine
+                patient.machine_assigned = machine # Assign new machine
+                machine.patient_assigned = patient # Assign to new machine
                 patient.save()
                 machine.save()
             else:
@@ -176,7 +176,7 @@ def patient_assign(request, pk, machine_pk):
         raise Http404("Patient not found")
     except Machine.DoesNotExist:
         raise Http404("Machine not found")
-    patient.assign_machine(machine_pk)
+    patient.assign_machine(machine)
     patient.save()
     return redirect('patient', pk)
 
@@ -186,16 +186,16 @@ def assignment_task_complete(request, pk):
         task = AssignmetTask.objects.get(pk=pk)
         if task.bool_completed:
             raise Http404("Task was already completed")
-        patient = Patient.objects.get(pk=task.patient.pk) ######### THER MUST BE A BETTER WAY #########
-        machine = Machine.objects.get(pk=task.machine.pk) #############################################
+        patient = task.patient
+        machine = task.machine
         if not task.bool_install: # We assume both patient and machine are unassigned
-            patient.assign_machine(machine.pk)
-            machine.patient_pk = patient.pk
+            patient.assign_machine(machine)
+            machine.patient_assigned = patient
             task.bool_install = True
             task.date = task.end_date
         else:
             patient.assign_machine(0)
-            machine.patient_pk = 0
+            machine.patient_assigned = None
             task.bool_completed = True
         task.save()
         patient.save()

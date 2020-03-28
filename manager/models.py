@@ -37,8 +37,9 @@ class Patient(models.Model):
     )
     severity = models.IntegerField(default=1, choices=SEVERITY)
     admission_date = models.DateTimeField('Admission date: ', default=timezone.now)
+    location = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
-    machine_pk = models.IntegerField(default=0)
+    machine_assigned = models.ForeignKey('Machine', null=True, on_delete=models.SET_NULL)
     # History
     history_severity_x = models.TextField(blank=True)
     history_severity_y = models.TextField(blank=True)
@@ -48,14 +49,14 @@ class Patient(models.Model):
     	return self.name + ' #' + str(self.pk)
     def get_absolute_url(self):
         return reverse('patient', kwargs={'pk': self.pk})
-    def assign_machine(self, machine_pk):
-        self.machine_pk = machine_pk
+    def assign_machine(self, machine):
+        self.machine_assigned = machine
         if len(self.history_machine_y)==0:
             self.history_machine_x = str(timezone.now())[:-3] + str(timezone.now())[-2:]
-            self.history_machine_y = str(machine_pk)
-        elif not machine_pk == int(self.history_machine_y.split(', ')[-1]):
+            self.history_machine_y = str(machine.pk)
+        elif not machine.pk == int(self.history_machine_y.split(', ')[-1]):
             self.history_machine_x += ', ' + str(timezone.now())[:-3] + str(timezone.now())[-2:]
-            self.history_machine_y += ', ' + str(machine_pk)
+            self.history_machine_y += ', ' + str(machine.pk)
     def get_history_severity(self):
         xx = [datetime.strptime(a, "%Y-%m-%d %H:%M:%S.%f%z") for a in self.history_severity_x.split(', ')]
         yy = [int(a) for a in self.history_severity_y.split(', ')]
@@ -78,7 +79,7 @@ class Machine(models.Model):
     model = models.ForeignKey(MachineType, on_delete=models.CASCADE)
     location = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    patient_pk = models.IntegerField(default=0)
+    patient_assigned = models.ForeignKey(Patient, null=True, on_delete=models.SET_NULL)
     def __str__(self):
     	return self.model.name + ' #' + str(self.pk)
     def get_absolute_url(self):

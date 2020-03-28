@@ -2,7 +2,13 @@ from rest_framework import generics, permissions, viewsets
 
 from .models import Patient, MachineType, Machine, AssignmetTask
 from .models import User, Message
-from .serializers import PatientSerializer, MachineTypeSerializer, MachineSerializer, AssignmetTaskSerializer
+from .serializers import (
+    PatientSerializer,
+    PatientDetailedSerializer,
+    MachineTypeSerializer,
+    MachineSerializer,
+    AssignmetTaskSerializer
+)
 from .serializers import UserSerializer, MessageSerializer
 from .serializers import User, Message
 from . import functions
@@ -14,6 +20,13 @@ class PatientViewSet(viewsets.ModelViewSet):
     queryset = Patient.objects.all().order_by('-admission_date')
     serializer_class = PatientSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionUserEdit]
+    def get_serializer_class(self):
+        if 'pk' in self.kwargs:
+            return PatientDetailedSerializer
+        return self.serializer_class
+    def get_queryset(self):
+        print(vars(self))
+        return self.queryset
 
 class PermissionMachineTypeEdit(permissions.BasePermission):
     def has_permission(self, request, view):
