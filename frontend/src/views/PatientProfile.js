@@ -94,7 +94,7 @@ class PatientProfile extends React.Component {
         <Col md="8">
           <Card>
             <CardHeader>
-              <th className="title">Machine Profile</th>
+              <th className="title">Patient Profile</th>
             </CardHeader>
             <CardBody>
               <Form>
@@ -177,7 +177,7 @@ class PatientProfile extends React.Component {
                     </FormGroup>
                   </Col>
                     <Col md="4">
-                      <label>Assigned to</label>
+                      <label>Assigned Machine</label>
                       <CardBody>
                         {this.state.data.machine_assigned === null
                           ?

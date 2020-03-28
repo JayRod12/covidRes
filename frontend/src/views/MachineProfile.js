@@ -36,7 +36,7 @@ import {
   Col
 } from "reactstrap";
 
-class PatientProfile extends React.Component {
+class MachineProfile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -78,23 +78,23 @@ class PatientProfile extends React.Component {
     if (!this.state.loaded) {
       return (
         <CardHeader>
-          <CardTitle tag="h4">Loading patient...</CardTitle>
+          <CardTitle tag="h4">Loading machine...</CardTitle>
         </CardHeader>
       );
     }
-    let patient;
+    let machine;
     if (this.state.error_message.length > 0) {
-      patient = (
+      machine = (
         <Alert color="danger">
           {this.state.error_message} Are you <a href="/admin" className="alert-link"> logged in?</a>
         </Alert>
       );
     } else if (this.state.data.pk) {
-      patient = (
+      machine = (
         <Col md="8">
           <Card>
             <CardHeader>
-              <th className="title">Patient Profile</th>
+              <th className="title">Machine Profile</th>
             </CardHeader>
             <CardBody>
               <Form>
@@ -138,14 +138,14 @@ class PatientProfile extends React.Component {
                       <Input
                         cols="80"
                         defaultValue={this.state.data.description}
-                        placeholder="Patient description"
+                        placeholder="Machine description"
                         rows="6"
                         type="textarea"
                       />
                     </FormGroup>
                   </Col>
                     <Col md="4">
-                      <label>Assigned Machine</label>
+                      <label>Assigned to</label>
                       <CardBody>
                         {this.state.data.patient_assigned === null
                           ?
@@ -174,16 +174,16 @@ class PatientProfile extends React.Component {
         </Col>
       );
     } else {
-      patient = (
-        <CardText>No patient</CardText>
+      machine = (
+        <CardText>No machine</CardText>
       );
     }
-    console.log(patient);
+    console.log(machine);
     return (
       <>
         <div className="content">
           <Row>
-            {patient}
+            {machine}
             <Col md="4">
               <Card className="card-user">
                 <CardBody>
@@ -231,4 +231,4 @@ class PatientProfile extends React.Component {
   }
 }
 
-export default PatientProfile;
+export default MachineProfile;

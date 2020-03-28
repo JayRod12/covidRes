@@ -4,9 +4,11 @@ from .models import User, Message
 
 # Manage
 class PatientSerializer(serializers.ModelSerializer):
+	# Machine-related
+	machine_assigned_model = serializers.CharField(source='machine_assigned.model.name', allow_null=True, read_only=True)
 	class Meta:
 		model = Patient
-		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_assigned', 'description')
+		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'description')
 class PatientDetailedSerializer(serializers.ModelSerializer):
 	# User-related
 	user_pk = serializers.IntegerField(source='user.pk', allow_null=True, read_only=True)

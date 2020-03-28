@@ -16,6 +16,7 @@
 
 */
 import React from "react";
+import { NavLink, Link } from "react-router-dom";
 
 // reactstrap components
 import {
@@ -33,9 +34,9 @@ class MachineRow extends React.Component {
     return (
           <React.Fragment>
             <tr>
-              <td>{this.props.model_name}</td>
+              <td><Link to={'/machine/'+this.props.pk}>{this.props.model_name}</Link></td>
               <td>{this.props.location}</td>
-              <td className="text-center">{this.props.patient_pk}</td>
+              <td className="text-center">{this.props.patient_assigned_name}</td>
             </tr>
           </React.Fragment>
     );
@@ -139,10 +140,11 @@ class MachineList extends React.Component {
     } else if (this.state.data.results.length > 0) {
       machines = this.state.data.results.map((entry, index) => (
         <MachineRow
-          key={entry.id}
+          key={entry.pk}
+          pk={entry.pk}
           model_name={entry.model_name}
           location={entry.location}
-          patient_pk={entry.patient_pk}
+          patient_assigned_name={entry.patient_assigned_name}
           />
         )
       );
