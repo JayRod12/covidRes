@@ -4,18 +4,23 @@ from .models import User, Message
 
 # Manage
 class PatientSerializer(serializers.ModelSerializer):
+	# Machine-related
+	machine_assigned_model = serializers.CharField(source='machine_assigned.model.name', allow_null=True, read_only=True)
 	class Meta:
 		model = Patient
-		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_assigned', 'description')
+		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'description')
 class PatientDetailedSerializer(serializers.ModelSerializer):
-	user_pk = serializers.IntegerField(source='user.pk', allow_null=True)
-	role = serializers.CharField(source='user.role.name', allow_null=True)
+	# User-related
+	user_pk = serializers.IntegerField(source='user.pk', allow_null=True, read_only=True)
+	role = serializers.CharField(source='user.role.name', allow_null=True, read_only=True)
 	username = serializers.CharField(source='user.username', allow_null=True)
 	first_name = serializers.CharField(source='user.first_name', allow_null=True)
 	last_name = serializers.CharField(source='user.last_name', allow_null=True)
+	# Machine-related
+	machine_assigned_model = serializers.CharField(source='machine_assigned.model.name', allow_null=True, read_only=True)
 	class Meta:
 		model = Patient
-		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_assigned', 'description', 'user_pk', 'role', 'username', 'first_name', 'last_name')
+		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'description', 'user_pk', 'role', 'username', 'first_name', 'last_name')
 
 class MachineTypeSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -24,9 +29,10 @@ class MachineTypeSerializer(serializers.ModelSerializer):
 
 class MachineSerializer(serializers.ModelSerializer):
 	model_name = serializers.CharField(source='model.name', read_only=True)
+	patient_assigned_name = serializers.CharField(source='patient_assigned.name', allow_null=True, read_only=True)
 	class Meta:
 		model = Machine
-		fields = ('pk', 'model', 'model_name', 'location', 'patient_assigned', 'description')
+		fields = ('pk', 'model', 'model_name', 'location', 'patient_assigned', 'patient_assigned_name', 'description')
 
 class AssignmetTaskSerializer(serializers.ModelSerializer):
 	patient_name = serializers.CharField(source='patient.name', read_only=True)

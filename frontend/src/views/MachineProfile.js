@@ -36,7 +36,7 @@ import {
   Col
 } from "reactstrap";
 
-class PatientProfile extends React.Component {
+class MachineProfile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -48,7 +48,7 @@ class PatientProfile extends React.Component {
   }
   componentDidMount() {
     const { pk } = this.props.match.params
-    fetch('/rest/patients/'+pk+'/')
+    fetch('/rest/machines/'+pk+'/')
             .then(response => {
                 if (response.status > 400) {
                   throw new Error(response.status);
@@ -78,23 +78,23 @@ class PatientProfile extends React.Component {
     if (!this.state.loaded) {
       return (
         <CardHeader>
-          <CardTitle tag="h4">Loading patient...</CardTitle>
+          <CardTitle tag="h4">Loading machine...</CardTitle>
         </CardHeader>
       );
     }
-    let patient;
+    let machine;
     if (this.state.error_message.length > 0) {
-      patient = (
+      machine = (
         <Alert color="danger">
           {this.state.error_message} Are you <a href="/admin" className="alert-link"> logged in?</a>
         </Alert>
       );
     } else if (this.state.data.pk) {
-      patient = (
+      machine = (
         <Col md="8">
           <Card>
             <CardHeader>
-              <th className="title">Patient Profile</th>
+              <th className="title">Machine Profile</th>
             </CardHeader>
             <CardBody>
               <Form>
@@ -110,54 +110,22 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                  <Col className="px-md-1" md="4">
+                  <Col className="px-md-1" md="5">
                     <FormGroup>
-                      <label>Username</label>
+                      <label>Model</label>
                       <Input
-                        defaultValue={this.state.data.name}
-                        placeholder="Username"
-                        type="text"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col className="pl-md-1" md="2">
-                    <FormGroup>
-                      <label>Severity</label>
-                      <Input
-                        defaultValue={this.state.data.severity}
-                        placeholder="Severity"
-                        type="number"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col className="pl-md-1" md="5">
-                    <FormGroup>
-                      <label>Location</label>
-                      <Input
-                        defaultValue={this.state.data.location}
-                        placeholder="Location"
-                        type="text"
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col className="pr-md-1" md="6">
-                    <FormGroup>
-                      <label>First Name</label>
-                      <Input
-                        defaultValue={this.state.data.first_name}
-                        placeholder="First Name"
+                        defaultValue={this.state.data.model_name}
+                        placeholder="Model"
                         type="text"
                       />
                     </FormGroup>
                   </Col>
                   <Col className="pl-md-1" md="6">
                     <FormGroup>
-                      <label>Last Name</label>
+                      <label>Location</label>
                       <Input
-                        defaultValue={this.state.data.last_name}
-                        placeholder="Last Name"
+                        defaultValue={this.state.data.location}
+                        placeholder="Location"
                         type="text"
                       />
                     </FormGroup>
@@ -170,25 +138,25 @@ class PatientProfile extends React.Component {
                       <Input
                         cols="80"
                         defaultValue={this.state.data.description}
-                        placeholder="Patient description"
+                        placeholder="Machine description"
                         rows="6"
                         type="textarea"
                       />
                     </FormGroup>
                   </Col>
                     <Col md="4">
-                      <label>Assigned Machine</label>
+                      <label>Assigned to</label>
                       <CardBody>
-                        {this.state.data.machine_assigned === null
+                        {this.state.data.patient_assigned === null
                           ?
                           <Row><th>None</th></Row>
                           :
                           <div>
                             <Row>
-                              <th><Link to={'/machine/'+this.state.data.machine_assigned}>{this.state.data.machine_assigned_model}</Link></th>
+                              <th><Link to={'/patient/'+this.state.data.patient_assigned}>{this.state.data.patient_assigned_name}</Link></th>
                             </Row>
                             <Row>
-                              <th><small>ID: {this.state.data.machine_assigned}</small></th>
+                              <th><small>ID: {this.state.data.patient_assigned}</small></th>
                             </Row>
                           </div>
                         }
@@ -206,16 +174,16 @@ class PatientProfile extends React.Component {
         </Col>
       );
     } else {
-      patient = (
-        <CardText>No patient</CardText>
+      machine = (
+        <CardText>No machine</CardText>
       );
     }
-    console.log(patient);
+    console.log(machine);
     return (
       <>
         <div className="content">
           <Row>
-            {patient}
+            {machine}
             <Col md="4">
               <Card className="card-user">
                 <CardBody>
@@ -263,4 +231,4 @@ class PatientProfile extends React.Component {
   }
 }
 
-export default PatientProfile;
+export default MachineProfile;
