@@ -158,7 +158,7 @@ class FamilyNotifications extends React.Component {
         </Alert>
       );
     } else if (this.state.data.results?.length > 0) {
-      messages = this.state.results.data.map((entry, index) => (
+      messages = this.state.data.results.map((entry, index) => (
         <DoctorMessage
           key={entry.id}
           doctorName={entry.sender_username}
