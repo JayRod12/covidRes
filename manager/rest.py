@@ -55,7 +55,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
     def get_queryset(self):
-        return Message.objects.filter(receiver=self.request.user)
+        return Message.objects.filter(receiver=self.request.user).order_by('date')
 class MessageConvViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
@@ -63,4 +63,4 @@ class MessageConvViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         value = self.kwargs['you_pk']
         conversation = functions.get_messages(self.request.user, User.objects.get(pk=value))
-        return conversation['received'] | conversation['sent']
+        return (conversation['received'] | conversation['sent']).order_by('date')
