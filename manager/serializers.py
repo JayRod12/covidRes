@@ -29,7 +29,7 @@ class AssignmetTaskSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = User
-		fields = ('pk', 'role', 'username')
+		fields = ('pk', 'role', 'username', 'first_name', 'last_name')
 
 class MessageSerializer(serializers.ModelSerializer):
 	sender_username = serializers.CharField(source='sender.username', read_only=True)
