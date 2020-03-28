@@ -76,8 +76,10 @@ $weekend: rgba(250, 246, 225, 0.5);
       white-space: nowrap;
       text-overflow: ellipsis;
       box-sizing: border-box;
+      text-align: center;
       margin: 0;
       border-bottom: $border-width solid $border-color;
+      font-weight: bold;
 
       &.rct-sidebar-row-odd {
         background: $row-background-odd;

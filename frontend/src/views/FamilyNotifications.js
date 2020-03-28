@@ -71,12 +71,15 @@ class FamilyNotifications extends React.Component {
   componentDidMount() {
     fetch("rest/messages/received/")
             .then(response => {
+                console.log('Response');
+                console.log(response);
                 if (response.status > 400) {
                   throw new Error(response.status);
                 }
                 return response.json();
             })
             .then(data => {
+                console.log('Data');
                 console.log(data);
                 this.setState(() => {
                     return {
@@ -86,6 +89,8 @@ class FamilyNotifications extends React.Component {
                 });
             })
             .catch(error => {
+              console.log('Error');
+              console.log(error);
               this.setState(() => {
                 return {
                   loaded: true,
@@ -142,6 +147,9 @@ class FamilyNotifications extends React.Component {
         </CardHeader>
       );
     }
+    console.log('here');
+    console.log(this.state.data);
+    console.log(this.state.data.length);
     let messages;
     if (this.state.error_message.length > 0) {
       messages = (
@@ -149,8 +157,8 @@ class FamilyNotifications extends React.Component {
           {this.state.error_message} Are you <a href="/admin" className="alert-link"> logged in?</a>
         </Alert>
       );
-    } else if (this.state.data.results.length > 0) {
-      messages = this.state.data.results.map((entry, index) => (
+    } else if (this.state.data?.length > 0) {
+      messages = this.state.data.map((entry, index) => (
         <DoctorMessage
           key={entry.id}
           doctorName={entry.sender_username}
