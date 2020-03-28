@@ -28,6 +28,7 @@ import FamilyNotifications from "views/FamilyNotifications.js";
 import PatientList from "views/PatientList.js";
 import MachineList from "views/MachineList.js";
 import PatientProfile from "views/PatientProfile.js";
+import MachineProfile from "views/MachineProfile.js";
 
 
 var routes = [
@@ -57,6 +58,12 @@ var routes = [
     path: "/patient/:pk",
     name: "Patient-details",
     component: PatientProfile,
+    layout: "/"
+  },
+  {
+    path: "/machine/:pk",
+    name: "Machine-details",
+    component: MachineProfile,
     layout: "/"
   },
   {
