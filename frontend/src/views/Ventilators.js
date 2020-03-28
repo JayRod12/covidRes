@@ -66,7 +66,7 @@ class Ventilators extends React.Component {
         this.state = {
             groups: [],
             items: null,
-            dialogState: { showDialog: false, dialogTitle: "", dialogText: "", showCancelButton: false },
+            dialogState: { showDialog: false, dialogTitle: "", dialogText: "" },
             pendingItemMove: null,
             pendingItemResize: null,
             selected: [],
@@ -153,49 +153,24 @@ class Ventilators extends React.Component {
     }
 
     _handleItemMove = (itemId, dragTime, newGroupOrder) => {
-        // local validation before trying to do anything
-        const selectedItem = this.state.items.find(item => item.id === itemId);
-        const newStartTime = dragTime;
-        const newEndTime = dragTime + (selectedItem.end_time - selectedItem.start_time);
-        const newMachine = this.state.groups[newGroupOrder];
-
-        const isValidOperation = this._isValidOperation(itemId, newStartTime, newEndTime, selectedItem.patient_id, newMachine.id);
-        if (!isValidOperation) {
-            this._showMachineOrPatientAssignedDialog();
-            return;
-        }
-
         this.setState(prevState => ({
             ...prevState,
             dialogState: {
                 showDialog: true,
                 dialogTitle: "Move ventilator?",
-                dialogText: "You are about to change the assignment of this ventilator. Please confirm.",
-                showCancelButton: true,
+                dialogText: "You are about to change the assignment of this ventilator. Please confirm."
             },
             pendingItemMove: { itemId: itemId, dragTime: dragTime, newGroupOrder: newGroupOrder }
         }));
     }
 
     _handleItemResize = (itemId, time, edge) => {
-        // local validation before trying to do anything
-        const selectedItem = this.state.items.find(item => item.id === itemId);
-        const newStartTime = edge === "left" ? time : selectedItem.start_time;
-        const newEndTime = edge === "left" ? selectedItem.end_time : time;
-
-        const isValidOperation = this._isValidOperation(itemId, newStartTime, newEndTime, selectedItem.patient_id, selectedItem.group);
-        if (!isValidOperation) {
-            this._showMachineOrPatientAssignedDialog();
-            return;
-        }
-
         this.setState(prevState => ({
             ...prevState,
             dialogState: {
                 showDialog: true,
                 dialogTitle: "Edit ventilator assignment?",
-                dialogText: "You are about to change the assignment of this ventilator. Please confirm.",
-                showCancelButton: true,
+                dialogText: "You are about to change the assignment of this ventilator. Please confirm."
             },
             pendingItemResize: { itemId: itemId, time: time, edge: edge }
         }));
@@ -206,68 +181,44 @@ class Ventilators extends React.Component {
             const { items, groups } = this.state;
             const { itemId, dragTime, newGroupOrder } = this.state.pendingItemMove;
             const group = groups[newGroupOrder];
-            const selectedItem = items.find(item => item.id === itemId);
 
-            this._actuallyCommitPendingChange(
-                itemId,
-                selectedItem.patient_id,
-                group.id,
-                dragTime,
-                dragTime + (selectedItem.end_time - selectedItem.start_time));
-        }
-
-        if (this.state.pendingItemResize !== null) {
-            const { items } = this.state;
-            const { itemId, time, edge } = this.state.pendingItemResize;
-            const selectedItem = items.find(item => item.id === itemId);
-
-            this._actuallyCommitPendingChange(
-                itemId,
-                selectedItem.patient_id,
-                selectedItem.group,
-                edge === "left" ? time : selectedItem.start_time,
-                edge === "left" ? selectedItem.end_time : time);
-        }
-    }
-
-    _actuallyCommitPendingChange = (assignmentID, patient, machine, start_date, end_date) => {
-        fetch('rest/assignment_tasks/' + assignmentID + "/", {
-            method: 'PUT',
-            body: JSON.stringify({
-                patient: patient,
-                machine: machine,
-                start_date: new Date(start_date).toISOString(),
-                end_date: new Date(end_date).toISOString(),
-            }),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
-            }
-        }).then(response => {
-            return response.json();
-        }).then(json => {
-            // optimistically update the state with the new item
             this.setState(prevState => {
                 return {
                     ...prevState,
-                    items: prevState.items.map(item =>
-                        item.id === json.pk
+                    items: items.map(item =>
+                        item.id === itemId
                             ? Object.assign({}, item, {
-                                start_time: moment(json.start_date).valueOf(),
-                                end_time: moment(json.end_date).valueOf(),
-                                group: json.machine
+                                start_time: dragTime,
+                                end_time: dragTime + (item.end_time - item.start_time),
+                                group: group.id
                             })
                             : item
                     ),
                     pendingItemMove: null,
                 };
             })
-        }).catch(error => {
-            console.log("Something bad happened while trying to edit the current machine assignment." + error);
-        });
+        }
+
+        if (this.state.pendingItemResize !== null) {
+            const { items } = this.state;
+            const { itemId, time, edge } = this.state.pendingItemResize;
+            this.setState(prevState => ({
+                ...prevState,
+                items: items.map(item =>
+                    item.id === itemId
+                        ? Object.assign({}, item, {
+                            start_time: edge === "left" ? time : item.start_time,
+                            end_time: edge === "left" ? item.end_time : time
+                        })
+                        : item
+                ),
+                pendingItemResize: null
+            }));
+        }
     }
 
     _closeDialog = (isConfirm) => {
-        this.setState(prevState => ({ ...prevState, dialogState: { showDialog: false, showCancelButton: false } }), () => {
+        this.setState(prevState => ({ ...prevState, dialogState: { showDialog: false } }), () => {
             if (isConfirm) {
                 this._applyPendingChanges();
             }
@@ -313,11 +264,20 @@ class Ventilators extends React.Component {
         const startDate = moment(this.state.selectedStartDate).valueOf();
         const endDate = moment(this.state.selectedEndDate).valueOf();
 
-        const isValidOperation = this._isValidOperation(null, startDate, endDate, this.state.selectedPatient, this.state.selectedMachine);
-        if (!isValidOperation) {
-            this._showMachineOrPatientAssignedDialog();
-            return;
-        }
+        for (var i = 0; i < this.state.items.length; i++) {
+            // check if the current patient already has an assignment for those days or if the machine is assigned
+            const item = this.state.items[i];
+            if (this._datesIntersect(startDate, endDate, item.start_time, item.end_time)) {
+                if (item.patient_id == this.state.selectedPatient) {
+                    alert("Patient is alredy assigned a machine during the selected time interval");
+                    return;
+                }
+                if (item.group == this.state.selectedMachine) {
+                    alert("The machine you are trying to assign is already assigned during the selected time interval.");
+                    return;
+                }
+            }
+        };
 
         const selectedPatient = this.state.allPatients.find(patient => patient.id == this.state.selectedPatient);
 
@@ -364,41 +324,6 @@ class Ventilators extends React.Component {
         });
     }
 
-    _showMachineOrPatientAssignedDialog = () => {
-        this.setState(prevState => ({
-            ...prevState,
-            dialogState: {
-                showDialog: true,
-                dialogTitle: "Error",
-                dialogText: "Machine or patient already assigned during this time interval!",
-                showCancelButton: false,
-            },
-        }));
-    }
-
-    _isValidOperation = (itemID, tentativeStartDate, tentativeEndDate, tentativePatientID, tentativeMachineID) => {
-        for (var i = 0; i < this.state.items.length; i++) {
-            // check if the current patient already has an assignment for those days or if the machine is assigned
-            const item = this.state.items[i];
-
-            // don't check the current item against itself (for edit operations)
-            if (item.id == itemID) {
-                continue;
-            }
-
-            if (this._datesIntersect(tentativeStartDate, tentativeEndDate, item.start_time, item.end_time)) {
-                if (item.patient_id == tentativePatientID) {
-                    return false;
-                }
-                if (item.group == tentativeMachineID) {
-                    return false;
-                }
-            }
-        };
-
-        return true;
-    }
-
     _datesIntersect = (startDate1, endDate1, startDate2, endDate2) => {
         return startDate1 < endDate2 && endDate1 > startDate2;
     }
@@ -420,6 +345,7 @@ class Ventilators extends React.Component {
                 );
             });
         }
+
         return (
             <div className="content">
                 <Row>
@@ -436,10 +362,9 @@ class Ventilators extends React.Component {
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
-                            {this.state.dialogState.showCancelButton &&
-                                <Button onClick={() => this._closeDialog(false)} color="primary">
-                                    Cancel
-                        </Button>}
+                            <Button onClick={() => this._closeDialog(false)} color="primary">
+                                Cancel
+                        </Button>
                             <Button onClick={() => this._closeDialog(true)} color="primary" autoFocus>
                                 Ok
                         </Button>

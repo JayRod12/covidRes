@@ -110,16 +110,18 @@ class AssignmentTask(models.Model):
     def get_absolute_url(self):
         return reverse('assignment_task', kwargs={'pk': self.pk})
     def save(self, *args, **kwargs):
+        """
         if self.bool_install:
-            self.date = self.end_date
-        else:
             self.date = self.start_date
+        else:
+            self.date = self.end_date
+        """
         super(AssignmentTask, self).save(*args, **kwargs)
 
 # Messages
 class Message(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, related_name='%(class)s_sender', on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, related_name='%(class)s_receiver', on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
     message = models.TextField()
     def __str__(self):

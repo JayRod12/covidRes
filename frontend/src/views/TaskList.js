@@ -33,7 +33,25 @@ import {
   Col
 } from "reactstrap";
 
-import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
+class AssignmentTaskWindow extends React.Component {
+  render() {
+    return (
+          <React.Fragment>
+            {this.props.bool_install == 0 ? <th>Remove Machine</th> : <th>Install Machine</th>}
+            <tr>
+              <p>
+                <Link to={'/machine/'+this.props.machine}>{this.props.machine_model}</Link>
+                <small>location: {this.props.machine_location}</small>
+              </p>
+              <p>
+                <Link to={'/patient/'+this.props.patient}>{this.props.patient_name}</Link>
+                <small>location: {this.props.patient_location}</small>
+              </p>
+            </tr>
+          </React.Fragment>
+    );
+  }
+}
 
 class TaskList extends React.Component {
   constructor(props) {
@@ -108,7 +126,6 @@ class TaskList extends React.Component {
           patient_name={props.patient_name}
           machine_location={props.machine_location}
           patient_location={props.patient_location}
-          bool_install={props.bool_install}
         />
       ),
       type: type,
@@ -151,23 +168,25 @@ class TaskList extends React.Component {
     }
     console.log(tasks);
     return (
-      <div className="content">
-        <div className="react-notification-alert-container">
-          <NotificationAlert ref="notificationAlert" />
+      <>
+        <div className="content">
+          <div className="react-notification-alert-container">
+            <NotificationAlert ref="notificationAlert" />
+          </div>
+          <Row>
+            <Col md="12">
+              <Card>
+                <CardHeader>
+                  <CardTitle tag="h4">Tasks</CardTitle>
+                </CardHeader>
+                <CardBody>
+                  {tasks}
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
         </div>
-        <Row>
-          <Col md="12">
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h4">Tasks</CardTitle>
-              </CardHeader>
-              <CardBody>
-                {tasks}
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-      </div>
+      </>
     );
   }
 }

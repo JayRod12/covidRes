@@ -28,12 +28,10 @@ router.register(r'rest/user', views_manager.CurrentUserViewSet),
 router.register(r'rest/patients', views_manager.PatientViewSet),
 router.register(r'rest/machinetypes', views_manager.MachineTypeViewSet),
 router.register(r'rest/machines', views_manager.MachineViewSet),
-router.register(r'^rest/machines/query/(?P<query>.+)', views_manager.MachineQueryViewSet),
 router.register(r'rest/assignment_tasks', views_manager.AssignmentTaskViewSet),
-router.register(r'^rest/assignment_tasks/query/(?P<query>.+)', views_manager.AssignmentTaskQueryViewSet),
 router.register(r'rest/users', views_manager.UserViewSet),
 router.register(r'rest/messages', views_manager.MessageViewSet),
-router.register(r'rest/messages/to/(?P<patient_pk>.+)', views_manager.MessagePatientViewSet),
+router.register(r'^rest/messages/(?P<you_pk>.+)', views_manager.MessageConvViewSet),
 
 
 urlpatterns = [
