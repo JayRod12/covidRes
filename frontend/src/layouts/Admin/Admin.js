@@ -27,6 +27,7 @@ import Sidebar from "components/Sidebar/Sidebar.js";
 import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 
 import routes from "src/routes.js";
+import sidebar_routes from "src/sidebar_routes.js";
 
 import logo from "assets/img/react-logo.png";
 
@@ -109,7 +110,7 @@ class Admin extends React.Component {
         <div className="wrapper">
           <Sidebar
             {...this.props}
-            routes={routes}
+            routes={sidebar_routes}
             bgColor={this.state.backgroundColor}
             logo={{
               text: "Res Manager",
