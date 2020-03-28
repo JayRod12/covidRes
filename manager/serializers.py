@@ -6,32 +6,34 @@ from .models import User, Message
 class PatientSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Patient
-		fields = ('name', 'severity', 'admission_date', 'machine_pk', 'description')
+		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_pk', 'description')
 
 class MachineTypeSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = MachineType
-		fields = ('name', 'description')
+		fields = ('pk', 'name', 'description')
 
 class MachineSerializer(serializers.ModelSerializer):
+	model_name = serializers.CharField(source='model.name', read_only=True)
 	class Meta:
 		model = Machine
-		fields = ('model', 'location', 'patient_pk', 'description')
+		fields = ('pk', 'model', 'model_name', 'location', 'patient_pk', 'description')
 
 class AssignmetTaskSerializer(serializers.ModelSerializer):
+	patient_name = serializers.CharField(source='patient.name', read_only=True)
 	class Meta:
 		model = AssignmetTask
-		fields = ('patient', 'machine', 'start_date', 'end_date', 'bool_install', 'bool_completed')
+		fields = ('pk', 'patient', 'machine', 'patient_name', 'start_date', 'end_date', 'date', 'bool_install', 'bool_completed')
 
 # User
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = User
-		fields = ('role', 'role')
+		fields = ('pk', 'role', 'username')
 
 class MessageSerializer(serializers.ModelSerializer):
 	sender_username = serializers.CharField(source='sender.username', read_only=True)
 	sender_role = serializers.CharField(source='sender.role', read_only=True)
 	class Meta:
 		model = Message
-		fields = ('id', 'sender', 'receiver', 'date', 'message', 'sender_username', 'sender_role')
+		fields = ('pk', 'sender', 'receiver', 'date', 'message', 'sender_username', 'sender_role')
