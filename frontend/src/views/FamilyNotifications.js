@@ -24,6 +24,7 @@ import {
   Alert,
   UncontrolledAlert,
   Button,
+  Collapse,
   Form,
   FormGroup,
   Label,
@@ -86,8 +87,8 @@ const PatientDropdown = (props) => {
 
     return (
       <CardSubtitle>
-        <Dropdown isOpen={dropdownOpen} toggle={toggle}>
-          <DropdownToggle caret>
+        <Dropdown isOpen={dropdownOpen} toggle={toggle} color="secondary">
+          <DropdownToggle>
             Filter messages of a patient
           </DropdownToggle>
           <DropdownMenu>
@@ -100,28 +101,59 @@ const PatientDropdown = (props) => {
     );
 }
 
-const MessageForm = (props) => {
+const MessageComposerForm = (props) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const toggle = () => setIsOpen(!isOpen);
+  if (!props.patient_data) {
+    return null;
+  }
+
   var patient_list = props.patient_data.map((entry, index) => {
     return (
       <option key={entry.pk}>{entry.name}</option>
     );
   });
-
+  var toggle_sign = (isOpen ? <span>&#9650;</span> : <span>&#9660;</span>);
   return (
-    <Form>
-    <FormGroup>
-      <Label for="patientSelect">Select Patient</Label>
-      <Input type="select" name="select" id="patientSelect">
-        {patient_list}
-      </Input>
-    </FormGroup>
-    <FormGroup>
-      <Label for="messageText">Message</Label>
-      <Input type="textarea" name="text" id="messageText" />
-    </FormGroup>
-    </Form>
+    <Row>
+      <Col md="12">
+        <Card>
+          <CardHeader>
+            <Row>
+              <Col md="6">
+                <CardTitle tag="h4">Compose new message</CardTitle>
+              </Col>
+              <Col md="6">
+                <span className="pull-right">
+                  <Button
+                    color="secondary"
+                    onClick={toggle}
+                    style={{ marginBottom: '1rem' }}>{toggle_sign}</Button>
+                </span>
+              </Col>
+            </Row>
+          </CardHeader>
+          <Collapse isOpen={isOpen}>
+            <CardBody>
+              <Form>
+                <FormGroup>
+                  <Label for="patientSelect">Select Patient</Label>
+                  <Input type="select" name="select" id="patientSelect">
+                    {patient_list}
+                  </Input>
+                </FormGroup>
+                <FormGroup>
+                  <Label for="messageText">Message</Label>
+                  <Input type="textarea" name="text" id="messageText" />
+                </FormGroup>
+                <Button>Submit</Button>
+              </Form>
+            </CardBody>
+          </Collapse>
+        </Card>
+      </Col>
+    </Row>
   );
-  
 }
 
 class FamilyNotifications extends React.Component {
@@ -230,7 +262,6 @@ class FamilyNotifications extends React.Component {
         </CardHeader>
       );
     }
-
     console.log('here');
     console.log(this.state.data);
     console.log(this.state.data.length);
@@ -267,12 +298,28 @@ class FamilyNotifications extends React.Component {
             <Col md="12">
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h4">Family Messages</CardTitle>
+                  <CardTitle tag="h3">Family Messages</CardTitle>
+                </CardHeader>
+              </Card>
+            </Col>
+          </Row>
+          <MessageComposerForm patient_data={this.state.patient_data} />
+          <Row>
+            <Col md="12">
+              <Card>
+                <CardHeader>
+                  <Row>
+                    <Col md="6">
+                      <CardTitle tag="h4">Messages</CardTitle>
+                    </Col>
+                    <Col md="6">
+                      <span className="pull-right">
+                        <PatientDropdown patient_data={this.state.patient_data} />
+                      </span>
+                    </Col>
+                  </Row>
                 </CardHeader>
                 <CardBody>
-                  <MessageForm patient_data={this.state.patient_data} />
-
-                  <PatientDropdown patient_data={this.state.patient_data} />
                   {messages}
                 </CardBody>
               </Card>
