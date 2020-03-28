@@ -298,7 +298,9 @@ class Ventilators extends React.Component {
         }).then(response => {
             return response.json();
         }).then(json => {
-            console.log(json);
+            this.setState(prevState => ({
+                ...prevState, selectedStartDate: null, selectedEndDate: null, selectedPatient: -1, selectedMachine: -1
+            }));
         }).catch(error => {
             console.log("Something bad happened while trying to create a new assgiment." + error);
         });
