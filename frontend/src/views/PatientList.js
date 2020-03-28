@@ -35,7 +35,7 @@ class PatientRow extends React.Component {
             <tr>
               <td>{this.props.name}</td>
               <td className="text-center">{this.props.severity}</td>
-              <td className="text-center">{this.props.machine}</td>
+              <td className="text-center">{this.props.machine_pk}</td>
               <td>{this.props.admission_date}</td>
             </tr>
           </React.Fragment>
@@ -144,7 +144,7 @@ class PatientList extends React.Component {
           name={entry.name}
           admission_date={prettifyDate(entry.admission_date)}
           severity={entry.severity}
-          machine={entry.machine_pk}
+          machine_pk={entry.machine_pk}
           />
         )
       );

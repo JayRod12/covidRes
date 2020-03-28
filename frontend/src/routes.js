@@ -26,6 +26,7 @@ import Typography from "views/Typography.js";
 import UserProfile from "views/UserProfile.js";
 import FamilyNotifications from "views/FamilyNotifications.js";
 import PatientList from "views/PatientList.js";
+import MachineList from "views/MachineList.js";
 
 
 var routes = [
@@ -49,6 +50,13 @@ var routes = [
     name: "Patients",
     icon: "tim-icons icon-single-02",
     component: PatientList,
+    layout: "/"
+  },
+  {
+    path: "/machines",
+    name: "Machines",
+    icon: "tim-icons icon-single-02",
+    component: MachineList,
     layout: "/"
   },
   {
