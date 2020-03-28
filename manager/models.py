@@ -4,9 +4,28 @@ from django.urls import reverse
 from datetime import datetime
 from django.contrib.auth.models import AbstractUser
 
+# Users
+class Role(models.Model):
+    name = models.CharField(max_length=100)
+    # permission fields defined here
+    permission_user_edit = models.BooleanField(default=False)
+    permission_machinetype_edit = models.BooleanField(default=False)
+    permission_machine_edit = models.BooleanField(default=False)
+    permission_task_edit = models.BooleanField(default=False)
+    permission_user_edit = models.BooleanField(default=False)
+    permission_message_edit = models.BooleanField(default=False)
+    def __str__(self):
+    	return self.name
+
+class User(AbstractUser):
+    role = models.ForeignKey(Role, null=True, on_delete=models.CASCADE)
+    def __str__(self):
+    	return str(self.username)
+
 # Manage
 class Patient(models.Model):
     name = models.CharField(max_length=100)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     SEVERITY = (
     	(0, 'Healed'),
         (1, 'Low'),
@@ -78,24 +97,6 @@ class AssignmetTask(models.Model):
     	return str(self.machine) + '->' + str(self.patient) + ' | ' + str(self.start_date) + ' --- ' + str(self.end_date)
     def get_absolute_url(self):
         return reverse('assignment_task', kwargs={'pk': self.pk})
-
-# Users
-class Role(models.Model):
-    name = models.CharField(max_length=100)
-    # permission fields defined here
-    permission_user_edit = models.BooleanField(default=False)
-    permission_machinetype_edit = models.BooleanField(default=False)
-    permission_machine_edit = models.BooleanField(default=False)
-    permission_task_edit = models.BooleanField(default=False)
-    permission_user_edit = models.BooleanField(default=False)
-    permission_message_edit = models.BooleanField(default=False)
-    def __str__(self):
-    	return self.name
-
-class User(AbstractUser):
-    role = models.ForeignKey(Role, null=True, on_delete=models.CASCADE)
-    def __str__(self):
-    	return str(self.username)
 
 # Messages
 class Message(models.Model):
