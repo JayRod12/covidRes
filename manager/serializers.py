@@ -6,7 +6,7 @@ from .models import User, Message
 class PatientSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Patient
-		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_pk', 'description')
+		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_assigned', 'description')
 class PatientDetailedSerializer(serializers.ModelSerializer):
 	user_pk = serializers.IntegerField(source='user.pk', allow_null=True)
 	role = serializers.CharField(source='user.role.name', allow_null=True)
@@ -15,7 +15,7 @@ class PatientDetailedSerializer(serializers.ModelSerializer):
 	last_name = serializers.CharField(source='user.last_name', allow_null=True)
 	class Meta:
 		model = Patient
-		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_pk', 'description', 'user_pk', 'role', 'username', 'first_name', 'last_name')
+		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_assigned', 'description', 'user_pk', 'role', 'username', 'first_name', 'last_name')
 
 class MachineTypeSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -26,7 +26,7 @@ class MachineSerializer(serializers.ModelSerializer):
 	model_name = serializers.CharField(source='model.name', read_only=True)
 	class Meta:
 		model = Machine
-		fields = ('pk', 'model', 'model_name', 'location', 'patient_pk', 'description')
+		fields = ('pk', 'model', 'model_name', 'location', 'patient_assigned', 'description')
 
 class AssignmetTaskSerializer(serializers.ModelSerializer):
 	patient_name = serializers.CharField(source='patient.name', read_only=True)

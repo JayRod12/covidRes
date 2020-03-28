@@ -133,7 +133,7 @@ class PatientProfile extends React.Component {
         <CardBody>
           <Form>
             <Row>
-              <Col className="pr-md-1" md="1">
+              <Col className="pr-md-1" md="2">
                 <FormGroup>
                   <label>ID</label>
                   <Input
@@ -154,7 +154,7 @@ class PatientProfile extends React.Component {
                   />
                 </FormGroup>
               </Col>
-              <Col className="pl-md-1" md="2">
+              <Col className="pl-md-1" md="1">
                 <FormGroup>
                   <label htmlFor="exampleInputEmail1">
                     Severity
@@ -166,7 +166,7 @@ class PatientProfile extends React.Component {
                   />
                 </FormGroup>
               </Col>
-              <Col className="pl-md-1" md="4">
+              <Col className="pl-md-1" md="5">
                 <FormGroup>
                   <label htmlFor="exampleInputEmail1">
                     Location
