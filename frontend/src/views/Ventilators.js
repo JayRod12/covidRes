@@ -73,11 +73,11 @@ class Ventilators extends React.Component {
                         items.push({
                             id: assignment.pk,
                             group: assignment.machine,
-                            title: "Patient Name: " + assignment.patient_name,
+                            title: assignment.patient_name,
                             start_time: moment(assignment.start_date).valueOf(),
                             end_time: moment(assignment.end_date).valueOf(),
                             canChangeGroup: true,
-                            patient_name: "Dolo",
+                            patient_name: assignment.patient_name,
                         });
                     });
                     this.setState(prevState => ({
