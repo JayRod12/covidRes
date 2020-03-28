@@ -7,6 +7,15 @@ class PatientSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Patient
 		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_pk', 'description')
+class PatientDetailedSerializer(serializers.ModelSerializer):
+	user_pk = serializers.IntegerField(source='user.pk', allow_null=True)
+	role = serializers.CharField(source='user.role.name', allow_null=True)
+	username = serializers.CharField(source='user.username', allow_null=True)
+	first_name = serializers.CharField(source='user.first_name', allow_null=True)
+	last_name = serializers.CharField(source='user.last_name', allow_null=True)
+	class Meta:
+		model = Patient
+		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_pk', 'description', 'user_pk', 'role', 'username', 'first_name', 'last_name')
 
 class MachineTypeSerializer(serializers.ModelSerializer):
 	class Meta:
