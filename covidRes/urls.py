@@ -31,7 +31,7 @@ router.register(r'rest/machines', views_manager.MachineViewSet),
 router.register(r'rest/assignment_tasks', views_manager.AssignmentTaskViewSet),
 router.register(r'rest/users', views_manager.UserViewSet),
 router.register(r'rest/messages', views_manager.MessageViewSet),
-router.register(r'^rest/messages/(?P<you_pk>.+)', views_manager.MessageConvViewSet),
+router.register(r'^rest/messages/to/(?P<patient_pk>.+)', views_manager.MessagePatientViewSet),
 
 
 urlpatterns = [

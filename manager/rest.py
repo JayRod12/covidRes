@@ -28,7 +28,6 @@ class PatientViewSet(viewsets.ModelViewSet):
             return PatientDetailedSerializer
         return self.serializer_class
     def get_queryset(self):
-        print(vars(self))
         return self.queryset
 
 class PermissionMachineTypeEdit(permissions.BasePermission):
@@ -54,11 +53,13 @@ class AssignmentTaskViewSet(viewsets.ModelViewSet):
     queryset = AssignmentTask.objects.all()
     serializer_class = AssignmentTaskSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
+    def get_queryset(self):
+        print(vars(self))
+        return self.queryset
 
 class PermissionUserEdit(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role.permission_user_edit
-
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -77,20 +78,18 @@ class CurrentUserViewSet(viewsets.ViewSet):
 class PermissionMessageEdit(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role.permission_message_edit
-
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all().order_by('-date')
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMessageEdit]
-
+    def get_queryset(self):
+        return self.queryset.filter(sender__pk=self.request.user.pk)
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
 
-class MessageConvViewSet(viewsets.ModelViewSet):
+class MessagePatientViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all().order_by('-date')
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMessageEdit]
     def get_queryset(self):
-        value = self.kwargs['you_pk']
-        conversation = functions.get_messages(self.request.user, User.objects.get(pk=value))
-        return (conversation['received'] | conversation['sent']).order_by('date')
+        return self.queryset.filter(patient__pk=self.kwargs['patient_pk'])
