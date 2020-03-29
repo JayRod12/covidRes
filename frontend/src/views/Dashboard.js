@@ -292,9 +292,12 @@ class Dashboard extends React.Component {
 
 /////////////////////////////////////////////////////////////////////////////
     if(this.state.assignement_data.length == 0 ) return (<div>Loading</div>);
-    //const AD= this.state.assignement_data.results.filter(item => item.start_date < date_today);
-    //const AD = AD.length;
-    console.log(this.state.assignement_data)
+   
+    var tempDate = new Date();
+    var date_today = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + tempDate.getDate() +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
+    const AD= this.state.assignement_data.results.filter(item => item.start_date < date_today);
+    const ADn =AD.filter(item => item.end_date> date_today);
+    console.log(ADn)
 
 
 
