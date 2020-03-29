@@ -82,16 +82,14 @@ class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all().order_by('-date')
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMessageEdit]
-
+    def get_queryset(self):
+        return self.queryset.filter(sender__pk=self.request.user.pk)
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
 
-class MessageConvViewSet(viewsets.ModelViewSet):
+class MessagePatientViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all().order_by('-date')
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMessageEdit]
     def get_queryset(self):
-        print(self.kwargs)
-        value = self.kwargs['you_pk']
-        conversation = functions.get_messages(self.request.user, User.objects.get(pk=value))
-        return (conversation['received'] | conversation['sent']).order_by('date')
+        return self.queryset.filter(patient__pk=self.kwargs['patient_pk'])
