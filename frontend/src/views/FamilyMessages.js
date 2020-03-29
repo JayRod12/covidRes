@@ -48,16 +48,19 @@ class DoctorMessage extends React.Component {
     return (
           <React.Fragment>
             <Row>
-              <Col md="6">
-                <CardText>Doctor {this.props.doctorName}</CardText>
+              <Col md="3">
+                <CardText style={{ 'font-size': '11px' }}>From: Doctor {this.props.doctorName}</CardText>
+              </Col>
+              <Col md="3">
+                <CardText style={{ 'font-size': '11px' }}>To: Patient {this.props.patientName}</CardText>
               </Col>
               <Col md="6">
                 <span className="pull-right">
-                  <CardText>{this.props.time}</CardText>
+                  <CardText style={{ 'font-size': '11px' }}>{this.props.time}</CardText>
                 </span>
               </Col>
             </Row>
-            <Alert color="info">
+            <Alert color="info" style={{'padding': '0.4rem 1.25rem' }}>
               <span>{this.props.message}</span>
             </Alert>
           </React.Fragment>
@@ -84,12 +87,22 @@ const PatientDropdown = (props) => {
         <DropdownItem key={entry.pk}>{entry.name}</DropdownItem>
       );
     });
-
+    var toggle_sign = (dropdownOpen
+      ? <span style={{ 'font-size': '9px' }}>&#9650;</span>
+      : <span style={{ 'font-size': '9px' }}>&#9660;</span>
+    );
     return (
       <CardSubtitle>
         <Dropdown isOpen={dropdownOpen} toggle={toggle} color="secondary">
           <DropdownToggle>
-            Filter messages of a patient
+            <Row>
+              <Col md="10">
+                Filter messages of a patient
+              </Col>
+              <Col md="2">
+                {toggle_sign}
+              </Col>
+            </Row>
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem>All patients</DropdownItem>
@@ -101,59 +114,94 @@ const PatientDropdown = (props) => {
     );
 }
 
-const MessageComposerForm = (props) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const toggle = () => setIsOpen(!isOpen);
-  if (!props.patient_data) {
-    return null;
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+class MessageComposerForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isOpen: false,
+    }
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+    var csrftoken = getCookie('csrftoken');
+    data.set('csrfmiddlewaretoken', csrftoken);
+    // data.set('sender', -1);
+
+    fetch('/rest/messages/', {
+      method: 'POST',
+      body: data,
+    });
   }
 
-  var patient_list = props.patient_data.map((entry, index) => {
-    return (
-      <option key={entry.pk}>{entry.name}</option>
+  render() {
+    if (!this.props.patient_data) {
+      return null;
+    }
+    var patient_list = this.props.patient_data.map((entry, index) => {
+      return (
+        <option key={entry.pk} value={entry.pk}>{entry.name}</option>
+      );
+    });
+    var toggle_sign = (this.state.isOpen
+      ? <span style={{ 'font-size': '9px' }}>&#9650;</span>
+      : <span style={{ 'font-size': '9px' }}>&#9660;</span>
     );
-  });
-  var toggle_sign = (isOpen ? <span>&#9650;</span> : <span>&#9660;</span>);
-  return (
-    <Row>
-      <Col md="12">
-        <Card>
-          <CardHeader>
-            <Row>
-              <Col md="6">
-                <CardTitle tag="h4">Compose new message</CardTitle>
+    return (
+      <CardBody>
+        <Row>
+          <Col md="12">
+            <Button
+              color="secondary"
+              onClick={() => this.setState({isOpen: !this.state.isOpen})}
+              style={{ marginBottom: '1rem' }}>
+              <Row>
+              <Col md="10">Compose new message
               </Col>
-              <Col md="6">
-                <span className="pull-right">
-                  <Button
-                    color="secondary"
-                    onClick={toggle}
-                    style={{ marginBottom: '1rem' }}>{toggle_sign}</Button>
-                </span>
+              <Col md="2">{toggle_sign}
               </Col>
-            </Row>
-          </CardHeader>
-          <Collapse isOpen={isOpen}>
-            <CardBody>
-              <Form>
+              </Row></Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col md="12">
+            <Collapse isOpen={this.state.isOpen}>
+              <Form onSubmit={this.handleSubmit}>
                 <FormGroup>
-                  <Label for="patientSelect">Select Patient</Label>
-                  <Input type="select" name="select" id="patientSelect">
+                  <Label for="receiverSelect">Select Patient</Label>
+                  <Input type="select" name="patient" id="receiverSelect">
                     {patient_list}
                   </Input>
                 </FormGroup>
                 <FormGroup>
                   <Label for="messageText">Message</Label>
-                  <Input type="textarea" name="text" id="messageText" />
+                  <Input type="textarea" name="message" id="messageText" />
                 </FormGroup>
                 <Button>Submit</Button>
               </Form>
-            </CardBody>
-          </Collapse>
-        </Card>
-      </Col>
-    </Row>
-  );
+            </Collapse>
+          </Col>
+        </Row>
+      </CardBody>
+    );
+  }
 }
 
 class FamilyNotifications extends React.Component {
@@ -169,7 +217,7 @@ class FamilyNotifications extends React.Component {
     };
   }
   componentDidMount() {
-    fetch("/rest/messages/received/")
+    fetch("/rest/messages/")
             .then(response => {
                 console.log('Response');
                 console.log(response);
@@ -276,7 +324,8 @@ class FamilyNotifications extends React.Component {
       messages = this.state.data.results.map((entry, index) => (
         <DoctorMessage
           key={entry.pk}
-          doctorName={entry.sender_username}
+          doctorName={entry.sender_lastname}
+          patientName={entry.patient_lastname}
           time={prettifyDate(entry.date)}
           message={entry.message}
           />
@@ -300,10 +349,10 @@ class FamilyNotifications extends React.Component {
                 <CardHeader>
                   <CardTitle tag="h3">Family Messages</CardTitle>
                 </CardHeader>
+                <MessageComposerForm patient_data={this.state.patient_data} />
               </Card>
             </Col>
           </Row>
-          <MessageComposerForm patient_data={this.state.patient_data} />
           <Row>
             <Col md="12">
               <Card>

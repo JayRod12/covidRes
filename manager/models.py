@@ -119,8 +119,8 @@ class AssignmentTask(models.Model):
 # Messages
 class Message(models.Model):
     sender = models.ForeignKey(User, related_name='%(class)s_sender', on_delete=models.CASCADE)
-    receiver = models.ForeignKey(User, related_name='%(class)s_receiver', on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, related_name='%(class)s_receiver', on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
     message = models.TextField()
     def __str__(self):
-    	return str(self.sender) + '->' + str(self.receiver) + ' | ' + str(self.date)
+    	return str(self.sender) + '->' + str(self.patient) + ' | ' + str(self.date)

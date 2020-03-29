@@ -24,7 +24,7 @@ import Rtl from "views/Rtl.js";
 import TableList from "views/TableList.js";
 import Typography from "views/Typography.js";
 import UserProfile from "views/UserProfile.js";
-import FamilyNotifications from "views/FamilyNotifications.js";
+import FamilyMessages from "views/FamilyMessages.js";
 import PatientList from "views/PatientList.js";
 import MachineList from "views/MachineList.js";
 import PatientProfile from "views/PatientProfile.js";
@@ -41,10 +41,10 @@ var routes = [
     layout: "/"
   },
   {
-    path: "/family-notifications",
-    name: "Family notifications",
+    path: "/family-messages",
+    name: "Family messages",
     icon: "tim-icons icon-single-02",
-    component: FamilyNotifications,
+    component: FamilyMessages,
     layout: "/"
   },
   {

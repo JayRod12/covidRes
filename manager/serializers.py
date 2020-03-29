@@ -47,8 +47,20 @@ class UserSerializer(serializers.ModelSerializer):
 		fields = ('pk', 'role', 'username', 'first_name', 'last_name')
 
 class MessageSerializer(serializers.ModelSerializer):
-	sender_username = serializers.CharField(source='sender.username', read_only=True)
+	sender_lastname = serializers.CharField(source='sender.last_name', read_only=True)
 	sender_role = serializers.CharField(source='sender.role', read_only=True)
+	patient_lastname = serializers.CharField(source='patient.user.last_name', read_only=True)
 	class Meta:
 		model = Message
-		fields = ('pk', 'sender', 'receiver', 'date', 'message', 'sender_username', 'sender_role')
+		extra_kwargs = {
+			'sender': {'required': False}
+		}
+		fields = (
+			'pk',
+			'date',
+			'message',
+			'sender',
+			'sender_lastname',
+			'sender_role',
+			'patient',
+			'patient_lastname')
