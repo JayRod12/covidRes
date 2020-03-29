@@ -204,40 +204,64 @@ class Ventilators extends React.Component {
             const { items, groups } = this.state;
             const { itemId, dragTime, newGroupOrder } = this.state.pendingItemMove;
             const group = groups[newGroupOrder];
+            const selectedItem = items.find(item => item.id === itemId);
 
+            this._actuallyCommitPendingChange(
+                itemId,
+                selectedItem.patient_id,
+                group.id,
+                dragTime,
+                dragTime + (selectedItem.end_time - selectedItem.start_time));
+        }
+
+        if (this.state.pendingItemResize !== null) {
+            const { items } = this.state;
+            const { itemId, time, edge } = this.state.pendingItemResize;
+            const selectedItem = items.find(item => item.id === itemId);
+
+            this._actuallyCommitPendingChange(
+                itemId,
+                selectedItem.patient_id,
+                selectedItem.group,
+                edge === "left" ? time : selectedItem.start_time,
+                edge === "left" ? selectedItem.end_time : time);
+        }
+    }
+
+    _actuallyCommitPendingChange = (assignmentID, patient, machine, start_date, end_date) => {
+        fetch('rest/assignment_tasks/' + assignmentID + "/", {
+            method: 'PUT',
+            body: JSON.stringify({
+                patient: patient,
+                machine: machine,
+                start_date: new Date(start_date).toISOString(),
+                end_date: new Date(end_date).toISOString(),
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+            }
+        }).then(response => {
+            return response.json();
+        }).then(json => {
+            // optimistically update the state with the new item
             this.setState(prevState => {
                 return {
                     ...prevState,
-                    items: items.map(item =>
-                        item.id === itemId
+                    items: prevState.items.map(item =>
+                        item.id === json.pk
                             ? Object.assign({}, item, {
-                                start_time: dragTime,
-                                end_time: dragTime + (item.end_time - item.start_time),
-                                group: group.id
+                                start_time: moment(json.start_date).valueOf(),
+                                end_time: moment(json.end_date).valueOf(),
+                                group: json.machine
                             })
                             : item
                     ),
                     pendingItemMove: null,
                 };
             })
-        }
-
-        if (this.state.pendingItemResize !== null) {
-            const { items } = this.state;
-            const { itemId, time, edge } = this.state.pendingItemResize;
-            this.setState(prevState => ({
-                ...prevState,
-                items: items.map(item =>
-                    item.id === itemId
-                        ? Object.assign({}, item, {
-                            start_time: edge === "left" ? time : item.start_time,
-                            end_time: edge === "left" ? item.end_time : time
-                        })
-                        : item
-                ),
-                pendingItemResize: null
-            }));
-        }
+        }).catch(error => {
+            console.log("Something bad happened while trying to edit the current machine assignment." + error);
+        });
     }
 
     _closeDialog = (isConfirm) => {
