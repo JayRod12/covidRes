@@ -176,25 +176,23 @@ class TaskList extends React.Component {
     }
     console.log(tasks);
     return (
-      <>
-        <div className="content">
-          <div className="react-notification-alert-container">
-            <NotificationAlert ref="notificationAlert" />
-          </div>
-          <Row>
-            <Col md="12">
-              <Card>
-                <CardHeader>
-                  <CardTitle tag="h4">Tasks</CardTitle>
-                </CardHeader>
-                <CardBody>
-                  {tasks}
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
+      <div className="content">
+        <div className="react-notification-alert-container">
+          <NotificationAlert ref="notificationAlert" />
         </div>
-      </>
+        <Row>
+          <Col md="12">
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h4">Tasks</CardTitle>
+              </CardHeader>
+              <CardBody>
+                {tasks}
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
+      </div>
     );
   }
 }
