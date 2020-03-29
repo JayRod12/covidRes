@@ -16,6 +16,7 @@
 
 */
 import React from "react";
+import { NavLink, Link } from "react-router-dom";
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
 
@@ -47,66 +48,6 @@ class AssignmentTaskWindow extends React.Component {
                 <small>location: {this.props.patient_location}</small>
               </p>
             </tr>
-          </React.Fragment>
-    );
-  }
-}
-
-class AssignmentTask extends React.Component {
-  pop = props => {
-    var color;
-    color = 1;
-    var type;
-    switch (color) {
-      case 1:
-        type = "primary";
-        break;
-      case 2:
-        type = "success";
-        break;
-      case 3:
-        type = "danger";
-        break;
-      case 4:
-        type = "warning";
-        break;
-      case 5:
-        type = "info";
-        break;
-      default:
-        break;
-    }
-    var options = {};
-    options = {
-      place: "tc",
-      message: (
-        <AssignmentTaskWindow
-          key={props.pk}
-          pk={props.pk}
-          machine={props.machine}
-          patient={props.patient}
-          machine_model={props.machine_model}
-          patient_name={props.patient_name}
-          machine_location={props.machine_location}
-          patient_location={props.patient_location}
-        />
-      ),
-      type: type,
-      icon: "tim-icons icon-bell-55",
-      autoDismiss: 7
-    };
-    this.refs.notificationAlert.notificationAlert(options);
-  };
-  render() {
-    return (
-          <React.Fragment>
-            <UncontrolledAlert
-              block
-              color={this.props.bool_install == 0 ? "primary" : "info"}
-              onClick={() => this.pop(this.props)}
-            >
-              Bottom Left
-            </UncontrolledAlert>
           </React.Fragment>
     );
   }
@@ -149,6 +90,49 @@ class TaskList extends React.Component {
               });
             });
   };
+  pop = props => {
+    var color;
+    color = props.bool_install == 0 ? 1 : 5;
+    var type;
+    switch (color) {
+      case 1:
+        type = "primary";
+        break;
+      case 2:
+        type = "success";
+        break;
+      case 3:
+        type = "danger";
+        break;
+      case 4:
+        type = "warning";
+        break;
+      case 5:
+        type = "info";
+        break;
+      default:
+        break;
+    }
+    var options = {};
+    options = {
+      place: "tc",
+      message: (
+        <AssignmentTaskWindow
+          key={props.pk}
+          pk={props.pk}
+          machine={props.machine}
+          patient={props.patient}
+          machine_model={props.machine_model}
+          patient_name={props.patient_name}
+          machine_location={props.machine_location}
+          patient_location={props.patient_location}
+        />
+      ),
+      type: type,
+      icon: "tim-icons icon-bell-55",
+    };
+    this.refs.notificationAlert.notificationAlert(options);
+  };
   render() {
     if (!this.state.loaded) {
       return (
@@ -166,16 +150,15 @@ class TaskList extends React.Component {
       );
     } else if (this.state.data.results.length > 0) {
       tasks = this.state.data.results.map((props, index) => (
-        <AssignmentTask
-          key={props.pk}
-          pk={props.pk}
-          machine={props.machine}
-          patient={props.patient}
-          machine_model={props.machine_model}
-          patient_name={props.patient_name}
-          machine_location={props.machine_location}
-          patient_location={props.patient_location}
-          />
+        <React.Fragment>
+          <Button
+            block
+            color={props.bool_install == 0 ? "primary" : "info"}
+            onClick={() => this.pop(props)}
+          >
+            {props.machine_model} - {props.patient_name}
+          </Button>
+        </React.Fragment>
         )
       );
     } else {
