@@ -153,6 +153,18 @@ class Ventilators extends React.Component {
     }
 
     _handleItemMove = (itemId, dragTime, newGroupOrder) => {
+        // local validation before trying to do anything
+        const selectedItem = this.state.items.find(item => item.id === itemId);
+        const newStartTime = dragTime;
+        const newEndTime = dragTime + (selectedItem.end_time - selectedItem.start_time);
+        const newMachine = this.state.groups[newGroupOrder];
+
+        const isValidOperation = this._isValidOperation(itemId, newStartTime, newEndTime, selectedItem.patient_id, newMachine.id);
+        if (!isValidOperation) {
+            alert("Machine or patient already assigned during this time interval!");
+            return;
+        }
+
         this.setState(prevState => ({
             ...prevState,
             dialogState: {
@@ -165,6 +177,17 @@ class Ventilators extends React.Component {
     }
 
     _handleItemResize = (itemId, time, edge) => {
+        // local validation before trying to do anything
+        const selectedItem = this.state.items.find(item => item.id === itemId);
+        const newStartTime = edge === "left" ? time : selectedItem.start_time;
+        const newEndTime = edge === "left" ? selectedItem.end_time : time;
+
+        const isValidOperation = this._isValidOperation(itemId, newStartTime, newEndTime, selectedItem.patient_id, selectedItem.group);
+        if (!isValidOperation) {
+            alert("Machine or patient already assigned during this time interval!");
+            return;
+        }
+
         this.setState(prevState => ({
             ...prevState,
             dialogState: {
@@ -264,20 +287,11 @@ class Ventilators extends React.Component {
         const startDate = moment(this.state.selectedStartDate).valueOf();
         const endDate = moment(this.state.selectedEndDate).valueOf();
 
-        for (var i = 0; i < this.state.items.length; i++) {
-            // check if the current patient already has an assignment for those days or if the machine is assigned
-            const item = this.state.items[i];
-            if (this._datesIntersect(startDate, endDate, item.start_time, item.end_time)) {
-                if (item.patient_id == this.state.selectedPatient) {
-                    alert("Patient is alredy assigned a machine during the selected time interval");
-                    return;
-                }
-                if (item.group == this.state.selectedMachine) {
-                    alert("The machine you are trying to assign is already assigned during the selected time interval.");
-                    return;
-                }
-            }
-        };
+        const isValidOperation = this._isValidOperation(null, startDate, endDate, state.selectedPatient, this.state.selectedMachine);
+        if (!isValidOperation) {
+            alert("Machine or patient already assigned during this time interval!");
+            return;
+        }
 
         const selectedPatient = this.state.allPatients.find(patient => patient.id == this.state.selectedPatient);
 
@@ -322,6 +336,29 @@ class Ventilators extends React.Component {
         }).catch(error => {
             console.log("Something bad happened while trying to create a new assgiment." + error);
         });
+    }
+
+    _isValidOperation = (itemID, tentativeStartDate, tentativeEndDate, tentativePatientID, tentativeMachineID) => {
+        for (var i = 0; i < this.state.items.length; i++) {
+            // check if the current patient already has an assignment for those days or if the machine is assigned
+            const item = this.state.items[i];
+
+            // don't check the current item against itself (for edit operations)
+            if (item.id == itemID) {
+                continue;
+            }
+
+            if (this._datesIntersect(tentativeStartDate, tentativeEndDate, item.start_time, item.end_time)) {
+                if (item.patient_id == tentativePatientID) {
+                    return false;
+                }
+                if (item.group == tentativeMachineID) {
+                    return false;
+                }
+            }
+        };
+
+        return true;
     }
 
     _datesIntersect = (startDate1, endDate1, startDate2, endDate2) => {
