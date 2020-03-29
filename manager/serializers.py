@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Patient, MachineType, Machine, AssignmetTask
+from .models import Patient, MachineType, Machine, AssignmentTask
 from .models import User, Message
 
 # Manage
@@ -34,10 +34,10 @@ class MachineSerializer(serializers.ModelSerializer):
 		model = Machine
 		fields = ('pk', 'model', 'model_name', 'location', 'patient_assigned', 'patient_assigned_name', 'description')
 
-class AssignmetTaskSerializer(serializers.ModelSerializer):
+class AssignmentTaskSerializer(serializers.ModelSerializer):
 	patient_name = serializers.CharField(source='patient.name', read_only=True)
 	class Meta:
-		model = AssignmetTask
+		model = AssignmentTask
 		fields = ('pk', 'patient', 'machine', 'patient_name', 'start_date', 'end_date', 'date', 'bool_install', 'bool_completed')
 
 # User

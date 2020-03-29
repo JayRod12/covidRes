@@ -12,9 +12,9 @@ from django.views.generic import (
 
 from rest_framework import generics, permissions, viewsets
 
-from .models import Patient, MachineType, Machine, AssignmetTask
+from .models import Patient, MachineType, Machine, AssignmentTask
 from .models import User, Message
-from .serializers import PatientSerializer, MachineTypeSerializer, MachineSerializer, AssignmetTaskSerializer
+from .serializers import PatientSerializer, MachineTypeSerializer, MachineSerializer, AssignmentTaskSerializer
 from .serializers import UserSerializer, MessageSerializer
 from .serializers import User, Message
 from django.utils import timezone
@@ -34,28 +34,20 @@ def machines(request):
     return render(request, 'machines.html', {'machines': Machine.objects.all()})
 
 def tasks(request):
-    return render(request, 'tasks.html', {'assignment_tasks': AssignmetTask.objects.filter(bool_completed=False).order_by('date')})
+    return render(request, 'tasks.html', {'assignment_tasks': AssignmentTask.objects.filter(bool_completed=False).order_by('date')})
 
 # Details
 def patient(request, pk):
     try:
         patient = Patient.objects.get(pk=pk)
-        if patient.machine in None:
-            return render(request, 'patient.html', {
-                'patient': patient,
-                'history_severity': patient.get_history_severity(),
-                'history_machine': patient.get_history_machine(),
-                'tasks': functions.get_assignment_tasks_patient(patient)
-            })
-        else:
-            machine = Machine.objects.get(pk=patient.machine_pk)
-            return render(request, 'patient.html', {
-                'patient': patient,
-                'history_severity': patient.get_history_severity(),
-                'history_machine': patient.get_history_machine(),
-                'tasks': functions.get_assignment_tasks_patient(patient),
-                'machine': machine
-            })
+        machine = patient.machine_assigned
+        return render(request, 'patient.html', {
+            'patient': patient,
+            'history_severity': patient.get_history_severity(),
+            'history_machine': patient.get_history_machine(),
+            'tasks': functions.get_assignment_tasks_patient(patient),
+            'machine': machine
+        })
     except Patient.DoesNotExist:
         raise Http404("Patient not found")
     except Machine.DoesNotExist:
@@ -70,9 +62,9 @@ def machine(request, pk):
 
 def assignment_task(request, pk):
     try:
-        task = AssignmetTask.objects.get(pk=pk)
-    except AssignmetTask.DoesNotExist:
-        raise Http404("AssignmetTask not found")
+        task = AssignmentTask.objects.get(pk=pk)
+    except AssignmentTask.DoesNotExist:
+        raise Http404("AssignmentTask not found")
     return render(request, 'assignment_task.html', {'task': task})
 
 # Create
@@ -80,10 +72,6 @@ class patient_create(LoginRequiredMixin, CreateView):
     model = Patient
     template_name = 'generic_form.html'
     fields = ['name', 'severity', 'description']
-    def form_valid(self, form):
-        form.instance.history_severity_x = str(timezone.now())[:-3] + str(timezone.now())[-2:]
-        form.instance.history_severity_y = str(form.instance.severity)
-        return super().form_valid(form)
 
 class machine_create(LoginRequiredMixin, CreateView):
     model = Machine
@@ -91,7 +79,7 @@ class machine_create(LoginRequiredMixin, CreateView):
     fields = ['model', 'location', 'description']
 
 class assignment_task_create(LoginRequiredMixin, CreateView):
-    model = AssignmetTask
+    model = AssignmentTask
     template_name = 'generic_form.html'
     fields = ['patient', 'machine', 'start_date', 'end_date']
     def form_valid(self, form):
@@ -103,11 +91,6 @@ class patient_update(LoginRequiredMixin, UpdateView):
     model = Patient
     template_name = 'generic_form.html'
     fields = ['name', 'severity', 'description']
-    def form_valid(self, form):
-        if not form.instance.severity == int(form.instance.history_severity_y.split(', ')[-1]):
-            form.instance.history_severity_x += ', ' + str(timezone.now())[:-3] + str(timezone.now())[-2:]
-            form.instance.history_severity_y += ', ' + str(form.instance.severity)
-        return super().form_valid(form)
 
 class machine_update(LoginRequiredMixin, UpdateView):
     model = Machine
@@ -115,15 +98,17 @@ class machine_update(LoginRequiredMixin, UpdateView):
     fields = ['model', 'location', 'description']
 
 class assignment_task_update(LoginRequiredMixin, UpdateView):
-    model = AssignmetTask
+    model = AssignmentTask
     template_name = 'generic_form.html'
     fields = ['patient', 'machine', 'bool_install', 'start_date', 'end_date']
+    """
     def form_valid(self, form):
         if form.instance.bool_install:
             form.instance.date = form.instance.end_date
         else:
             form.instance.date = form.instance.start_date
         return super().form_valid(form)
+    """
 
 # Assign machine to patient
 def patient_machinetype(request, pk):
@@ -135,7 +120,7 @@ def patient_machinetype(request, pk):
     machinetypes = MachineType.objects.all()
     machinetypes_count = {machinetype.pk:0 for machinetype in machinetypes}
     for machine in machines:
-        if machine.patient_pk == 0:
+        if machine.patient_assigned is None:
             machinetypes_count[machine.model.pk] += 1
     machinetypes_count = [machinetypes_count[machinetype.pk] for machinetype in machinetypes]
     machinetypes_plus = [{'machinetype': machinetype, 'count':count} for machinetype, count in zip(machinetypes, machinetypes_count)]
@@ -162,7 +147,7 @@ def patient_assign(request, pk, machine_pk):
         else:
             machine = Machine.objects.get(pk=machine_pk)
             if machine.patient_assigned is None:
-                if not patient.machine is None:
+                if not patient.machine_assigned is None:
                     machine_old = patient.machine_assigned
                     machine_old.patient_assigned = None # Unassign from old machine
                     machine_old.save()
@@ -183,7 +168,7 @@ def patient_assign(request, pk, machine_pk):
 # Task completion
 def assignment_task_complete(request, pk):
     try:
-        task = AssignmetTask.objects.get(pk=pk)
+        task = AssignmentTask.objects.get(pk=pk)
         if task.bool_completed:
             raise Http404("Task was already completed")
         patient = task.patient
@@ -201,5 +186,5 @@ def assignment_task_complete(request, pk):
         patient.save()
         machine.save()
         return redirect('tasks')
-    except AssignmetTask.DoesNotExist:
+    except AssignmentTask.DoesNotExist:
         raise Http404("Task not found")

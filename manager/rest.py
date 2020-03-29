@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions, viewsets
 
-from .models import Patient, MachineType, Machine, AssignmetTask
+from .models import Patient, MachineType, Machine, AssignmentTask
 from .models import User, Message
 from .serializers import (
     PatientSerializer,

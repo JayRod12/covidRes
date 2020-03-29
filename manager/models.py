@@ -41,22 +41,33 @@ class Patient(models.Model):
     description = models.TextField(blank=True)
     machine_assigned = models.ForeignKey('Machine', null=True, on_delete=models.SET_NULL)
     # History
-    history_severity_x = models.TextField(blank=True)
-    history_severity_y = models.TextField(blank=True)
-    history_machine_x = models.TextField(blank=True)
-    history_machine_y = models.TextField(blank=True)
+    history_severity_x = models.TextField(blank=True, editable=False)
+    history_severity_y = models.TextField(blank=True, editable=False)
+    history_machine_x = models.TextField(blank=True, editable=False)
+    history_machine_y = models.TextField(blank=True, editable=False)
     def __str__(self):
     	return self.name + ' #' + str(self.pk)
     def get_absolute_url(self):
         return reverse('patient', kwargs={'pk': self.pk})
-    def assign_machine(self, machine):
-        self.machine_assigned = machine
+    def save(self, *args, **kwargs):
+        if self.machine is None:
+            machine_pk = 0
+        else:
+            machine_pk = self.machine_assigned.pk
+        time_str = str(timezone.now())[:-3] + str(timezone.now())[-2:]
         if len(self.history_machine_y)==0:
-            self.history_machine_x = str(timezone.now())[:-3] + str(timezone.now())[-2:]
-            self.history_machine_y = str(machine.pk)
-        elif not machine.pk == int(self.history_machine_y.split(', ')[-1]):
-            self.history_machine_x += ', ' + str(timezone.now())[:-3] + str(timezone.now())[-2:]
-            self.history_machine_y += ', ' + str(machine.pk)
+            self.history_machine_x = time_str
+            self.history_machine_y = machine_pk
+        elif not machine_pk == int(self.history_machine_y.split(', ')[-1]):
+            self.history_machine_x += ', ' + time_str
+            self.history_machine_y += ', ' + machine_pk
+        if len(self.history_severity_y)==0:
+            self.history_severity_x = time_str
+            self.history_severity_y = machine_pk
+        elif not machine_pk == int(self.history_severity_y.split(', ')[-1]):
+            self.history_severity_x += ', ' + time_str
+            self.history_severity_y += ', ' + machine_pk
+        super(AssignmentTask, self).save(self)
     def get_history_severity(self):
         xx = [datetime.strptime(a, "%Y-%m-%d %H:%M:%S.%f%z") for a in self.history_severity_x.split(', ')]
         yy = [int(a) for a in self.history_severity_y.split(', ')]
@@ -85,8 +96,8 @@ class Machine(models.Model):
     def get_absolute_url(self):
         return reverse('machine', kwargs={'pk': self.pk})
 
-class AssignmetTask(models.Model):
-    date = models.DateTimeField('Task by:', default=timezone.now)
+class AssignmentTask(models.Model):
+    date = models.DateTimeField('Task by:', editable=False, default=timezone.now)
     bool_completed = models.BooleanField(default=False)
 
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='machine_assignments')
@@ -98,6 +109,12 @@ class AssignmetTask(models.Model):
     	return str(self.machine) + '->' + str(self.patient) + ' | ' + str(self.start_date) + ' --- ' + str(self.end_date)
     def get_absolute_url(self):
         return reverse('assignment_task', kwargs={'pk': self.pk})
+    def save(self, *args, **kwargs):
+        if self.bool_install:
+            self.date = self.start_date
+        else:
+            self.date = self.end_date
+        super(AssignmentTask, self).save(self)
 
 # Messages
 class Message(models.Model):
