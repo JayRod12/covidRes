@@ -42,7 +42,7 @@ class PermissionMachineEdit(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role.permission_machine_edit
 class MachineViewSet(viewsets.ModelViewSet):
-    queryset = Machine.objects.all()
+    queryset = Machine.objects.all().order_by('model')
     serializer_class = MachineSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachineEdit]
 
