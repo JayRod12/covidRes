@@ -54,8 +54,22 @@ class AssignmentTaskViewSet(viewsets.ModelViewSet):
     serializer_class = AssignmentTaskSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
     def get_queryset(self):
-        print(vars(self))
+        print(self.kwargs)
         return self.queryset
+class AssignmentTaskPatientViewSet(viewsets.ModelViewSet):
+    queryset = AssignmentTask.objects.all()
+    serializer_class = AssignmentTaskSerializer
+    permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
+    def get_queryset(self):
+        print(self.kwargs)
+        return self.queryset.filter(patient__pk=self.kwargs['patient_pk'])
+class AssignmentTaskMachineViewSet(viewsets.ModelViewSet):
+    queryset = AssignmentTask.objects.all()
+    serializer_class = AssignmentTaskSerializer
+    permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
+    def get_queryset(self):
+        print(self.kwargs)
+        return self.queryset.filter(machine__pk=self.kwargs['machine_pk'])
 
 class PermissionUserEdit(permissions.BasePermission):
     def has_permission(self, request, view):

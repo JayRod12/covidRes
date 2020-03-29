@@ -29,9 +29,11 @@ router.register(r'rest/patients', views_manager.PatientViewSet),
 router.register(r'rest/machinetypes', views_manager.MachineTypeViewSet),
 router.register(r'rest/machines', views_manager.MachineViewSet),
 router.register(r'rest/assignment_tasks', views_manager.AssignmentTaskViewSet),
+router.register(r'^rest/assignment_tasks/patient/(?P<patient_pk>.+)', views_manager.AssignmentTaskPatientViewSet),
+router.register(r'^rest/assignment_tasks/machine/(?P<machine_pk>.+)', views_manager.AssignmentTaskMachineViewSet),
 router.register(r'rest/users', views_manager.UserViewSet),
 router.register(r'rest/messages', views_manager.MessageViewSet),
-router.register(r'^rest/messages/to/(?P<patient_pk>.+)', views_manager.MessagePatientViewSet),
+router.register(r'rest/messages/to/(?P<patient_pk>.+)', views_manager.MessagePatientViewSet),
 
 
 urlpatterns = [
