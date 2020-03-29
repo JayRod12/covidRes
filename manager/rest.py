@@ -7,7 +7,7 @@ from .serializers import (
     PatientDetailedSerializer,
     MachineTypeSerializer,
     MachineSerializer,
-    AssignmetTaskSerializer
+    AssignmentTaskSerializer
 )
 from .serializers import UserSerializer, MessageSerializer
 from .serializers import User, Message
@@ -47,9 +47,9 @@ class MachineViewSet(viewsets.ModelViewSet):
 class PermissionTaskEdit(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role.permission_task_edit
-class AssignmetTaskViewSet(viewsets.ModelViewSet):
-    queryset = AssignmetTask.objects.all()
-    serializer_class = AssignmetTaskSerializer
+class AssignmentTaskViewSet(viewsets.ModelViewSet):
+    queryset = AssignmentTask.objects.all()
+    serializer_class = AssignmentTaskSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
 
 class PermissionUserEdit(permissions.BasePermission):
