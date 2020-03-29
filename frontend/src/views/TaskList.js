@@ -38,16 +38,23 @@ class AssignmentTaskWindow extends React.Component {
     return (
           <React.Fragment>
             {this.props.bool_install == 0 ? <th>Remove Machine</th> : <th>Install Machine</th>}
-            <tr>
-              <p>
-                <Link to={'/machine/'+this.props.machine}>{this.props.machine_model}</Link>
-                <small>location: {this.props.machine_location}</small>
-              </p>
-              <p>
-                <Link to={'/patient/'+this.props.patient}>{this.props.patient_name}</Link>
-                <small>location: {this.props.patient_location}</small>
-              </p>
-            </tr>
+            <Row>
+              <Link to={'/machine/'+this.props.machine}><th>{this.props.machine_model}</th></Link>
+              <small>location: {this.props.machine_location}</small>
+            </Row>
+            <Row>
+              <Link to={'/patient/'+this.props.patient}><th>{this.props.patient_name}</th></Link>
+              <small>location: {this.props.patient_location}</small>
+            </Row>
+            <Row>
+              <Col className="px-md-1" md="4" align="right">
+                <Button
+
+                >
+                Complete task
+                </Button>
+              </Col>
+            </Row>
           </React.Fragment>
     );
   }
@@ -126,6 +133,7 @@ class TaskList extends React.Component {
           patient_name={props.patient_name}
           machine_location={props.machine_location}
           patient_location={props.patient_location}
+          bool_install={props.bool_install}
         />
       ),
       type: type,
