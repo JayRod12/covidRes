@@ -111,9 +111,9 @@ class AssignmentTask(models.Model):
         return reverse('assignment_task', kwargs={'pk': self.pk})
     def save(self, *args, **kwargs):
         if self.bool_install:
-            self.date = self.start_date
-        else:
             self.date = self.end_date
+        else:
+            self.date = self.start_date
         super(AssignmentTask, self).save(*args, **kwargs)
 
 # Messages
