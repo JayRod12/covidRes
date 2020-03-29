@@ -67,7 +67,7 @@ class Patient(models.Model):
         elif not machine_pk == int(self.history_severity_y.split(', ')[-1]):
             self.history_severity_x += ', ' + time_str
             self.history_severity_y += ', ' + machine_pk
-        super(AssignmentTask, self).save(self)
+        super(AssignmentTask, self).save(*args, **kwargs)
     def get_history_severity(self):
         xx = [datetime.strptime(a, "%Y-%m-%d %H:%M:%S.%f%z") for a in self.history_severity_x.split(', ')]
         yy = [int(a) for a in self.history_severity_y.split(', ')]
@@ -110,11 +110,13 @@ class AssignmentTask(models.Model):
     def get_absolute_url(self):
         return reverse('assignment_task', kwargs={'pk': self.pk})
     def save(self, *args, **kwargs):
+        """
         if self.bool_install:
             self.date = self.start_date
         else:
             self.date = self.end_date
-        super(AssignmentTask, self).save(self)
+        """
+        super(AssignmentTask, self).save(*args, **kwargs)
 
 # Messages
 class Message(models.Model):
