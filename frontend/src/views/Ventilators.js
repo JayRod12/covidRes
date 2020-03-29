@@ -66,7 +66,7 @@ class Ventilators extends React.Component {
         this.state = {
             groups: [],
             items: null,
-            dialogState: { showDialog: false, dialogTitle: "", dialogText: "" },
+            dialogState: { showDialog: false, dialogTitle: "", dialogText: "", showCancelButton: false },
             pendingItemMove: null,
             pendingItemResize: null,
             selected: [],
@@ -161,7 +161,7 @@ class Ventilators extends React.Component {
 
         const isValidOperation = this._isValidOperation(itemId, newStartTime, newEndTime, selectedItem.patient_id, newMachine.id);
         if (!isValidOperation) {
-            alert("Machine or patient already assigned during this time interval!");
+            this._showMachineOrPatientAssignedDialog();
             return;
         }
 
@@ -170,7 +170,8 @@ class Ventilators extends React.Component {
             dialogState: {
                 showDialog: true,
                 dialogTitle: "Move ventilator?",
-                dialogText: "You are about to change the assignment of this ventilator. Please confirm."
+                dialogText: "You are about to change the assignment of this ventilator. Please confirm.",
+                showCancelButton: true,
             },
             pendingItemMove: { itemId: itemId, dragTime: dragTime, newGroupOrder: newGroupOrder }
         }));
@@ -184,7 +185,7 @@ class Ventilators extends React.Component {
 
         const isValidOperation = this._isValidOperation(itemId, newStartTime, newEndTime, selectedItem.patient_id, selectedItem.group);
         if (!isValidOperation) {
-            alert("Machine or patient already assigned during this time interval!");
+            this._showMachineOrPatientAssignedDialog();
             return;
         }
 
@@ -193,7 +194,8 @@ class Ventilators extends React.Component {
             dialogState: {
                 showDialog: true,
                 dialogTitle: "Edit ventilator assignment?",
-                dialogText: "You are about to change the assignment of this ventilator. Please confirm."
+                dialogText: "You are about to change the assignment of this ventilator. Please confirm.",
+                showCancelButton: true,
             },
             pendingItemResize: { itemId: itemId, time: time, edge: edge }
         }));
@@ -265,7 +267,7 @@ class Ventilators extends React.Component {
     }
 
     _closeDialog = (isConfirm) => {
-        this.setState(prevState => ({ ...prevState, dialogState: { showDialog: false } }), () => {
+        this.setState(prevState => ({ ...prevState, dialogState: { showDialog: false, showCancelButton: false } }), () => {
             if (isConfirm) {
                 this._applyPendingChanges();
             }
@@ -311,9 +313,9 @@ class Ventilators extends React.Component {
         const startDate = moment(this.state.selectedStartDate).valueOf();
         const endDate = moment(this.state.selectedEndDate).valueOf();
 
-        const isValidOperation = this._isValidOperation(null, startDate, endDate, state.selectedPatient, this.state.selectedMachine);
+        const isValidOperation = this._isValidOperation(null, startDate, endDate, this.state.selectedPatient, this.state.selectedMachine);
         if (!isValidOperation) {
-            alert("Machine or patient already assigned during this time interval!");
+            this._showMachineOrPatientAssignedDialog();
             return;
         }
 
@@ -360,6 +362,18 @@ class Ventilators extends React.Component {
         }).catch(error => {
             console.log("Something bad happened while trying to create a new assgiment." + error);
         });
+    }
+
+    _showMachineOrPatientAssignedDialog = () => {
+        this.setState(prevState => ({
+            ...prevState,
+            dialogState: {
+                showDialog: true,
+                dialogTitle: "Error",
+                dialogText: "Machine or patient already assigned during this time interval!",
+                showCancelButton: false,
+            },
+        }));
     }
 
     _isValidOperation = (itemID, tentativeStartDate, tentativeEndDate, tentativePatientID, tentativeMachineID) => {
@@ -423,9 +437,10 @@ class Ventilators extends React.Component {
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={() => this._closeDialog(false)} color="primary">
-                                Cancel
-                        </Button>
+                            {this.state.showCancelButton &&
+                                <Button onClick={() => this._closeDialog(false)} color="primary">
+                                    Cancel
+                        </Button>}
                             <Button onClick={() => this._closeDialog(true)} color="primary" autoFocus>
                                 Ok
                         </Button>
