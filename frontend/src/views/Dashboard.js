@@ -112,7 +112,6 @@ class Dashboard extends React.Component {
   updateData(result) {
     const labels = result.data.map(point => point.month);
     const datasets = result.data.map(point => parseInt(point.people));
-
     var total = 0;
     result.data.forEach(point => {
       total += parseInt(point.people);

@@ -27,8 +27,6 @@ import UserProfile from "views/UserProfile.js";
 import FamilyMessages from "views/FamilyMessages.js";
 import PatientList from "views/PatientList.js";
 import MachineList from "views/MachineList.js";
-import PatientProfile from "views/PatientProfile.js";
-import MachineProfile from "views/MachineProfile.js";
 
 
 var routes = [
@@ -52,18 +50,6 @@ var routes = [
     name: "Patients",
     icon: "tim-icons icon-single-02",
     component: PatientList,
-    layout: "/"
-  },
-  {
-    path: "/patient/:pk",
-    name: "Patient-details",
-    component: PatientProfile,
-    layout: "/"
-  },
-  {
-    path: "/machine/:pk",
-    name: "Machine-details",
-    component: MachineProfile,
     layout: "/"
   },
   {
