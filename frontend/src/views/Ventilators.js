@@ -420,7 +420,6 @@ class Ventilators extends React.Component {
                 );
             });
         }
-        console.log(this.state.showCancelButton);
         return (
             <div className="content">
                 <Row>
