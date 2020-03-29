@@ -321,8 +321,10 @@ class Dashboard extends React.Component {
 
     const Machines_today_pk = ADn.map(item=>item.machine)
 
-    const Machines_today =   for  (var i = 0; i < Machines_today_pk.length; i++) {this.state.machine_data
-      .results.filter(itm=> itm.pk === Machines_today_pk[i])}
+    console.log(Machines_today_pk)
+
+    const Machines_today= Machines_today_pk.map(item=> {return this.state.machine_data
+      .results.find(element=>element.pk==item)})
 
     console.log(Machines_today)
 
