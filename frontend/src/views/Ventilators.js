@@ -65,13 +65,13 @@ class Ventilators extends React.Component {
 
         this.state = {
             groups: [],
-            items: [],
+            items: null,
             dialogState: { showDialog: false, dialogTitle: "", dialogText: "" },
             pendingItemMove: null,
             pendingItemResize: null,
             selected: [],
-            allPatients: [],
-            allMachines: [],
+            allPatients: null,
+            allMachines: null,
             selectedPatient: -1,
             selectedMachine: -1,
             selectedStartDate: null,
@@ -281,6 +281,10 @@ class Ventilators extends React.Component {
 
         const selectedPatient = this.state.allPatients.find(patient => patient.id == this.state.selectedPatient);
 
+        // shift end day with one day, to include the end date too
+        var shiftedEndDate = new Date(this.state.selectedEndDate);
+        shiftedEndDate = new Date(shiftedEndDate.setDate(shiftedEndDate.getDate() + 1));
+
         // actually commit
         fetch('rest/assignment_tasks/', {
             method: 'POST',
@@ -289,8 +293,7 @@ class Ventilators extends React.Component {
                 machine: this.state.selectedMachine,
                 patient_name: selectedPatient.name,
                 start_date: this.state.selectedStartDate.toISOString(),
-                end_date: this.state.selectedEndDate.toISOString(),
-                date: new Date().toISOString(),
+                end_date: shiftedEndDate.toISOString(),
             }),
             headers: {
                 "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
@@ -298,8 +301,23 @@ class Ventilators extends React.Component {
         }).then(response => {
             return response.json();
         }).then(json => {
+            // optimistically update the state with the new item
+            const newItem = {
+                id: json.pk,
+                group: json.machine,
+                title: json.patient_name,
+                start_time: moment(json.start_date).valueOf(),
+                end_time: moment(json.end_date).valueOf(),
+                canChangeGroup: true,
+                patient_id: json.patient,
+            };
             this.setState(prevState => ({
-                ...prevState, selectedStartDate: null, selectedEndDate: null, selectedPatient: -1, selectedMachine: -1
+                ...prevState,
+                selectedStartDate: null,
+                selectedEndDate: null,
+                selectedPatient: -1,
+                selectedMachine: -1,
+                items: prevState.items.concat([newItem]),
             }));
         }).catch(error => {
             console.log("Something bad happened while trying to create a new assgiment." + error);
@@ -311,19 +329,22 @@ class Ventilators extends React.Component {
     }
 
     render() {
-        var patient_list = this.state.allPatients.map(patient => {
-            return (
-                <option value={patient.id}>{patient.name}</option>
-            );
-        });
-        var machine_list = this.state.allMachines.map(machine => {
-            return (
-                <option value={machine.id}>{machine.name}</option>
-            );
-        });
-        const isLoaded = this.state.groups.length > 0 &&
-            this.state.items.length > 0 &&
-            this.state.allPatients.length > 0;
+        const isLoaded = this.state.allPatients !== null &&
+            this.state.allMachines !== null &&
+            this.state.items !== null;
+
+        if (isLoaded) {
+            var patient_list = this.state.allPatients.map(patient => {
+                return (
+                    <option value={patient.id}>{patient.name}</option>
+                );
+            });
+            var machine_list = this.state.allMachines.map(machine => {
+                return (
+                    <option value={machine.id}>{machine.name}</option>
+                );
+            });
+        }
 
         return (
             <div className="content">
