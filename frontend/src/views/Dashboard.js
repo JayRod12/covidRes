@@ -59,6 +59,7 @@ class Dashboard extends React.Component {
     super(props);
     this.state = {
       machine_data: [],
+      assignement_data: [],
       //nb_of_machines : [],
       loaded:false,
       placeholder: "Loading",      
@@ -107,6 +108,35 @@ class Dashboard extends React.Component {
             };
           });
         });
+
+        // fetch machine assignements 
+    fetch("rest/assignment_tasks/")
+    .then(response => {
+            if (response.status > 400) {
+              throw new Error(response.status);
+            }
+            return response.json();
+        })
+        .then(assignement_data => {
+            console.log(assignement_data);
+            this.setState(() => {
+                return {
+                    assignement_data,
+                    loaded: true
+                };
+            });
+        })
+        .catch(error => {
+          this.setState(() => {
+            return {
+              loaded: true,
+              placeholder: "Failed to load",
+              error_message: "You don't have permission to view these assignements.",
+            };
+          });
+        });
+                
+
   }
 
   updateData(result) {
@@ -259,14 +289,12 @@ class Dashboard extends React.Component {
     const label_machines_location = countsLocation.map(item => item.type)
 
     const data_plot_machines_location = countsLocation.map(item => item.count)
-    console.log(label_machines_location)
-    console.log(data_plot_machines_location)
 
-
-    
 /////////////////////////////////////////////////////////////////////////////
-
-
+    if(this.state.assignement_data.length == 0 ) return (<div>Loading</div>);
+    //const AD= this.state.assignement_data.results.filter(item => item.start_date < date_today);
+    //const AD = AD.length;
+    console.log(this.state.assignement_data)
 
 
 
