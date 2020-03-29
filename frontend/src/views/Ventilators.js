@@ -420,7 +420,7 @@ class Ventilators extends React.Component {
                 );
             });
         }
-
+        console.log(this.state.showCancelButton);
         return (
             <div className="content">
                 <Row>
@@ -437,7 +437,7 @@ class Ventilators extends React.Component {
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
-                            {this.state.showCancelButton &&
+                            {this.state.dialogState.showCancelButton &&
                                 <Button onClick={() => this._closeDialog(false)} color="primary">
                                     Cancel
                         </Button>}
