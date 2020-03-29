@@ -33,32 +33,7 @@ import {
   Col
 } from "reactstrap";
 
-class AssignmentTaskWindow extends React.Component {
-  render() {
-    return (
-          <React.Fragment>
-            {this.props.bool_install == 0 ? <th>Remove Machine</th> : <th>Install Machine</th>}
-            <Row>
-              <Link to={'/machine/'+this.props.machine}><th>{this.props.machine_model}</th></Link>
-              <small>location: {this.props.machine_location}</small>
-            </Row>
-            <Row>
-              <Link to={'/patient/'+this.props.patient}><th>{this.props.patient_name}</th></Link>
-              <small>location: {this.props.patient_location}</small>
-            </Row>
-            <Row>
-              <Col className="px-md-1" md="4" align="right">
-                <Button
-
-                >
-                Complete task
-                </Button>
-              </Col>
-            </Row>
-          </React.Fragment>
-    );
-  }
-}
+import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
 
 class TaskList extends React.Component {
   constructor(props) {

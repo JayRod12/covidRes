@@ -42,9 +42,25 @@ class PermissionMachineEdit(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role.permission_machine_edit
 class MachineViewSet(viewsets.ModelViewSet):
+    queryset = Machine.objects.all().order_by('model')
+    serializer_class = MachineSerializer
+    permission_classes = [permissions.IsAuthenticated & PermissionMachineEdit]
+class MachineQueryViewSet(viewsets.ModelViewSet):
     queryset = Machine.objects.all()
     serializer_class = MachineSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachineEdit]
+    def get_queryset(self):
+        print(self.kwargs)
+        if 'query' in self.kwargs:
+            query = self.kwargs['query'].split('&')
+            query = [q.split('=') for q in query]
+            query = {q[0]:q[1] for q in query}
+        if 'date' in query:
+            overlaping_tasks = AssignmentTask.objects.filter(start_date__lte=query['date'], end_date__gte=query['date'])
+            machine_pks = overlaping_tasks.values_list('machine', flat=True)
+            self.queryset = self.queryset.filter(pk__in=machine_pks)
+            query.pop('date', None);
+        return self.queryset.filter(**query)
 
 class PermissionTaskEdit(permissions.BasePermission):
     def has_permission(self, request, view):
