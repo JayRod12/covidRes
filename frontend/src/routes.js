@@ -29,6 +29,7 @@ import PatientList from "views/PatientList.js";
 import MachineList from "views/MachineList.js";
 import PatientProfile from "views/PatientProfile.js";
 import MachineProfile from "views/MachineProfile.js";
+import TaskList from "views/TaskList.js";
 
 
 var routes = [
@@ -61,16 +62,23 @@ var routes = [
     layout: "/"
   },
   {
+    path: "/machines",
+    name: "Machines",
+    icon: "tim-icons icon-single-02",
+    component: MachineList,
+    layout: "/"
+  },
+  {
     path: "/machine/:pk",
     name: "Machine-details",
     component: MachineProfile,
     layout: "/"
   },
   {
-    path: "/machines",
-    name: "Machines",
-    icon: "tim-icons icon-single-02",
-    component: MachineList,
+    path: "/tasks",
+    name: "Tasks",
+    icon: "icon-bell-55",
+    component: TaskList,
     layout: "/"
   },
   {
