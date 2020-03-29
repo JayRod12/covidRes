@@ -28,6 +28,8 @@ import {
   Card,
   CardHeader,
   CardBody,
+  CardFooter,
+  CardText,
   CardTitle,
   Row,
   Col
@@ -46,7 +48,7 @@ class TaskList extends React.Component {
     };
   }
   componentDidMount() {
-    fetch("rest/assignment_tasks/")
+    fetch("rest/assignment_tasks/query/bool_completed=0/")
             .then(response => {
                 if (response.status > 400) {
                   throw new Error(response.status);
