@@ -37,6 +37,8 @@ import {
 
 import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
 
+const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
 class TaskList extends React.Component {
   constructor(props) {
     super(props);
@@ -49,30 +51,30 @@ class TaskList extends React.Component {
   }
   componentDidMount() {
     fetch("rest/assignment_tasks/query/bool_completed=0/")
-            .then(response => {
-                if (response.status > 400) {
-                  throw new Error(response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                this.setState(() => {
-                    return {
-                        data,
-                        loaded: true
-                    };
-                });
-            })
-            .catch(error => {
-              this.setState(() => {
-                return {
-                  loaded: true,
-                  placeholder: "Failed to load",
-                  error_message: "You don't have permission to view these tasks.",
-                };
-              });
-            });
+      .then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        this.setState(() => {
+          return {
+            data,
+            loaded: true
+          };
+        });
+      })
+      .catch(error => {
+        this.setState(() => {
+          return {
+            loaded: true,
+            placeholder: "Failed to load",
+            error_message: "You don't have permission to view these tasks.",
+          };
+        });
+      });
   };
   pop = props => {
     var color;
@@ -129,24 +131,26 @@ class TaskList extends React.Component {
       );
     }
     let tasks;
+    const results = IS_DEV ? this.state.data.results : this.state.data;
+
     if (this.state.error_message.length > 0) {
       tasks = (
         <Alert color="danger">
           {this.state.error_message} Are you <a href="/admin" className="alert-link"> logged in?</a>
         </Alert>
       );
-    } else if (this.state.data.results.length > 0) {
-      tasks = this.state.data.results.map((props, index) => (
+    } else if (results.length > 0) {
+      tasks = results.map((props, index) => (
         <Button
-          key = {props.pk}
-          ref = "taskButton"
+          key={props.pk}
+          ref="taskButton"
           block
           color={props.bool_install == 0 ? "primary" : "info"}
           onClick={() => this.pop(props)}
         >
           {props.bool_install == 0 ? "Install" : "Remove"} {props.machine_model} {props.bool_install == 0 ? "to" : "from"} {props.patient_name} due {props.date}
         </Button>
-        )
+      )
       );
     } else {
       tasks = (
