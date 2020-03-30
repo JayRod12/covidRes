@@ -332,8 +332,6 @@ class Dashboard extends React.Component {
               count: Machines_today.filter(item => item.location === machineLoc).length
            }));
 
-    console.log(countstodayLocation )
-
  
     const    countstodayType = machTypes
     .     map(machineType => ({
@@ -573,6 +571,138 @@ class Dashboard extends React.Component {
           }
         };
 
+  ///////////////////////////////// TOTAL MACHINES AVAILABLE PER DAY THIS WEEK
+  
+    const D0_count = ADn.length
+
+    var date_today1 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+1) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
+    const AD1= this.state.assignement_data.results.filter(item => item.start_date < date_today1);
+    const ADn1 =AD1.filter(item => new Date(item.end_date)- new Date(date_today1) >0);
+    const D1_count = ADn1.length
+
+
+    var date_today2 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+2) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
+    const AD2= this.state.assignement_data.results.filter(item => item.start_date < date_today2);
+    const ADn2 =AD2.filter(item => new Date(item.end_date)- new Date(date_today2) >0);
+    const D2_count = ADn2.length
+
+    var date_today3 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+3) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
+    const AD3= this.state.assignement_data.results.filter(item => item.start_date < date_today3);
+    const ADn3 =AD3.filter(item => new Date(item.end_date)- new Date(date_today3) >0);
+    const D3_count = ADn3.length
+
+    var date_today4 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+4) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
+    const AD4= this.state.assignement_data.results.filter(item => item.start_date < date_today4);
+    const ADn4 =AD4.filter(item => new Date(item.end_date)- new Date(date_today4) >0);
+    const D4_count = ADn4.length
+
+    var date_today5 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+5) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
+    const AD5= this.state.assignement_data.results.filter(item => item.start_date < date_today5);
+    const ADn5 =AD5.filter(item => new Date(item.end_date)- new Date(date_today5) >0);
+    const D5_count = ADn5.length
+
+    var date_today6 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+6) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
+    const AD6= this.state.assignement_data.results.filter(item => item.start_date < date_today6);
+    const ADn6 =AD6.filter(item => new Date(item.end_date)- new Date(date_today6) >0);
+    const D6_count = ADn6.length
+
+    var date_today7 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+7) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
+    const AD7= this.state.assignement_data.results.filter(item => item.start_date < date_today7);
+    const ADn7 =AD7.filter(item => new Date(item.end_date)- new Date(date_today7) >0);
+    const D7_count = ADn7.length
+
+    const M_used_week = [D0_count, D1_count, D2_count, D3_count, D4_count, D5_count, D6_count, D7_count]
+    console.log(M_used_week)
+
+    console.log(date_today1)
+    const days_from_today=["today","1","2","3","4","5","6","7"]
+
+
+     const ourChartweek = {
+      data: canvas => {
+        let ctx = canvas.getContext("2d");
+
+        let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
+
+        gradientStroke.addColorStop(1, "rgba(66,134,121,0.15)");
+        gradientStroke.addColorStop(0.4, "rgba(66,134,121,0.0)"); //green colors
+        gradientStroke.addColorStop(0, "rgba(66,134,121,0)"); //green colors
+
+        return {
+          labels: days_from_today,
+          datasets: [
+            {
+              label: "Number of Ventilators",
+              fill: true,
+              backgroundColor: gradientStroke,
+              borderColor: "#00d6b4",
+              borderWidth: 2,
+              borderDash: [],
+              borderDashOffset: 0.0,
+              pointBackgroundColor: "#00d6b4",
+              pointBorderColor: "rgba(255,255,255,0)",
+              pointHoverBackgroundColor: "#00d6b4",
+              pointBorderWidth: 20,
+              pointHoverRadius: 4,
+              pointHoverBorderWidth: 15,
+              pointRadius: 4,
+              data: M_used_week,
+            }
+          ]
+        };
+      },
+      options: {
+        maintainAspectRatio: false,
+        legend: {
+          display: false
+        },
+
+        tooltips: {
+          backgroundColor: "#f5f5f5",
+          titleFontColor: "#333",
+          bodyFontColor: "#666",
+          bodySpacing: 4,
+          xPadding: 12,
+          mode: "nearest",
+          intersect: 0,
+          position: "nearest"
+        },
+        responsive: true,
+        scales: {
+          yAxes: [
+            {
+              barPercentage: 1.6,
+              gridLines: {
+                drawBorder: false,
+                color: "rgba(29,140,248,0.0)",
+                zeroLineColor: "transparent"
+              },
+              ticks: {
+                suggestedMin: 0,
+                suggestedMax: 3,
+                padding: 20,
+                fontColor: "#9e9e9e"
+              }
+            }
+          ],
+
+          xAxes: [
+            {
+              barPercentage: 1.6,
+              gridLines: {
+                drawBorder: false,
+                color: "rgba(0,242,195,0.1)",
+                zeroLineColor: "transparent"
+              },
+              ticks: {
+                padding: 20,
+                fontColor: "#9e9e9e"
+              }
+            }
+          ]
+        }
+      }
+    };
 
     // return (
     //   <h1> Hello </h1>
@@ -720,14 +850,14 @@ class Dashboard extends React.Component {
                 <CardHeader>
                   <h5 className="card-category">Patient Numbers</h5>
                   <CardTitle tag="h3">
-                    <i className="tim-icons icon-single-02 text-success" /> {this.state.data.total + " total patients"}
+                    <i className="tim-icons icon-single-02 text-success" /> {" Total usage of Ventilators from today"}
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
                   <div className="chart-area">
                     <Line
-                      data={ourChartData.data}
-                      options={ourChartData.options}
+                      data={ourChartweek.data}
+                      options={ourChartweek.options}
                     />
                   </div>
                 </CardBody>
