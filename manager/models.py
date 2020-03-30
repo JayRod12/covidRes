@@ -18,14 +18,14 @@ class Role(models.Model):
     	return self.name
 
 class User(AbstractUser):
-    role = models.ForeignKey(Role, null=True, on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, null=True, blank=True, on_delete=models.CASCADE)
     def __str__(self):
     	return str(self.username)
 
 # Manage
 class Patient(models.Model):
     name = models.CharField(max_length=100)
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     SEVERITY = (
     	(0, 'Healed'),
         (1, 'Low'),
@@ -63,7 +63,7 @@ class Patient(models.Model):
             self.history_machine_y += ', ' + str(machine_pk)
         if len(self.history_severity_y)==0:
             self.history_severity_x = time_str
-            self.history_severity_y = str(machine_pk)
+            self.history_severity_y = str(self.severity)
         elif not self.severity == int(self.history_severity_y.split(', ')[-1]):
             self.history_severity_x += ', ' + time_str
             self.history_severity_y += ', ' + str(self.severity)
@@ -91,7 +91,7 @@ class Machine(models.Model):
     model = models.ForeignKey(MachineType, on_delete=models.CASCADE)
     location = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    patient_assigned = models.ForeignKey(Patient, null=True, on_delete=models.SET_NULL)
+    patient_assigned = models.ForeignKey(Patient, null=True, blank=True, on_delete=models.SET_NULL)
     def __str__(self):
     	return self.model.name + ' #' + str(self.pk)
     def get_absolute_url(self):
