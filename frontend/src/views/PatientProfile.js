@@ -344,104 +344,109 @@ class PatientProfile extends React.Component {
             </CardBody>
           </Card>
           <Card>
-            <Scatter
-              data={
-                canvas => {
-                  let ctx = canvas.getContext("2d");
+            <CardHeader>
+              <h5 className="title">Severity evolution</h5>
+            </CardHeader>
+            <CardBody>
+              <Scatter
+                data={
+                  canvas => {
+                    let ctx = canvas.getContext("2d");
 
-                  let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
+                    let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
 
-                  gradientStroke.addColorStop(1, "rgba(29,140,248,0.2)");
-                  gradientStroke.addColorStop(0.4, "rgba(29,140,248,0.0)");
-                  gradientStroke.addColorStop(0, "rgba(29,140,248,0)"); //blue colors
+                    gradientStroke.addColorStop(1, "rgba(29,140,248,0.2)");
+                    gradientStroke.addColorStop(0.4, "rgba(29,140,248,0.0)");
+                    gradientStroke.addColorStop(0, "rgba(29,140,248,0)"); //blue colors
 
-                  return {
-                    labels: this.state.graph_xy.map((xy) => {return new Date(xy['x']).toISOString()}),
-                    datasets: [
+                    return {
+                      labels: this.state.graph_xy.map((xy) => {return new Date(xy['x']).toISOString()}),
+                      datasets: [
+                        {
+                          label: "Data",
+                          fill: true,
+                          showLine: true,
+                          lineTension: 0,
+                          backgroundColor: gradientStroke,
+                          borderColor: "#1f8ef1",
+                          borderWidth: 2,
+                          borderDash: [],
+                          borderDashOffset: 0.0,
+                          pointBackgroundColor: "#1f8ef1",
+                          pointBorderColor: "rgba(255,255,255,0)",
+                          pointHoverBackgroundColor: "#1f8ef1",
+                          pointBorderWidth: 20,
+                          pointHoverRadius: 4,
+                          pointHoverBorderWidth: 15,
+                          pointRadius: 4,
+                          data: this.state.graph_xy
+                        }
+                      ]
+                    };
+                  }
+                }
+                options={{
+                  maintainAspectRatio: false,
+                  legend: {
+                    display: false
+                  },
+                  tooltips: {
+                    backgroundColor: "#f5f5f5",
+                    titleFontColor: "#333",
+                    bodyFontColor: "#666",
+                    bodySpacing: 4,
+                    xPadding: 12,
+                    mode: "nearest",
+                    intersect: 0,
+                    position: "nearest",
+                    callbacks: {
+                        title: function (tooltipItem, data) {
+                            return "Date: " + data.labels[tooltipItem[0].index];
+                        },
+                        label: function(tooltipItems, data) {
+                            return "Severity: " + tooltipItems.yLabel;
+                        },
+                        footer: function (tooltipItem, data) { return "..."; }
+                    }
+                  },
+                  responsive: true,
+                  scales: {
+                    yAxes: [
                       {
-                        label: "Data",
-                        fill: true,
-                        showLine: true,
-                        lineTension: 0,
-                        backgroundColor: gradientStroke,
-                        borderColor: "#1f8ef1",
-                        borderWidth: 2,
-                        borderDash: [],
-                        borderDashOffset: 0.0,
-                        pointBackgroundColor: "#1f8ef1",
-                        pointBorderColor: "rgba(255,255,255,0)",
-                        pointHoverBackgroundColor: "#1f8ef1",
-                        pointBorderWidth: 20,
-                        pointHoverRadius: 4,
-                        pointHoverBorderWidth: 15,
-                        pointRadius: 4,
-                        data: this.state.graph_xy
+                        barPercentage: 1.6,
+                        gridLines: {
+                          drawBorder: false,
+                          color: "rgba(29,140,248,0.0)",
+                          zeroLineColor: "transparent"
+                        },
+                        ticks: {
+                          suggestedMin: 0,
+                          suggestedMax: 6,
+                          padding: 2,
+                          fontColor: "#9a9a9a"
+                        }
+                      }
+                    ],
+                    xAxes: [
+                      {
+                        barPercentage: 1.6,
+                        gridLines: {
+                          display: false,
+                          drawBorder: false,
+                          color: "rgba(29,140,248,0.1)",
+                          zeroLineColor: "transparent"
+                        },
+                        ticks: {
+                          display: false,
+                          padding: 20,
+                          fontColor: "#9a9a9a"
+                        }
                       }
                     ]
-                  };
-                }
-              }
-              options={{
-                maintainAspectRatio: false,
-                legend: {
-                  display: false
-                },
-                tooltips: {
-                  backgroundColor: "#f5f5f5",
-                  titleFontColor: "#333",
-                  bodyFontColor: "#666",
-                  bodySpacing: 4,
-                  xPadding: 12,
-                  mode: "nearest",
-                  intersect: 0,
-                  position: "nearest",
-                  callbacks: {
-                      title: function (tooltipItem, data) {
-                          return "Date: " + data.labels[tooltipItem[0].index];
-                      },
-                      label: function(tooltipItems, data) {
-                          return "Severity: " + tooltipItems.yLabel;
-                      },
-                      footer: function (tooltipItem, data) { return "..."; }
                   }
-                },
-                responsive: true,
-                scales: {
-                  yAxes: [
-                    {
-                      barPercentage: 1.6,
-                      gridLines: {
-                        drawBorder: false,
-                        color: "rgba(29,140,248,0.0)",
-                        zeroLineColor: "transparent"
-                      },
-                      ticks: {
-                        suggestedMin: 0,
-                        suggestedMax: 6,
-                        padding: 2,
-                        fontColor: "#9a9a9a"
-                      }
-                    }
-                  ],
-                  xAxes: [
-                    {
-                      barPercentage: 1.6,
-                      gridLines: {
-                        display: false,
-                        drawBorder: false,
-                        color: "rgba(29,140,248,0.1)",
-                        zeroLineColor: "transparent"
-                      },
-                      ticks: {
-                        display: false,
-                        padding: 20,
-                        fontColor: "#9a9a9a"
-                      }
-                    }
-                  ]
-                }
-              }}
-            />
+                }}
+              />
+            </CardBody>
           </Card>
         </Col>
       );
