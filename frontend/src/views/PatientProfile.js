@@ -362,7 +362,7 @@ class PatientProfile extends React.Component {
                         label: "Data",
                         fill: true,
                         showLine: true,
-                        toolTipContent: "{y}",
+                        lineTension: 0,
                         backgroundColor: gradientStroke,
                         borderColor: "#1f8ef1",
                         borderWidth: 2,
@@ -394,7 +394,16 @@ class PatientProfile extends React.Component {
                   xPadding: 12,
                   mode: "nearest",
                   intersect: 0,
-                  position: "nearest"
+                  position: "nearest",
+                  callbacks: {
+                      title: function (tooltipItem, data) {
+                          return "Date: " + data.labels[tooltipItem[0].index];
+                      },
+                      label: function(tooltipItems, data) {
+                          return "Severity: " + tooltipItems.yLabel;
+                      },
+                      footer: function (tooltipItem, data) { return "..."; }
+                  }
                 },
                 responsive: true,
                 scales: {
@@ -409,7 +418,7 @@ class PatientProfile extends React.Component {
                       ticks: {
                         suggestedMin: 0,
                         suggestedMax: 6,
-                        padding: 20,
+                        padding: 2,
                         fontColor: "#9a9a9a"
                       }
                     }
@@ -418,11 +427,13 @@ class PatientProfile extends React.Component {
                     {
                       barPercentage: 1.6,
                       gridLines: {
+                        display: false,
                         drawBorder: false,
                         color: "rgba(29,140,248,0.1)",
                         zeroLineColor: "transparent"
                       },
                       ticks: {
+                        display: false,
                         padding: 20,
                         fontColor: "#9a9a9a"
                       }
