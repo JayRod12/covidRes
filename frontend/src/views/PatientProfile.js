@@ -80,6 +80,13 @@ class PatientProfile extends React.Component {
     event.preventDefault();
     const data = new FormData(event.target);
 
+    console.log("patient_info", {
+        name: data.get('name'),
+        severity: data.get('severity'),
+        location: data.get('location'),
+        description: data.get('description')
+    })
+
     fetch('/rest/patients/'+this.state.data.pk+"/", {
       method: 'PATCH',
       body: JSON.stringify({
@@ -125,7 +132,7 @@ class PatientProfile extends React.Component {
                     return {
                         data: data,
                         graph_xy: xx.map((xs, i) => {return {
-                          x: parseInt(moment(xs).valueOf()),
+                          x: moment(xs).valueOf(),
                           y: parseInt(yy[i])
                         }}),
                         loaded: true
@@ -360,7 +367,7 @@ class PatientProfile extends React.Component {
                     gradientStroke.addColorStop(0, "rgba(29,140,248,0)"); //blue colors
 
                     return {
-                      labels: this.state.graph_xy.map((xy) => {return new Date(xy['x']).toISOString()}),
+                      labels: [...this.state.graph_xy, {x: new Date().valueOf(), y: this.state.graph_xy[this.state.graph_xy.length-1]}].map((xy) => {return new Date(xy['x']).toISOString()}),
                       datasets: [
                         {
                           label: "Data",
@@ -379,7 +386,7 @@ class PatientProfile extends React.Component {
                           pointHoverRadius: 4,
                           pointHoverBorderWidth: 15,
                           pointRadius: 4,
-                          data: this.state.graph_xy
+                          data: [...this.state.graph_xy, {x: new Date().valueOf(), y: this.state.graph_xy[this.state.graph_xy.length-1]}]
                         }
                       ]
                     };
