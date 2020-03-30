@@ -42,6 +42,7 @@ import DatePicker from "react-datepicker";
 import $ from 'jquery';
 
 const FIVE_SECONDS_MS = 5 * 1000;
+const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 
 function getCookie(name) {
     var cookieValue = null;
@@ -90,7 +91,8 @@ class Ventilators extends React.Component {
                 return response.json();
             })
             .then(data => {
-                const allPatients = data.results.map(patient => { return { id: patient.pk, name: patient.name } });
+                const results = IS_DEV ? data.results : data;
+                const allPatients = results.map(patient => { return { id: patient.pk, name: patient.name } });
                 this.setState(prevState => ({
                     ...prevState, allPatients: allPatients
                 }));
@@ -108,8 +110,9 @@ class Ventilators extends React.Component {
                 return response.json();
             })
             .then(data => {
+                const results = IS_DEV ? data.results : data;
                 const groups = []; const allMachines = [];
-                data.results.forEach(ventilator => {
+                results.forEach(ventilator => {
                     const ventilatorName = ventilator.model_name + " #" + ventilator.pk;
                     groups.push({ id: ventilator.pk, title: ventilatorName });
                     allMachines.push({ id: ventilator.pk, name: ventilatorName })
@@ -131,8 +134,9 @@ class Ventilators extends React.Component {
                     return response.json();
                 })
                 .then(data => {
+                    const results = IS_DEV ? data.results : data;
                     const items = [];
-                    data.results.forEach(assignment => {
+                    results.forEach(assignment => {
                         items.push({
                             id: assignment.pk,
                             group: assignment.machine,
