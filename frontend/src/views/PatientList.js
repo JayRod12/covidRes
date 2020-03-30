@@ -21,6 +21,7 @@ import { NavLink, Link } from "react-router-dom";
 // reactstrap components
 import {
   Alert,
+  Button,
   Card,
   CardHeader,
   CardBody,
@@ -28,6 +29,9 @@ import {
   CardText,
   CardTitle,
   Table,
+  FormGroup,
+  Form,
+  Input,
   Row,
   Col
 } from "reactstrap";
@@ -131,7 +135,40 @@ class PatientList extends React.Component {
             <Col md="12">
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h4">Patients</CardTitle>
+                  <Col className="px-md-1" md="4">
+                    <CardTitle tag="h4">Patients</CardTitle>
+                  </Col>
+                  <Form>
+                    <Row>
+                      <Col className="px-md-1" md={{ span: 3, offset: 1 }}>
+                        <FormGroup>
+                          <Input
+                            placeholder="Nickname"
+                            name="model"
+                            type="text"
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col className="px-md-1" md="1">
+                        <FormGroup>
+                          <Input type="select" name="patient" id="receiverSelect">
+                            <option key={1} value={0}>Healed</option>
+                            <option key={2} value={1}>Low</option>
+                            <option key={3} value={2}>Moderate</option>
+                            <option key={4} value={3}>Medium</option>
+                            <option key={5} value={4}>High</option>
+                            <option key={6} value={5}>Very high</option>
+                            <option key={7} value={6}>Dead</option>
+                          </Input>
+                        </FormGroup>
+                      </Col>
+                      <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
+                        <Button>
+                          Create
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Form>
                 </CardHeader>
                 <CardBody>
                   <Table className="tablesorter" responsive>
