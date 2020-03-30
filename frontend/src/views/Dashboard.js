@@ -346,6 +346,15 @@ class Dashboard extends React.Component {
 
     const data_plot_machines_today_location = countstodayLocation.map(item => item.count)
 
+
+    const data_plot_machines_location_sub = data_plot_machines_location
+    .map(item=> {data_plot_machines_today_location.map(it=> item-it)})
+
+    console.log(data_plot_machines_today_location)
+    console.log(data_plot_machines_location_sub)
+
+
+
     const label_machines_today_type = countstodayType.map(item => item.type)
 
     const data_plot_machines_today_type = countstodayType.map(item => item.count)
@@ -447,11 +456,14 @@ class Dashboard extends React.Component {
             gradientStroke.addColorStop(0.4, "rgba(29,140,248,0.0)");
             gradientStroke.addColorStop(0, "rgba(29,140,248,0)"); //blue colors
 
+            const arbitraryStackkey= "stack1";
+
             return {
               labels: label_machines_location,
               datasets: [
-                {
-                  label: "Number of machines",
+                 {
+                  stack:arbitraryStackkey,
+                  label: "Number of machines today",
                   fill: true,
                   backgroundColor: gradientStroke,
                   borderColor: "#1f8ef1",
@@ -465,7 +477,25 @@ class Dashboard extends React.Component {
                   pointHoverRadius: 4,
                   pointHoverBorderWidth: 15,
                   pointRadius: 4,
-                  data: data_plot_machines_location ,
+                  data: data_plot_machines_today_location ,
+                },
+                {
+                  stack: arbitraryStackkey,
+                  label: "Number of machines total",
+                  fill: true,
+                  backgroundColor: gradientStroke,
+                  borderColor: "#1f8ef1",
+                  borderWidth: 2,
+                  borderDash: [],
+                  borderDashOffset: 0.0,
+                  pointBackgroundColor: "#1f8ef1",
+                  pointBorderColor: "rgba(255,255,255,0)",
+                  pointHoverBackgroundColor: "#00d6b4",
+                  pointBorderWidth: 20,
+                  pointHoverRadius: 4,
+                  pointHoverBorderWidth: 15,
+                  pointRadius: 4,
+                  data: data_plot_machines_location_sub ,
                 }
               ]
             };
