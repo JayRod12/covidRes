@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
@@ -33,12 +33,30 @@ import {
   CardTitle,
   FormGroup,
   Form,
+  Label,
   Input,
   Row,
   Col
 } from "reactstrap";
 
 import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
+
+import $ from 'jquery';
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = $.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 class MachineProfile extends React.Component {
   constructor(props) {
@@ -53,6 +71,22 @@ class MachineProfile extends React.Component {
       placeholder_tasks: "Loading",
       error_message_tasks: "",
     };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+
+    fetch('/rest/machines/'+this.state.data.pk+"/", {
+      method: 'PATCH',
+      body: JSON.stringify({
+          location: data.get('location'),
+          description: data.get('description')
+      }),
+      headers: {
+          "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+      }
+    }).then(response => {console.log(response)});
   }
   componentDidMount() {
     const { pk } = this.props.match.params
@@ -171,10 +205,10 @@ class MachineProfile extends React.Component {
         <Col md="8">
           <Card>
             <CardHeader>
-              <th className="title">Machine Profile</th>
+              <h5 className="title">Machine Profile</h5>
             </CardHeader>
             <CardBody>
-              <Form>
+              <Form onSubmit={this.handleSubmit}>
                 <Row>
                   <Col className="pr-md-1" md="1">
                     <FormGroup>
@@ -183,6 +217,7 @@ class MachineProfile extends React.Component {
                         defaultValue={this.state.data.pk}
                         disabled
                         placeholder="ID"
+                        name="pk"
                         type="text"
                       />
                     </FormGroup>
@@ -192,7 +227,9 @@ class MachineProfile extends React.Component {
                       <label>Model</label>
                       <Input
                         defaultValue={this.state.data.model_name}
+                        disabled
                         placeholder="Model"
+                        name="model_name"
                         type="text"
                       />
                     </FormGroup>
@@ -203,6 +240,7 @@ class MachineProfile extends React.Component {
                       <Input
                         defaultValue={this.state.data.location}
                         placeholder="Location"
+                        name="location"
                         type="text"
                       />
                     </FormGroup>
@@ -216,6 +254,7 @@ class MachineProfile extends React.Component {
                         cols="80"
                         defaultValue={this.state.data.description}
                         placeholder="Machine description"
+                        name="description"
                         rows="6"
                         type="textarea"
                       />
@@ -226,27 +265,23 @@ class MachineProfile extends React.Component {
                       <CardBody>
                         {this.state.data.patient_assigned === null
                           ?
-                          <Row><th>None</th></Row>
+                          <Row><h3>None</h3></Row>
                           :
                           <div>
                             <Row>
-                              <th><Link to={'/patient/'+this.state.data.patient_assigned}>{this.state.data.patient_assigned_name}</Link></th>
-                            </Row>
-                            <Row>
-                              <th><small>ID: {this.state.data.patient_assigned}</small></th>
+                              <h3><Link to={'/patient/'+this.state.data.patient_assigned}>{this.state.data.patient_assigned_name}</Link></h3>
+                              <small>ID: {this.state.data.patient_assigned}</small>
                             </Row>
                           </div>
                         }
                       </CardBody>
                     </Col>
                 </Row>
+                <Button>
+                  Save
+                </Button>
               </Form>
             </CardBody>
-            <CardFooter>
-              <Button className="btn-fill" color="primary" type="submit" value="Submit">
-                Save
-              </Button>
-            </CardFooter>
           </Card>
         </Col>
       );
@@ -272,15 +307,14 @@ class MachineProfile extends React.Component {
       );
     } else if (this.state.data_tasks.results.length > 0) {
       tasks = this.state.data_tasks.results.map((props, index) => (
-        <React.Fragment>
-          <Button
-            block
-            color={props.bool_install == 0 ? "primary" : "info"}
-            onClick={() => this.pop(props)}
-          >
-            {props.machine_model} - {props.patient_name}
-          </Button>
-        </React.Fragment>
+        <Button
+          key = {props.pk}
+          block
+          color={props.bool_install == 0 ? "primary" : "info"}
+          onClick={() => this.pop(props)}
+        >
+          {props.machine_model} - {props.patient_name}
+        </Button>
         )
       );
     } else {
@@ -300,7 +334,7 @@ class MachineProfile extends React.Component {
             <Col md="4">
               <Card className="card-user">
                 <CardHeader>
-                  <th className="title">Associated Tasks</th>
+                  <h5 className="title">Associated Tasks</h5>
                 </CardHeader>
                 <CardBody>
                   {tasks}
