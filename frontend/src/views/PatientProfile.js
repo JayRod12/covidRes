@@ -260,10 +260,10 @@ class PatientProfile extends React.Component {
                   </Col>
                   <Col className="px-md-1" md="4">
                     <FormGroup>
-                      <label>Username</label>
+                      <label>Nickname</label>
                       <Input
                         defaultValue={this.state.data.name}
-                        placeholder="Username"
+                        placeholder="Nickname"
                         name="name"
                         type="text"
                       />
