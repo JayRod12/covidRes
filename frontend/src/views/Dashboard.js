@@ -317,16 +317,39 @@ class Dashboard extends React.Component {
     var date_today = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + tempDate.getDate() +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
     const AD= this.state.assignement_data.results.filter(item => item.start_date < date_today);
     const ADn =AD.filter(item => new Date(item.end_date)- new Date(date_today) >0);
-    console.log(ADn)
-
     const Machines_today_pk = ADn.map(item=>item.machine)
-
-    console.log(Machines_today_pk)
-
     const Machines_today= Machines_today_pk.map(item=> {return this.state.machine_data
       .results.find(element=>element.pk==item)})
 
-    console.log(Machines_today)
+    const machtodayLocations = Machines_today
+          .map(dataItem => dataItem.location) // get all media types
+          .filter((location, index, array) => array.indexOf(location) === index), // filter out duplicates
+
+        countstodayLocation = machtodayLocations
+    .     map(machineLoc => ({
+              type: machineLoc,
+              count: Machines_today.filter(item => item.location === machineLoc).length
+           }));
+
+    const machtodayTypes = Machines_today
+          .map(dataItem => dataItem.model_name) // get all media types
+          .filter((model_name, index, array) => array.indexOf(model_name) === index), // filter out duplicates
+
+        countstodayType = machtodayTypes
+    .     map(machineType => ({
+              type: machineType,
+              count: Machines_today.filter(item => item.model_name === machineType).length
+           }));
+
+    ///////////////////////////////////////////RESULT PER LOCATION:PLOT THIS///////////////////////
+    const label_machines_today_location = countstodayLocation.map(item => item.type)
+
+    const data_plot_machines_today_location = countstodayLocation.map(item => item.count)
+
+    const label_machines_today_type = countstodayType.map(item => item.type)
+
+    const data_plot_machines_today_type = countstodayType.map(item => item.count)
+    /////////////////////////////////////////////////////////////////////////////////
 
     const ourChartMachinesTotal = {
           data: canvas => {
