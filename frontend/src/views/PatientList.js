@@ -32,14 +32,14 @@ import {
 class PatientRow extends React.Component {
   render() {
     return (
-          <React.Fragment>
-            <tr>
-              <td><Link to={'/patient/'+this.props.pk}>{this.props.name}</Link></td>
-              <td className="text-center">{this.props.severity}</td>
-              <td className="text-center">{this.props.machine_assigned_model}</td>
-              <td>{this.props.admission_date}</td>
-            </tr>
-          </React.Fragment>
+      <React.Fragment>
+        <tr>
+          <td><Link to={'/patient/' + this.props.pk}>{this.props.name}</Link></td>
+          <td className="text-center">{this.props.severity}</td>
+          <td className="text-center">{this.props.machine_assigned_model}</td>
+          <td>{this.props.admission_date}</td>
+        </tr>
+      </React.Fragment>
     );
   }
 }
@@ -59,30 +59,30 @@ class PatientList extends React.Component {
   }
   componentDidMount() {
     fetch("rest/patients/")
-            .then(response => {
-                if (response.status > 400) {
-                  throw new Error(response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                this.setState(() => {
-                    return {
-                        data,
-                        loaded: true
-                    };
-                });
-            })
-            .catch(error => {
-              this.setState(() => {
-                return {
-                  loaded: true,
-                  placeholder: "Failed to load",
-                  error_message: "You don't have permission to view these patients.",
-                };
-              });
-            });
+      .then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        this.setState(() => {
+          return {
+            data,
+            loaded: true
+          };
+        });
+      })
+      .catch(error => {
+        this.setState(() => {
+          return {
+            loaded: true,
+            placeholder: "Failed to load",
+            error_message: "You don't have permission to view these patients.",
+          };
+        });
+      });
   };
   render() {
     if (!this.state.loaded) {
@@ -108,8 +108,8 @@ class PatientList extends React.Component {
           admission_date={prettifyDate(entry.admission_date)}
           severity={entry.severity}
           machine_assigned_model={entry.machine_assigned_model}
-          />
-        )
+        />
+      )
       );
     } else {
       patients = (
@@ -125,28 +125,6 @@ class PatientList extends React.Component {
               <Card>
                 <CardHeader>
                   <CardTitle tag="h4">Patients</CardTitle>
-                </CardHeader>
-                <CardBody>
-                  <Table className="tablesorter" responsive>
-                    <thead className="text-primary">
-                      <tr>
-                        <th>Name</th>
-                        <th className="text-center">Severity</th>
-                        <th className="text-center">Machine</th>
-                        <th>Admission date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {patients}
-                    </tbody>
-                  </Table>
-                </CardBody>
-              </Card>
-            </Col>
-            <Col md="12">
-              <Card className="card-plain">
-                <CardHeader>
-                  <CardTitle tag="h4">Patients on Plain Background</CardTitle>
                 </CardHeader>
                 <CardBody>
                   <Table className="tablesorter" responsive>

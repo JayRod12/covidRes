@@ -32,13 +32,13 @@ import {
 class MachineRow extends React.Component {
   render() {
     return (
-          <React.Fragment>
-            <tr>
-              <td><Link to={'/machine/'+this.props.pk}>{this.props.model_name}</Link></td>
-              <td>{this.props.location}</td>
-              <td className="text-center">{this.props.patient_assigned_name}</td>
-            </tr>
-          </React.Fragment>
+      <React.Fragment>
+        <tr>
+          <td><Link to={'/machine/' + this.props.pk}>{this.props.model_name}</Link></td>
+          <td>{this.props.location}</td>
+          <td className="text-center">{this.props.patient_assigned_name}</td>
+        </tr>
+      </React.Fragment>
     );
   }
 }
@@ -58,30 +58,30 @@ class MachineList extends React.Component {
   }
   componentDidMount() {
     fetch("rest/machines/")
-            .then(response => {
-                if (response.status > 400) {
-                  throw new Error(response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                this.setState(() => {
-                    return {
-                        data,
-                        loaded: true
-                    };
-                });
-            })
-            .catch(error => {
-              this.setState(() => {
-                return {
-                  loaded: true,
-                  placeholder: "Failed to load",
-                  error_message: "You don't have permission to view these machines.",
-                };
-              });
-            });
+      .then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        this.setState(() => {
+          return {
+            data,
+            loaded: true
+          };
+        });
+      })
+      .catch(error => {
+        this.setState(() => {
+          return {
+            loaded: true,
+            placeholder: "Failed to load",
+            error_message: "You don't have permission to view these machines.",
+          };
+        });
+      });
   };
   notify = place => {
     var color = Math.floor(Math.random() * 5 + 1);
@@ -145,8 +145,8 @@ class MachineList extends React.Component {
           model_name={entry.model_name}
           location={entry.location}
           patient_assigned_name={entry.patient_assigned_name}
-          />
-        )
+        />
+      )
       );
     } else {
       machines = (
@@ -162,27 +162,6 @@ class MachineList extends React.Component {
               <Card>
                 <CardHeader>
                   <CardTitle tag="h4">Machines</CardTitle>
-                </CardHeader>
-                <CardBody>
-                  <Table className="tablesorter" responsive>
-                    <thead className="text-primary">
-                      <tr>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th className="text-center">Patient</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {machines}
-                    </tbody>
-                  </Table>
-                </CardBody>
-              </Card>
-            </Col>
-            <Col md="12">
-              <Card className="card-plain">
-                <CardHeader>
-                  <CardTitle tag="h4">Machines on Plain Background</CardTitle>
                 </CardHeader>
                 <CardBody>
                   <Table className="tablesorter" responsive>
