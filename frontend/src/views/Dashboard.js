@@ -319,13 +319,18 @@ class Dashboard extends React.Component {
 
     var tempDate = new Date();
     var date_today = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + tempDate.getDate() + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
-    const AD = results.filter(item => item.start_date < date_today);
+    const AD = this.state.assignement_data.results.filter(item => new Date(item.start_date) - new Date(date_today) < 0);
     const ADn = AD.filter(item => new Date(item.end_date) - new Date(date_today) > 0);
     const Machines_today_pk = ADn.map(item => item.machine)
     const Machines_today = Machines_today_pk.map(item => {
       return this.state.machine_data
         .results.find(element => element.pk == item)
     })
+
+    console.log(date_today)
+    console.log(AD)
+    console.log(ADn)
+    console.log(Machines_today_pk)
 
     // const machtodayLocations = Machines_today
     //     .map(dataItem => dataItem.location) // get all media types
@@ -350,6 +355,7 @@ class Dashboard extends React.Component {
 
     const data_plot_machines_today_location = countstodayLocation.map(item => item.count)
 
+    console.log(this.state.assignement_data)
 
     const data_plot_machines_location_sub = data_plot_machines_location
       .map((item, index) => data_plot_machines_location[index] - data_plot_machines_today_location[index])
