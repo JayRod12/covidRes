@@ -36,7 +36,24 @@ import {
   Col
 } from "reactstrap";
 
+import $ from 'jquery';
+
 const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = $.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 class MachineRow extends React.Component {
   render() {
@@ -60,10 +77,27 @@ class MachineList extends React.Component {
     super(props);
     this.state = {
       data: [],
+      data_machinetype: [],
       loaded: false,
+      loaded_machinetype: false,
       placeholder: "Loading",
       error_message: "",
     };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+
+    fetch('/rest/machines/', {
+      method: 'POST',
+      body: JSON.stringify({
+          model: data.get('model')
+      }),
+      headers: {
+          "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+      }
+    })
   }
   componentDidMount() {
     fetch("rest/machines/")
@@ -77,7 +111,7 @@ class MachineList extends React.Component {
         console.log(data);
         this.setState(() => {
           return {
-            data,
+            data: data,
             loaded: true
           };
         });
@@ -91,51 +125,44 @@ class MachineList extends React.Component {
           };
         });
       });
-  };
-  notify = place => {
-    var color = Math.floor(Math.random() * 5 + 1);
-    var type;
-    switch (color) {
-      case 1:
-        type = "primary";
-        break;
-      case 2:
-        type = "success";
-        break;
-      case 3:
-        type = "danger";
-        break;
-      case 4:
-        type = "warning";
-        break;
-      case 5:
-        type = "info";
-        break;
-      default:
-        break;
-    }
-    var options = {};
-    options = {
-      place: place,
-      message: (
-        <div>
-          <div>
-            Welcome to <b>Black Dashboard React</b> - a beautiful freebie for
-            every web developer.
-          </div>
-        </div>
-      ),
-      type: type,
-      icon: "tim-icons icon-bell-55",
-      autoDismiss: 7
-    };
-    this.refs.notificationAlert.notificationAlert(options);
+      fetch("rest/machinetypes/")
+        .then(response => {
+          if (response.status > 400) {
+            throw new Error(response.status);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log(data);
+          this.setState(() => {
+            return {
+              loaded_machinetype: true,
+              data_machinetype: data,
+            };
+          });
+        })
+        .catch(error => {
+          this.setState(() => {
+            return {
+              loaded_machinetype: true,
+              placeholder: "Failed to load",
+              error_message: this.state.error_message + " You don't have permission to view these machines.",
+            };
+          });
+        });
   };
   render() {
     if (!this.state.loaded) {
       return (
         <CardHeader>
           <CardTitle tag="h4">Loading machines...</CardTitle>
+        </CardHeader>
+      );
+    }
+    if (!this.state.loaded_machinetype) {
+      return (
+        <CardHeader>
+          <CardTitle tag="h4">Loading machinetypes...</CardTitle>
         </CardHeader>
       );
     }
@@ -163,6 +190,18 @@ class MachineList extends React.Component {
         <CardText>No machines</CardText>
       );
     }
+    let machinetypes;
+    const results_machinetype = IS_DEV ? this.state.data_machinetype.results : this.state.data_machinetype;
+    if (this.state.error_message.length > 0) {
+      machinetypes = (
+        <div></div>
+      );
+    } else {
+      machinetypes = results_machinetype.map((entry, index) => (
+        <option key={entry.pk} value={entry.pk}>{entry.name}</option>
+      )
+      );
+    }
     console.log(machines);
     return (
       <>
@@ -178,11 +217,9 @@ class MachineList extends React.Component {
                     <Row>
                       <Col className="px-md-1" md={{ span: 2, offset: 2 }}>
                         <FormGroup>
-                          <Input
-                            placeholder="Model"
-                            name="name"
-                            type="text"
-                          />
+                          <Input type="select" name="model">
+                            {machinetypes}
+                          </Input>
                         </FormGroup>
                       </Col>
                       <Col className="px-md-1" md={{ span: 2, offset: 0 }}>

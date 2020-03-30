@@ -36,7 +36,24 @@ import {
   Col
 } from "reactstrap";
 
+import $ from 'jquery';
+
 const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = $.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 class PatientRow extends React.Component {
   render() {
@@ -64,6 +81,7 @@ class PatientList extends React.Component {
       loaded: false,
       placeholder: "Loading",
       error_message: "",
+      severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"]
     };
   }
   componentDidMount() {
@@ -144,21 +162,17 @@ class PatientList extends React.Component {
                         <FormGroup>
                           <Input
                             placeholder="Nickname"
-                            name="model"
+                            name="name"
                             type="text"
                           />
                         </FormGroup>
                       </Col>
                       <Col className="px-md-1" md="1">
                         <FormGroup>
-                          <Input type="select" name="patient" id="receiverSelect">
-                            <option key={1} value={0}>Healed</option>
-                            <option key={2} value={1}>Low</option>
-                            <option key={3} value={2}>Moderate</option>
-                            <option key={4} value={3}>Medium</option>
-                            <option key={5} value={4}>High</option>
-                            <option key={6} value={5}>Very high</option>
-                            <option key={7} value={6}>Dead</option>
+                          <Input type="select" name="severity">
+                            {this.state.severity_list.map((val, i) => {return (
+                              <option key={i+1} value={i}>{val}</option>
+                            )})}
                           </Input>
                         </FormGroup>
                       </Col>
