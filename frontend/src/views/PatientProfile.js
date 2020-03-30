@@ -105,7 +105,7 @@ class PatientProfile extends React.Component {
       graph_xy: this.state.graph_xy.concat({x: new Date().valueOf(), y: parseInt(data.get('severity'))})
     })
     if (this.state.data.user_pk !== null) {
-      fetch('/rest/users/'+this.state.data.pk+"/", {
+      fetch('/rest/users/'+this.state.data.user_pk+"/", {
         method: 'PATCH',
         body: JSON.stringify({
             first_name: data.get('first_name'),
