@@ -4,6 +4,8 @@ from django.urls import reverse
 from datetime import datetime
 from django.contrib.auth.models import AbstractUser
 
+import random
+
 # Users
 class Role(models.Model):
     name = models.CharField(max_length=100)
@@ -18,14 +20,15 @@ class Role(models.Model):
     	return self.name
 
 class User(AbstractUser):
-    role = models.ForeignKey(Role, null=True, on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, null=True, blank=True, on_delete=models.CASCADE)
     def __str__(self):
     	return str(self.username)
 
 # Manage
 class Patient(models.Model):
     name = models.CharField(max_length=100)
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    default_pass = models.CharField(max_length=20, editable=False)
     SEVERITY = (
     	(0, 'Healed'),
         (1, 'Low'),
@@ -50,6 +53,16 @@ class Patient(models.Model):
     def get_absolute_url(self):
         return reverse('patient', kwargs={'pk': self.pk})
     def save(self, *args, **kwargs):
+        if self.user is None:
+            random.seed()
+            self.default_pass = '_'.join([random.choice("ant bee cow dog cat pet dot map set pig pen mat let wet".split(" ")) for n in range(4)])
+            self.user = User.objects.create(username=self.name.split(" ")[0].lower()+str(self.pk), password = self.default_pass, email="")
+            self.user.save()
+        if self.user.role is None:
+            patient_role = Role.objects.filter(name="Patient")
+            if patient_role:
+                self.user.role = patient_role.first()
+            self.user.save()
         if self.machine_assigned is None:
             machine_pk = 0
         else:
@@ -63,11 +76,10 @@ class Patient(models.Model):
             self.history_machine_y += ', ' + str(machine_pk)
         if len(self.history_severity_y)==0:
             self.history_severity_x = time_str
-            self.history_severity_y = str(machine_pk)
+            self.history_severity_y = str(self.severity)
         elif not self.severity == int(self.history_severity_y.split(', ')[-1]):
             self.history_severity_x += ', ' + time_str
             self.history_severity_y += ', ' + str(self.severity)
-        print("HERE")
         super(Patient, self).save(*args, **kwargs)
     def get_history_severity(self):
         xx = [datetime.strptime(a, "%Y-%m-%d %H:%M:%S.%f%z") for a in self.history_severity_x.split(', ')]
@@ -91,7 +103,7 @@ class Machine(models.Model):
     model = models.ForeignKey(MachineType, on_delete=models.CASCADE)
     location = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    patient_assigned = models.ForeignKey(Patient, null=True, on_delete=models.SET_NULL)
+    patient_assigned = models.ForeignKey(Patient, null=True, blank=True, on_delete=models.SET_NULL)
     def __str__(self):
     	return self.model.name + ' #' + str(self.pk)
     def get_absolute_url(self):

@@ -236,7 +236,7 @@ class Ventilators extends React.Component {
 
     _actuallyCommitPendingChange = (assignmentID, patient, machine, start_date, end_date) => {
         fetch('rest/assignment_tasks/' + assignmentID + "/", {
-            method: 'PUT',
+            method: 'PATCH',
             body: JSON.stringify({
                 patient: patient,
                 machine: machine,

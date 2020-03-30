@@ -105,7 +105,7 @@ class PatientProfile extends React.Component {
       graph_xy: this.state.graph_xy.concat({x: new Date().valueOf(), y: parseInt(data.get('severity'))})
     })
     if (this.state.data.user_pk !== null) {
-      fetch('/rest/users/'+this.state.data.pk+"/", {
+      fetch('/rest/users/'+this.state.data.user_pk+"/", {
         method: 'PATCH',
         body: JSON.stringify({
             first_name: data.get('first_name'),
@@ -260,10 +260,10 @@ class PatientProfile extends React.Component {
                   </Col>
                   <Col className="px-md-1" md="4">
                     <FormGroup>
-                      <label>Username</label>
+                      <label>Nickname</label>
                       <Input
                         defaultValue={this.state.data.name}
-                        placeholder="Username"
+                        placeholder="Nickname"
                         name="name"
                         type="text"
                       />
@@ -330,22 +330,22 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                    <Col md="4">
-                      <label>Assigned Machine</label>
-                      <CardBody>
-                        {this.state.data.machine_assigned === null
-                          ?
-                          <Row><h3>None</h3></Row>
-                          :
-                          <div>
-                            <Row>
-                              <h3><Link to={'/machine/'+this.state.data.machine_assigned}>{this.state.data.machine_assigned_model}</Link></h3>
-                              <small>ID: {this.state.data.machine_assigned}</small>
-                            </Row>
-                          </div>
-                        }
-                      </CardBody>
-                    </Col>
+                  <Col md="4">
+                    <label>Assigned Machine</label>
+                    <CardBody>
+                      {this.state.data.machine_assigned === null
+                        ?
+                        <Row><h3>None</h3></Row>
+                        :
+                        <div>
+                          <Row>
+                            <h3><Link to={'/machine/'+this.state.data.machine_assigned}>{this.state.data.machine_assigned_model}</Link></h3>
+                            <small>ID: {this.state.data.machine_assigned}</small>
+                          </Row>
+                        </div>
+                      }
+                    </CardBody>
+                  </Col>
                 </Row>
                 <Button className="btn-fill" color="primary" type="submit" value="Submit">
                   Save

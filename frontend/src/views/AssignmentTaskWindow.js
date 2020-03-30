@@ -11,6 +11,8 @@ import {
   Card,
   CardHeader,
   CardBody,
+  CardFooter,
+  CardText,
   CardTitle,
   Row,
   Col
