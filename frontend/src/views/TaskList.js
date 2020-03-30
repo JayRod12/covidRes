@@ -135,15 +135,14 @@ class TaskList extends React.Component {
       );
     } else if (this.state.data.results.length > 0) {
       tasks = this.state.data.results.map((props, index) => (
-        <React.Fragment>
-          <Button
-            block
-            color={props.bool_install == 0 ? "primary" : "info"}
-            onClick={() => this.pop(props)}
-          >
-            {props.machine_model} - {props.patient_name}
-          </Button>
-        </React.Fragment>
+        <Button
+          key = {props.pk}
+          block
+          color={props.bool_install == 0 ? "primary" : "info"}
+          onClick={() => this.pop(props)}
+        >
+          {props.machine_model} - {props.patient_name}
+        </Button>
         )
       );
     } else {
