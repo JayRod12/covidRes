@@ -45,6 +45,18 @@ module.exports = {
         ]
       },
       {
+        test: /\.csv$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'files/'
+            }
+          }
+        ]
+      },
+      {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
         use: [
           {
