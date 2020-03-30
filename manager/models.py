@@ -63,7 +63,7 @@ class Patient(models.Model):
             self.history_machine_y += ', ' + str(machine_pk)
         if len(self.history_severity_y)==0:
             self.history_severity_x = time_str
-            self.history_severity_y = str(machine_pk)
+            self.history_severity_y = str(self.severity)
         elif not self.severity == int(self.history_severity_y.split(', ')[-1]):
             self.history_severity_x += ', ' + time_str
             self.history_severity_y += ', ' + str(self.severity)
