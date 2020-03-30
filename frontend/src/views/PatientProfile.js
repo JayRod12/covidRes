@@ -15,10 +15,11 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
+import { Line, Bar, Scatter } from "react-chartjs-2";
 
 // reactstrap components
 import {
@@ -37,6 +38,8 @@ import {
   Row,
   Col
 } from "reactstrap";
+
+import moment from 'moment'
 
 import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
 
@@ -69,6 +72,7 @@ class PatientProfile extends React.Component {
       loaded_tasks: false,
       placeholder_tasks: "Loading",
       error_message_tasks: "",
+      graph_xy: []
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -87,6 +91,9 @@ class PatientProfile extends React.Component {
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
       }
+    })
+    this.setState({
+      graph_xy: this.state.graph_xy.concat({x: new Date().valueOf(), y: parseInt(data.get('severity'))})
     })
     if (this.state.data.user_pk !== null) {
       fetch('/rest/users/'+this.state.data.pk+"/", {
@@ -113,8 +120,14 @@ class PatientProfile extends React.Component {
             .then(data => {
                 console.log(data);
                 this.setState(() => {
+                    const xx = data.history_severity_x.split(", ")
+                    const yy = data.history_severity_y.split(", ")
                     return {
                         data: data,
+                        graph_xy: xx.map((xs, i) => {return {
+                          x: parseInt(moment(xs).valueOf()),
+                          y: parseInt(yy[i])
+                        }}),
                         loaded: true
                     };
                 });
@@ -328,6 +341,111 @@ class PatientProfile extends React.Component {
                   Save
                 </Button>
               </Form>
+            </CardBody>
+          </Card>
+          <Card>
+            <CardHeader>
+              <h5 className="title">Severity evolution</h5>
+            </CardHeader>
+            <CardBody>
+              <Scatter
+                data={
+                  canvas => {
+                    let ctx = canvas.getContext("2d");
+
+                    let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
+
+                    gradientStroke.addColorStop(1, "rgba(29,140,248,0.2)");
+                    gradientStroke.addColorStop(0.4, "rgba(29,140,248,0.0)");
+                    gradientStroke.addColorStop(0, "rgba(29,140,248,0)"); //blue colors
+
+                    return {
+                      labels: this.state.graph_xy.map((xy) => {return new Date(xy['x']).toISOString()}),
+                      datasets: [
+                        {
+                          label: "Data",
+                          fill: true,
+                          showLine: true,
+                          lineTension: 0,
+                          backgroundColor: gradientStroke,
+                          borderColor: "#1f8ef1",
+                          borderWidth: 2,
+                          borderDash: [],
+                          borderDashOffset: 0.0,
+                          pointBackgroundColor: "#1f8ef1",
+                          pointBorderColor: "rgba(255,255,255,0)",
+                          pointHoverBackgroundColor: "#1f8ef1",
+                          pointBorderWidth: 20,
+                          pointHoverRadius: 4,
+                          pointHoverBorderWidth: 15,
+                          pointRadius: 4,
+                          data: this.state.graph_xy
+                        }
+                      ]
+                    };
+                  }
+                }
+                options={{
+                  maintainAspectRatio: false,
+                  legend: {
+                    display: false
+                  },
+                  tooltips: {
+                    backgroundColor: "#f5f5f5",
+                    titleFontColor: "#333",
+                    bodyFontColor: "#666",
+                    bodySpacing: 4,
+                    xPadding: 12,
+                    mode: "nearest",
+                    intersect: 0,
+                    position: "nearest",
+                    callbacks: {
+                        title: function (tooltipItem, data) {
+                            return "Date: " + data.labels[tooltipItem[0].index];
+                        },
+                        label: function(tooltipItems, data) {
+                            return "Severity: " + tooltipItems.yLabel;
+                        },
+                        footer: function (tooltipItem, data) { return "..."; }
+                    }
+                  },
+                  responsive: true,
+                  scales: {
+                    yAxes: [
+                      {
+                        barPercentage: 1.6,
+                        gridLines: {
+                          drawBorder: false,
+                          color: "rgba(29,140,248,0.0)",
+                          zeroLineColor: "transparent"
+                        },
+                        ticks: {
+                          suggestedMin: 0,
+                          suggestedMax: 6,
+                          padding: 2,
+                          fontColor: "#9a9a9a"
+                        }
+                      }
+                    ],
+                    xAxes: [
+                      {
+                        barPercentage: 1.6,
+                        gridLines: {
+                          display: false,
+                          drawBorder: false,
+                          color: "rgba(29,140,248,0.1)",
+                          zeroLineColor: "transparent"
+                        },
+                        ticks: {
+                          display: false,
+                          padding: 20,
+                          fontColor: "#9a9a9a"
+                        }
+                      }
+                    ]
+                  }
+                }}
+              />
             </CardBody>
           </Card>
         </Col>
