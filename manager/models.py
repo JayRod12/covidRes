@@ -50,24 +50,24 @@ class Patient(models.Model):
     def get_absolute_url(self):
         return reverse('patient', kwargs={'pk': self.pk})
     def save(self, *args, **kwargs):
-        if self.machine is None:
+        if self.machine_assigned is None:
             machine_pk = 0
         else:
             machine_pk = self.machine_assigned.pk
         time_str = str(timezone.now())[:-3] + str(timezone.now())[-2:]
         if len(self.history_machine_y)==0:
             self.history_machine_x = time_str
-            self.history_machine_y = machine_pk
+            self.history_machine_y = str(machine_pk)
         elif not machine_pk == int(self.history_machine_y.split(', ')[-1]):
             self.history_machine_x += ', ' + time_str
-            self.history_machine_y += ', ' + machine_pk
+            self.history_machine_y += ', ' + str(machine_pk)
         if len(self.history_severity_y)==0:
             self.history_severity_x = time_str
-            self.history_severity_y = machine_pk
+            self.history_severity_y = str(machine_pk)
         elif not machine_pk == int(self.history_severity_y.split(', ')[-1]):
             self.history_severity_x += ', ' + time_str
-            self.history_severity_y += ', ' + machine_pk
-        super(AssignmentTask, self).save(*args, **kwargs)
+            self.history_severity_y += ', ' + str(machine_pk)
+        super(Patient, self).save(*args, **kwargs)
     def get_history_severity(self):
         xx = [datetime.strptime(a, "%Y-%m-%d %H:%M:%S.%f%z") for a in self.history_severity_x.split(', ')]
         yy = [int(a) for a in self.history_severity_y.split(', ')]

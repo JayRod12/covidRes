@@ -40,6 +40,23 @@ import {
 
 import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
 
+import $ from 'jquery';
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = $.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 class PatientProfile extends React.Component {
   constructor(props) {
     super(props);
@@ -62,13 +79,27 @@ class PatientProfile extends React.Component {
     fetch('/rest/patients/'+this.state.data.pk+"/", {
       method: 'PATCH',
       body: JSON.stringify({
+          name: data.get('name'),
+          severity: data.get('severity'),
           location: data.get('location'),
           description: data.get('description')
       }),
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
       }
-    }).then(response => {console.log(response)});
+    })
+    if (this.state.data.user_pk !== null) {
+      fetch('/rest/users/'+this.state.data.pk+"/", {
+        method: 'PATCH',
+        body: JSON.stringify({
+            first_name: data.get('first_name'),
+            last_name: data.get('last_name')
+        }),
+        headers: {
+            "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+        }
+      })
+    }
   }
   componentDidMount() {
     const { pk } = this.props.match.params
@@ -190,7 +221,7 @@ class PatientProfile extends React.Component {
               <h5 className="title">Patient Profile</h5>
             </CardHeader>
             <CardBody>
-              <Form>
+              <Form onSubmit={this.handleSubmit}>
                 <Row>
                   <Col className="pr-md-1" md="1">
                     <FormGroup>
@@ -199,6 +230,7 @@ class PatientProfile extends React.Component {
                         defaultValue={this.state.data.pk}
                         disabled
                         placeholder="ID"
+                        name="pk"
                         type="text"
                       />
                     </FormGroup>
@@ -209,6 +241,7 @@ class PatientProfile extends React.Component {
                       <Input
                         defaultValue={this.state.data.name}
                         placeholder="Username"
+                        name="name"
                         type="text"
                       />
                     </FormGroup>
@@ -219,6 +252,7 @@ class PatientProfile extends React.Component {
                       <Input
                         defaultValue={this.state.data.severity}
                         placeholder="Severity"
+                        name="severity"
                         type="number"
                       />
                     </FormGroup>
@@ -229,6 +263,7 @@ class PatientProfile extends React.Component {
                       <Input
                         defaultValue={this.state.data.location}
                         placeholder="Location"
+                        name="location"
                         type="text"
                       />
                     </FormGroup>
@@ -241,6 +276,7 @@ class PatientProfile extends React.Component {
                       <Input
                         defaultValue={this.state.data.first_name}
                         placeholder="First Name"
+                        name="first_name"
                         type="text"
                       />
                     </FormGroup>
@@ -251,6 +287,7 @@ class PatientProfile extends React.Component {
                       <Input
                         defaultValue={this.state.data.last_name}
                         placeholder="Last Name"
+                        name="last_name"
                         type="text"
                       />
                     </FormGroup>
@@ -264,6 +301,7 @@ class PatientProfile extends React.Component {
                         cols="80"
                         defaultValue={this.state.data.description}
                         placeholder="Patient description"
+                        name="description"
                         rows="6"
                         type="textarea"
                       />
