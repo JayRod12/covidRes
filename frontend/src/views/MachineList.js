@@ -213,7 +213,7 @@ class MachineList extends React.Component {
                   <Col className="px-md-1" md="4">
                     <CardTitle tag="h4">Machines</CardTitle>
                   </Col>
-                  <Form>
+                  <Form onSubmit={this.handleSubmit}>
                     <Row>
                       <Col className="px-md-1" md={{ span: 2, offset: 2 }}>
                         <FormGroup>

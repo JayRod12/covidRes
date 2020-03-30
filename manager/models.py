@@ -102,7 +102,7 @@ class MachineType(models.Model):
 
 class Machine(models.Model):
     model = models.ForeignKey(MachineType, on_delete=models.CASCADE)
-    location = models.CharField(max_length=100)
+    location = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
     patient_assigned = models.ForeignKey(Patient, null=True, blank=True, on_delete=models.SET_NULL)
     def __str__(self):
