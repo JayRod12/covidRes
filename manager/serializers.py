@@ -20,7 +20,7 @@ class PatientDetailedSerializer(serializers.ModelSerializer):
 	machine_assigned_model = serializers.CharField(source='machine_assigned.model.name', allow_null=True, read_only=True)
 	class Meta:
 		model = Patient
-		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'description', 'user_pk', 'role', 'username', 'first_name', 'last_name')
+		fields = ('pk', 'name', 'severity', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'description', 'user_pk', 'role', 'username', 'first_name', 'last_name', 'history_severity_x', 'history_severity_y')
 
 class MachineTypeSerializer(serializers.ModelSerializer):
 	class Meta:
