@@ -321,21 +321,21 @@ class Dashboard extends React.Component {
     const Machines_today= Machines_today_pk.map(item=> {return this.state.machine_data
       .results.find(element=>element.pk==item)})
 
-    const machtodayLocations = Machines_today
-          .map(dataItem => dataItem.location) // get all media types
-          .filter((location, index, array) => array.indexOf(location) === index), // filter out duplicates
+   // const machtodayLocations = Machines_today
+     //     .map(dataItem => dataItem.location) // get all media types
+       //   .filter((location, index, array) => array.indexOf(location) === index), // filter out duplicates
 
-        countstodayLocation = machtodayLocations
+
+    const  countstodayLocation = machLocations
     .     map(machineLoc => ({
               type: machineLoc,
               count: Machines_today.filter(item => item.location === machineLoc).length
            }));
 
-    const machtodayTypes = Machines_today
-          .map(dataItem => dataItem.model_name) // get all media types
-          .filter((model_name, index, array) => array.indexOf(model_name) === index), // filter out duplicates
+    console.log(countstodayLocation )
 
-        countstodayType = machtodayTypes
+ 
+    const    countstodayType = machTypes
     .     map(machineType => ({
               type: machineType,
               count: Machines_today.filter(item => item.model_name === machineType).length
@@ -347,17 +347,16 @@ class Dashboard extends React.Component {
     const data_plot_machines_today_location = countstodayLocation.map(item => item.count)
 
 
-    const data_plot_machines_location_sub = data_plot_machines_location
-    .map(item=> {data_plot_machines_today_location.map(it=> item-it)})
-
-    console.log(data_plot_machines_today_location)
-    console.log(data_plot_machines_location_sub)
-
-
+    const data_plot_machines_location_sub =  data_plot_machines_location
+    .map((item,index)=>data_plot_machines_location[index]- data_plot_machines_today_location[index])
 
     const label_machines_today_type = countstodayType.map(item => item.type)
 
     const data_plot_machines_today_type = countstodayType.map(item => item.count)
+
+    const data_plot_machines_type_sub =  data_plot_machines
+    .map((item,index)=>data_plot_machines[index]- data_plot_machines_today_type[index])
+
     /////////////////////////////////////////////////////////////////////////////////
 
     const ourChartMachinesTotal = {
@@ -370,10 +369,31 @@ class Dashboard extends React.Component {
             gradientStroke.addColorStop(0.4, "rgba(72,72,176,0.0)"); //purple colors
             gradientStroke.addColorStop(0, "rgba(119,52,169,0)"); //purple colors
 
+            const arbitraryStackkey2= "stack1";
+
             return {
               labels: label_machines,
               datasets: [
                 {
+                  stack: arbitraryStackkey2,
+                  label: "Number of machines in use",
+                  fill: true,
+                  backgroundColor: "#d048b6",
+                  borderColor: "#d048b6",
+                  borderWidth: 2,
+                  borderDash: [],
+                  borderDashOffset: 0.0,
+                  pointBackgroundColor: "#00d6b4",
+                  pointBorderColor: "rgba(255,255,255,0)",
+                  pointHoverBackgroundColor: "#00d6b4",
+                  pointBorderWidth: 20,
+                  pointHoverRadius: 4,
+                  pointHoverBorderWidth: 15,
+                  pointRadius: 4,
+                  data: data_plot_machines_today_type,
+                },
+                {
+                  stack: arbitraryStackkey2,
                   label: "Number of machines",
                   fill: true,
                   backgroundColor: gradientStroke,
@@ -388,7 +408,7 @@ class Dashboard extends React.Component {
                   pointHoverRadius: 4,
                   pointHoverBorderWidth: 15,
                   pointRadius: 4,
-                  data: data_plot_machines,
+                  data: data_plot_machines_type_sub,
                 }
               ]
             };
@@ -463,9 +483,9 @@ class Dashboard extends React.Component {
               datasets: [
                  {
                   stack:arbitraryStackkey,
-                  label: "Number of machines today",
+                  label: "Number of machines in use today",
                   fill: true,
-                  backgroundColor: gradientStroke,
+                  backgroundColor: "#1f8ef1",
                   borderColor: "#1f8ef1",
                   borderWidth: 2,
                   borderDash: [],
@@ -481,7 +501,7 @@ class Dashboard extends React.Component {
                 },
                 {
                   stack: arbitraryStackkey,
-                  label: "Number of machines total",
+                  label: "Number of machines not in use",
                   fill: true,
                   backgroundColor: gradientStroke,
                   borderColor: "#1f8ef1",
