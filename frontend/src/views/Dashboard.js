@@ -54,6 +54,8 @@ import {
   chartExample4
 } from "variables/charts.js";
 
+const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
@@ -61,12 +63,12 @@ class Dashboard extends React.Component {
       machine_data: [],
       assignement_data: [],
       //nb_of_machines : [],
-      loaded:false,
-      placeholder: "Loading",      
+      loaded: false,
+      placeholder: "Loading",
       error_message: "",
       bigChartData: "data1",
       data: { datasets: [], labels: [], total: 0 },
-//      date: '',
+      //      date: '',
       //plotmachine: { datasets: [], labels: [], total: 0 }
     }
     this.updateData = this.updateData.bind(this);
@@ -85,62 +87,62 @@ class Dashboard extends React.Component {
       complete: this.updateData
     });
     fetch("rest/machines/")
-        .then(response => {
-            if (response.status > 400) {
-              throw new Error(response.status);
-            }
-            return response.json();
-        })
-        .then(machine_data => {
-            console.log(machine_data);
-            this.setState(() => {
-                return {
-                    machine_data,
-                    loaded: true
-                };
-            });
-        })
-        .catch(error => {
-          this.setState(() => {
-            return {
-              loaded: true,
-              placeholder: "Failed to load",
-              error_message: "You don't have permission to view these machines.",
-            };
-          });
+      .then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(machine_data => {
+        console.log(machine_data);
+        this.setState(() => {
+          return {
+            machine_data,
+            loaded: true
+          };
         });
+      })
+      .catch(error => {
+        this.setState(() => {
+          return {
+            loaded: true,
+            placeholder: "Failed to load",
+            error_message: "You don't have permission to view these machines.",
+          };
+        });
+      });
 
-        // fetch machine assignements 
+    // fetch machine assignements 
     fetch("rest/assignment_tasks/")
-    .then(response => {
-            if (response.status > 400) {
-              throw new Error(response.status);
-            }
-            return response.json();
-        })
-        .then(assignement_data => {
-            console.log(assignement_data);
-            this.setState(() => {
-                return {
-                    assignement_data,
-                    loaded: true
-                };
-            });
-        })
-        .catch(error => {
-          this.setState(() => {
-            return {
-              loaded: true,
-              placeholder: "Failed to load",
-              error_message: "You don't have permission to view these assignements.",
-            };
-          });
+      .then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(assignement_data => {
+        console.log(assignement_data);
+        this.setState(() => {
+          return {
+            assignement_data,
+            loaded: true
+          };
         });
+      })
+      .catch(error => {
+        this.setState(() => {
+          return {
+            loaded: true,
+            placeholder: "Failed to load",
+            error_message: "You don't have permission to view these assignements.",
+          };
+        });
+      });
 
     var tempDate = new Date();
-    var date = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + tempDate.getDate() +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
+    var date = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + tempDate.getDate() + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
     console.log(date);
-   
+
     {/*var that = this;
     var date = new Date().getDate(); //Current Date
     var month = new Date().getMonth() + 1; //Current Month
@@ -154,7 +156,7 @@ class Dashboard extends React.Component {
         date + '/' + month + '/' + year + ' ' + hours + ':' + min + ':' + sec,
     });
     console.log(this.state); */}
-                
+
 
   }
 
@@ -256,88 +258,92 @@ class Dashboard extends React.Component {
       }
     };
 
-// GETTING DATA FOR  MACHINES PER TYPE AVAILABLE PLOT
-///////////////////////////////////////////////////////////////////////////////////////////
+    // GETTING DATA FOR  MACHINES PER TYPE AVAILABLE PLOT
+    ///////////////////////////////////////////////////////////////////////////////////////////
 
-    if(this.state.machine_data.length == 0 ) return (<div>Loading</div>);
+    if (this.state.machine_data.length == 0) return (<div>Loading</div>);
     //const hamilton = this.state.machine_data.results.filter(item => item.model_name === 'Hamilton');
     //const hamiltonCount = hamilton.length;
 
+    const results = IS_DEV ? this.state.machine_data.results : this.state.machine_data;
+    const assignmentResults = IS_DEV ? this.state.assignement_data.results : this.state.assignement_data;
 
-    const machTypes = this.state.machine_data.results
-          .map(dataItem => dataItem.model_name) // get all media types
-          .filter((model_name, index, array) => array.indexOf(model_name) === index), // filter out duplicates
+    const machTypes = results
+      .map(dataItem => dataItem.model_name) // get all media types
+      .filter((model_name, index, array) => array.indexOf(model_name) === index), // filter out duplicates
 
-        counts = machTypes
-    .     map(machineType => ({
-              type: machineType,
-              count: this.state.machine_data.results.filter(item => item.model_name === machineType).length
-           }));
+      counts = machTypes
+        .map(machineType => ({
+          type: machineType,
+          count: results.filter(item => item.model_name === machineType).length
+        }));
 
     const label_machines = counts.map(item => item.type)
 
     const data_plot_machines = counts.map(item => item.count)
 
-    const total_machines = data_plot_machines.reduce((result,number)=>result+number)
+    const total_machines = data_plot_machines.reduce((result, number) => result + number)
 
-    
-/////////////////////////////////////////////////////////////////////////////
-// GETTING DATA FOR  MACHINES PER LOCATION AVAILABLE PLOT
-///////////////////////////////////////////////////////////////////////////////////////////
-  
-    if(this.state.machine_data.length == 0 ) return (<div>Loading</div>);
+
+    /////////////////////////////////////////////////////////////////////////////
+    // GETTING DATA FOR  MACHINES PER LOCATION AVAILABLE PLOT
+    ///////////////////////////////////////////////////////////////////////////////////////////
+
+    if (this.state.machine_data.length == 0) return (<div>Loading</div>);
 
     console.log(this.state.machine_data);
 
-    const FloorLoc = this.state.machine_data.results.filter(item => item.location === 'First floor');
+    const FloorLoc = results.filter(item => item.location === 'First floor');
     const Floorcount = FloorLoc.length;
 
     console.log(FloorLoc)
     console.log(Floorcount)
 
-    const machLocations = this.state.machine_data.results
-          .map(dataItem => dataItem.location) // get all media types
-          .filter((location, index, array) => array.indexOf(location) === index), // filter out duplicates
+    const machLocations = results
+      .map(dataItem => dataItem.location) // get all media types
+      .filter((location, index, array) => array.indexOf(location) === index), // filter out duplicates
 
-        countsLocation = machLocations
-    .     map(machineLoc => ({
-              type: machineLoc,
-              count: this.state.machine_data.results.filter(item => item.location === machineLoc).length
-           }));
+      countsLocation = machLocations
+        .map(machineLoc => ({
+          type: machineLoc,
+          count: results.filter(item => item.location === machineLoc).length
+        }));
 
     const label_machines_location = countsLocation.map(item => item.type)
 
     const data_plot_machines_location = countsLocation.map(item => item.count)
 
-/////////////////////////////////////////////////////////////////////////////
- ///////////////////////// ASSIGNEMENTS ON TODAY per location
-    if(this.state.assignement_data.length == 0 ) return (<div>Loading</div>);
-   
+    /////////////////////////////////////////////////////////////////////////////
+    ///////////////////////// ASSIGNEMENTS ON TODAY per location
+    if (this.state.assignement_data.length == 0) return (<div>Loading</div>);
+
     var tempDate = new Date();
-    var date_today = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + tempDate.getDate() +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
-    const AD= this.state.assignement_data.results.filter(item => item.start_date < date_today);
-    const ADn =AD.filter(item => new Date(item.end_date)- new Date(date_today) >0);
-    const Machines_today_pk = ADn.map(item=>item.machine)
-    const Machines_today= Machines_today_pk.map(item=> {return this.state.machine_data
-      .results.find(element=>element.pk==item)})
+    var date_today = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + tempDate.getDate() + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
+    const AD = results.filter(item => item.start_date < date_today);
+    const ADn = AD.filter(item => new Date(item.end_date) - new Date(date_today) > 0);
+    const Machines_today_pk = ADn.map(item => item.machine)
+    const Machines_today = Machines_today_pk.map(item => {
+      return this.state.machine_data
+        .results.find(element => element.pk == item)
+    })
 
-   // const machtodayLocations = Machines_today
-     //     .map(dataItem => dataItem.location) // get all media types
-       //   .filter((location, index, array) => array.indexOf(location) === index), // filter out duplicates
+    // const machtodayLocations = Machines_today
+    //     .map(dataItem => dataItem.location) // get all media types
+    //   .filter((location, index, array) => array.indexOf(location) === index), // filter out duplicates
 
 
-    const  countstodayLocation = machLocations
-    .     map(machineLoc => ({
-              type: machineLoc,
-              count: Machines_today.filter(item => item.location === machineLoc).length
-           }));
+    const countstodayLocation = machLocations
+      .map(machineLoc => ({
+        type: machineLoc,
+        count: Machines_today.filter(item => item.location === machineLoc).length
+      }));
 
- 
-    const    countstodayType = machTypes
-    .     map(machineType => ({
-              type: machineType,
-              count: Machines_today.filter(item => item.model_name === machineType).length
-           }));
+
+    const countstodayType = machTypes
+      .map(machineType => ({
+        type: machineType,
+        count: Machines_today.filter(item => item.model_name === machineType).length
+      }));
 
     ///////////////////////////////////////////RESULT PER LOCATION:PLOT THIS///////////////////////
     const label_machines_today_location = countstodayLocation.map(item => item.type)
@@ -345,280 +351,280 @@ class Dashboard extends React.Component {
     const data_plot_machines_today_location = countstodayLocation.map(item => item.count)
 
 
-    const data_plot_machines_location_sub =  data_plot_machines_location
-    .map((item,index)=>data_plot_machines_location[index]- data_plot_machines_today_location[index])
+    const data_plot_machines_location_sub = data_plot_machines_location
+      .map((item, index) => data_plot_machines_location[index] - data_plot_machines_today_location[index])
 
     const label_machines_today_type = countstodayType.map(item => item.type)
 
     const data_plot_machines_today_type = countstodayType.map(item => item.count)
 
-    const data_plot_machines_type_sub =  data_plot_machines
-    .map((item,index)=>data_plot_machines[index]- data_plot_machines_today_type[index])
+    const data_plot_machines_type_sub = data_plot_machines
+      .map((item, index) => data_plot_machines[index] - data_plot_machines_today_type[index])
 
     /////////////////////////////////////////////////////////////////////////////////
 
     const ourChartMachinesTotal = {
-          data: canvas => {
-            let ctx = canvas.getContext("2d");
+      data: canvas => {
+        let ctx = canvas.getContext("2d");
 
-            let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
+        let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
 
-            gradientStroke.addColorStop(1, "rgba(72,72,176,0.1)");
-            gradientStroke.addColorStop(0.4, "rgba(72,72,176,0.0)"); //purple colors
-            gradientStroke.addColorStop(0, "rgba(119,52,169,0)"); //purple colors
+        gradientStroke.addColorStop(1, "rgba(72,72,176,0.1)");
+        gradientStroke.addColorStop(0.4, "rgba(72,72,176,0.0)"); //purple colors
+        gradientStroke.addColorStop(0, "rgba(119,52,169,0)"); //purple colors
 
-            const arbitraryStackkey2= "stack1";
+        const arbitraryStackkey2 = "stack1";
 
-            return {
-              labels: label_machines,
-              datasets: [
-                {          
-                  stack: arbitraryStackkey2,
-                  label: "In use",
-                  fill: true,
-                  backgroundColor: "#d048b6",
-                  borderColor: "#d048b6",
-                  borderWidth: 2,
-                  borderDash: [],
-                  borderDashOffset: 0.0,
-                  pointBackgroundColor: "#00d6b4",
-                  pointBorderColor: "rgba(255,255,255,0)",
-                  pointHoverBackgroundColor: "#00d6b4",
-                  pointBorderWidth: 20,
-                  pointHoverRadius: 4,
-                  pointHoverBorderWidth: 15,
-                  pointRadius: 4,
-                  data: data_plot_machines_today_type,
-                },
-                {
-                  stack: arbitraryStackkey2,
-                  label: "Available",
-                  fill: true,
-                  backgroundColor: gradientStroke,
-                  borderColor: "#d048b6",
-                  borderWidth: 2,
-                  borderDash: [],
-                  borderDashOffset: 0.0,
-                  pointBackgroundColor: "#00d6b4",
-                  pointBorderColor: "rgba(255,255,255,0)",
-                  pointHoverBackgroundColor: "#00d6b4",
-                  pointBorderWidth: 20,
-                  pointHoverRadius: 4,
-                  pointHoverBorderWidth: 15,
-                  pointRadius: 4,
-                  data: data_plot_machines_type_sub,
-                }
-              ]
-            };
-          },
-          options: {
-            maintainAspectRatio: false,
-            legend: {
-              display: false
+        return {
+          labels: label_machines,
+          datasets: [
+            {
+              stack: arbitraryStackkey2,
+              label: "In use",
+              fill: true,
+              backgroundColor: "#d048b6",
+              borderColor: "#d048b6",
+              borderWidth: 2,
+              borderDash: [],
+              borderDashOffset: 0.0,
+              pointBackgroundColor: "#00d6b4",
+              pointBorderColor: "rgba(255,255,255,0)",
+              pointHoverBackgroundColor: "#00d6b4",
+              pointBorderWidth: 20,
+              pointHoverRadius: 4,
+              pointHoverBorderWidth: 15,
+              pointRadius: 4,
+              data: data_plot_machines_today_type,
             },
-
-            tooltips: {
-              backgroundColor: "#f5f5f5",
-              titleFontColor: "#333",
-              bodyFontColor: "#666",
-              bodySpacing: 4,
-              xPadding: 12,
-              mode: "nearest",
-              intersect: 0,
-              position: "nearest"
-            },
-            responsive: true,
-            scales: {
-              yAxes: [
-                {
-                  //barPercentage: 1.6,
-                  gridLines: {
-                    drawBorder: false,
-                    color: "rgba(29,140,248,0.0)",
-                    zeroLineColor: "transparent"
-                  },
-                  ticks: {
-                    suggestedMin: 0,
-                    suggestedMax: 1,
-                    padding: 20,
-                    fontColor: "#9e9e9e"
-                  }
-                }
-              ],
-
-              xAxes: [
-                {
-                 // barPercentage: 1.6,
-                  gridLines: {
-                    drawBorder: false,
-                    color: "rgba(0,242,195,0.0)",
-                    zeroLineColor: "transparent"
-                  },
-                  ticks: {
-                    padding: 20,
-                    fontColor: "#9e9e9e"
-                  }
-                }
-              ]
+            {
+              stack: arbitraryStackkey2,
+              label: "Available",
+              fill: true,
+              backgroundColor: gradientStroke,
+              borderColor: "#d048b6",
+              borderWidth: 2,
+              borderDash: [],
+              borderDashOffset: 0.0,
+              pointBackgroundColor: "#00d6b4",
+              pointBorderColor: "rgba(255,255,255,0)",
+              pointHoverBackgroundColor: "#00d6b4",
+              pointBorderWidth: 20,
+              pointHoverRadius: 4,
+              pointHoverBorderWidth: 15,
+              pointRadius: 4,
+              data: data_plot_machines_type_sub,
             }
-          }
+          ]
         };
+      },
+      options: {
+        maintainAspectRatio: false,
+        legend: {
+          display: false
+        },
+
+        tooltips: {
+          backgroundColor: "#f5f5f5",
+          titleFontColor: "#333",
+          bodyFontColor: "#666",
+          bodySpacing: 4,
+          xPadding: 12,
+          mode: "nearest",
+          intersect: 0,
+          position: "nearest"
+        },
+        responsive: true,
+        scales: {
+          yAxes: [
+            {
+              //barPercentage: 1.6,
+              gridLines: {
+                drawBorder: false,
+                color: "rgba(29,140,248,0.0)",
+                zeroLineColor: "transparent"
+              },
+              ticks: {
+                suggestedMin: 0,
+                suggestedMax: 1,
+                padding: 20,
+                fontColor: "#9e9e9e"
+              }
+            }
+          ],
+
+          xAxes: [
+            {
+              // barPercentage: 1.6,
+              gridLines: {
+                drawBorder: false,
+                color: "rgba(0,242,195,0.0)",
+                zeroLineColor: "transparent"
+              },
+              ticks: {
+                padding: 20,
+                fontColor: "#9e9e9e"
+              }
+            }
+          ]
+        }
+      }
+    };
 
     const ourChartMachinesPerLocation = {
-          data: canvas => {
-            let ctx = canvas.getContext("2d");
+      data: canvas => {
+        let ctx = canvas.getContext("2d");
 
-            let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
-            
-            gradientStroke.addColorStop(1, "rgba(29,140,248,0.2)");
-            gradientStroke.addColorStop(0.4, "rgba(29,140,248,0.0)");
-            gradientStroke.addColorStop(0, "rgba(29,140,248,0)"); //blue colors
+        let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
 
-            const arbitraryStackkey= "stack1";
+        gradientStroke.addColorStop(1, "rgba(29,140,248,0.2)");
+        gradientStroke.addColorStop(0.4, "rgba(29,140,248,0.0)");
+        gradientStroke.addColorStop(0, "rgba(29,140,248,0)"); //blue colors
 
-            return {
-              labels: label_machines_location,
-              datasets: [
-                 {
-                  stack:arbitraryStackkey,
-                  label: "In use",
-                  fill: true,
-                  backgroundColor: "#1f8ef1",
-                  borderColor: "#1f8ef1",
-                  borderWidth: 2,
-                  borderDash: [],
-                  borderDashOffset: 0.0,
-                  pointBackgroundColor: "#1f8ef1",
-                  pointBorderColor: "rgba(255,255,255,0)",
-                  pointHoverBackgroundColor: "#00d6b4",
-                  pointBorderWidth: 20,
-                  pointHoverRadius: 4,
-                  pointHoverBorderWidth: 15,
-                  pointRadius: 4,
-                  data: data_plot_machines_today_location ,
-                },
-                {
-                  stack: arbitraryStackkey,
-                  label: "Available",
-                  fill: true,
-                  backgroundColor: gradientStroke,
-                  borderColor: "#1f8ef1",
-                  borderWidth: 2,
-                  borderDash: [],
-                  borderDashOffset: 0.0,
-                  pointBackgroundColor: "#1f8ef1",
-                  pointBorderColor: "rgba(255,255,255,0)",
-                  pointHoverBackgroundColor: "#00d6b4",
-                  pointBorderWidth: 20,
-                  pointHoverRadius: 4,
-                  pointHoverBorderWidth: 15,
-                  pointRadius: 4,
-                  data: data_plot_machines_location_sub ,
-                }
-              ]
-            };
-          },
-          options: {
-            maintainAspectRatio: false,
-            legend: {
-              display: false
+        const arbitraryStackkey = "stack1";
+
+        return {
+          labels: label_machines_location,
+          datasets: [
+            {
+              stack: arbitraryStackkey,
+              label: "In use",
+              fill: true,
+              backgroundColor: "#1f8ef1",
+              borderColor: "#1f8ef1",
+              borderWidth: 2,
+              borderDash: [],
+              borderDashOffset: 0.0,
+              pointBackgroundColor: "#1f8ef1",
+              pointBorderColor: "rgba(255,255,255,0)",
+              pointHoverBackgroundColor: "#00d6b4",
+              pointBorderWidth: 20,
+              pointHoverRadius: 4,
+              pointHoverBorderWidth: 15,
+              pointRadius: 4,
+              data: data_plot_machines_today_location,
             },
-
-            tooltips: {
-              backgroundColor: "#f5f5f5",
-              titleFontColor: "#333",
-              bodyFontColor: "#666",
-              bodySpacing: 4,
-              xPadding: 12,
-              mode: "nearest",
-              intersect: 0,
-              position: "nearest"
-            },
-            responsive: true,
-            scales: {
-              yAxes: [
-                {
-                  //barPercentage: 1.6,
-                  gridLines: {
-                    drawBorder: false,
-                    color: "rgba(29,140,248,0.0)",
-                    zeroLineColor: "transparent"
-                  },
-                  ticks: {
-                    suggestedMin: 0,
-                    suggestedMax: 1,
-                    padding: 20,
-                    fontColor: "#9e9e9e"
-                  }
-                }
-              ],
-
-              xAxes: [
-                {
-                 // barPercentage: 1.6,
-                  gridLines: {
-                    drawBorder: false,
-                    color: "rgba(0,242,195,0.0)",
-                    zeroLineColor: "transparent"
-                  },
-                  ticks: {
-                    padding: 20,
-                    fontColor: "#9e9e9e"
-                  }
-                }
-              ]
+            {
+              stack: arbitraryStackkey,
+              label: "Available",
+              fill: true,
+              backgroundColor: gradientStroke,
+              borderColor: "#1f8ef1",
+              borderWidth: 2,
+              borderDash: [],
+              borderDashOffset: 0.0,
+              pointBackgroundColor: "#1f8ef1",
+              pointBorderColor: "rgba(255,255,255,0)",
+              pointHoverBackgroundColor: "#00d6b4",
+              pointBorderWidth: 20,
+              pointHoverRadius: 4,
+              pointHoverBorderWidth: 15,
+              pointRadius: 4,
+              data: data_plot_machines_location_sub,
             }
-          }
+          ]
         };
+      },
+      options: {
+        maintainAspectRatio: false,
+        legend: {
+          display: false
+        },
 
-  ///////////////////////////////// TOTAL MACHINES AVAILABLE PER DAY THIS WEEK
-  
+        tooltips: {
+          backgroundColor: "#f5f5f5",
+          titleFontColor: "#333",
+          bodyFontColor: "#666",
+          bodySpacing: 4,
+          xPadding: 12,
+          mode: "nearest",
+          intersect: 0,
+          position: "nearest"
+        },
+        responsive: true,
+        scales: {
+          yAxes: [
+            {
+              //barPercentage: 1.6,
+              gridLines: {
+                drawBorder: false,
+                color: "rgba(29,140,248,0.0)",
+                zeroLineColor: "transparent"
+              },
+              ticks: {
+                suggestedMin: 0,
+                suggestedMax: 1,
+                padding: 20,
+                fontColor: "#9e9e9e"
+              }
+            }
+          ],
+
+          xAxes: [
+            {
+              // barPercentage: 1.6,
+              gridLines: {
+                drawBorder: false,
+                color: "rgba(0,242,195,0.0)",
+                zeroLineColor: "transparent"
+              },
+              ticks: {
+                padding: 20,
+                fontColor: "#9e9e9e"
+              }
+            }
+          ]
+        }
+      }
+    };
+
+    ///////////////////////////////// TOTAL MACHINES AVAILABLE PER DAY THIS WEEK
+
     const D0_count = ADn.length
 
-    var date_today1 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+1) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
-    const AD1= this.state.assignement_data.results.filter(item => item.start_date < date_today1);
-    const ADn1 =AD1.filter(item => new Date(item.end_date)- new Date(date_today1) >0);
+    var date_today1 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 1) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
+    const AD1 = assignmentResults.filter(item => item.start_date < date_today1);
+    const ADn1 = AD1.filter(item => new Date(item.end_date) - new Date(date_today1) > 0);
     const D1_count = ADn1.length
 
 
-    var date_today2 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+2) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
-    const AD2= this.state.assignement_data.results.filter(item => item.start_date < date_today2);
-    const ADn2 =AD2.filter(item => new Date(item.end_date)- new Date(date_today2) >0);
+    var date_today2 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 2) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
+    const AD2 = assignmentResults.filter(item => item.start_date < date_today2);
+    const ADn2 = AD2.filter(item => new Date(item.end_date) - new Date(date_today2) > 0);
     const D2_count = ADn2.length
 
-    var date_today3 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+3) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
-    const AD3= this.state.assignement_data.results.filter(item => item.start_date < date_today3);
-    const ADn3 =AD3.filter(item => new Date(item.end_date)- new Date(date_today3) >0);
+    var date_today3 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 3) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
+    const AD3 = assignmentResults.filter(item => item.start_date < date_today3);
+    const ADn3 = AD3.filter(item => new Date(item.end_date) - new Date(date_today3) > 0);
     const D3_count = ADn3.length
 
-    var date_today4 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+4) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
-    const AD4= this.state.assignement_data.results.filter(item => item.start_date < date_today4);
-    const ADn4 =AD4.filter(item => new Date(item.end_date)- new Date(date_today4) >0);
+    var date_today4 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 4) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
+    const AD4 = assignmentResults.filter(item => item.start_date < date_today4);
+    const ADn4 = AD4.filter(item => new Date(item.end_date) - new Date(date_today4) > 0);
     const D4_count = ADn4.length
 
-    var date_today5 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+5) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
-    const AD5= this.state.assignement_data.results.filter(item => item.start_date < date_today5);
-    const ADn5 =AD5.filter(item => new Date(item.end_date)- new Date(date_today5) >0);
+    var date_today5 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 5) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
+    const AD5 = assignmentResults.filter(item => item.start_date < date_today5);
+    const ADn5 = AD5.filter(item => new Date(item.end_date) - new Date(date_today5) > 0);
     const D5_count = ADn5.length
 
-    var date_today6 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+6) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
-    const AD6= this.state.assignement_data.results.filter(item => item.start_date < date_today6);
-    const ADn6 =AD6.filter(item => new Date(item.end_date)- new Date(date_today6) >0);
+    var date_today6 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 6) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
+    const AD6 = assignmentResults.filter(item => item.start_date < date_today6);
+    const ADn6 = AD6.filter(item => new Date(item.end_date) - new Date(date_today6) > 0);
     const D6_count = ADn6.length
 
-    var date_today7 = tempDate.getFullYear() + '-' + (tempDate.getMonth()+1) + '-' + (tempDate.getDate()+7) +' '+ tempDate.getHours()+':'+ tempDate.getMinutes()+':'+ tempDate.getSeconds();
-    const AD7= this.state.assignement_data.results.filter(item => item.start_date < date_today7);
-    const ADn7 =AD7.filter(item => new Date(item.end_date)- new Date(date_today7) >0);
+    var date_today7 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 7) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
+    const AD7 = assignmentResults.filter(item => item.start_date < date_today7);
+    const ADn7 = AD7.filter(item => new Date(item.end_date) - new Date(date_today7) > 0);
     const D7_count = ADn7.length
 
     const M_used_week = [D0_count, D1_count, D2_count, D3_count, D4_count, D5_count, D6_count, D7_count]
     console.log(M_used_week)
 
     console.log(date_today1)
-    const days_from_today=["today","1","2","3","4","5","6","7"]
+    const days_from_today = ["today", "1", "2", "3", "4", "5", "6", "7"]
 
 
-     const ourChartweek = {
+    const ourChartweek = {
       data: canvas => {
         let ctx = canvas.getContext("2d");
 
@@ -813,7 +819,7 @@ class Dashboard extends React.Component {
             <Col lg="6">
               <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">{"Today "+"(Total: " + total_machines + " Ventilators)"}</h5>
+                  <h5 className="card-category">{"Today " + "(Total: " + total_machines + " Ventilators)"}</h5>
                   <CardTitle tag="h3">
                     <i className="tim-icons icon-square-pin text-info" />{" Machine per Location "}
                   </CardTitle>
@@ -831,10 +837,10 @@ class Dashboard extends React.Component {
             <Col lg="6">
               <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">{"Today "+"(Total: " + total_machines + " Ventilators)"}</h5>
+                  <h5 className="card-category">{"Today " + "(Total: " + total_machines + " Ventilators)"}</h5>
                   <CardTitle tag="h3">
-                    <i className="tim-icons icon-support-17 text-primary"/>{" Machine per Type"}
-                   
+                    <i className="tim-icons icon-support-17 text-primary" />{" Machine per Type"}
+
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
@@ -848,7 +854,7 @@ class Dashboard extends React.Component {
               </Card>
             </Col>
             <Col lg="4">
-              
+
             </Col>
           </Row>
 

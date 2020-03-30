@@ -43,27 +43,29 @@ import {
   Col
 } from "reactstrap";
 
+const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
 class DoctorMessage extends React.Component {
   render() {
     return (
-          <React.Fragment>
-            <Row>
-              <Col md="3">
-                <CardText style={{ 'font-size': '11px' }}>From: Doctor {this.props.doctorName}</CardText>
-              </Col>
-              <Col md="3">
-                <CardText style={{ 'font-size': '11px' }}>To: Patient {this.props.patientName}</CardText>
-              </Col>
-              <Col md="6">
-                <span className="pull-right">
-                  <CardText style={{ 'font-size': '11px' }}>{this.props.time}</CardText>
-                </span>
-              </Col>
-            </Row>
-            <Alert color="info" style={{'padding': '0.4rem 1.25rem' }}>
-              <span>{this.props.message}</span>
-            </Alert>
-          </React.Fragment>
+      <React.Fragment>
+        <Row>
+          <Col md="3">
+            <CardText style={{ 'font-size': '11px' }}>From: Doctor {this.props.doctorName}</CardText>
+          </Col>
+          <Col md="3">
+            <CardText style={{ 'font-size': '11px' }}>To: Patient {this.props.patientName}</CardText>
+          </Col>
+          <Col md="6">
+            <span className="pull-right">
+              <CardText style={{ 'font-size': '11px' }}>{this.props.time}</CardText>
+            </span>
+          </Col>
+        </Row>
+        <Alert color="info" style={{ 'padding': '0.4rem 1.25rem' }}>
+          <span>{this.props.message}</span>
+        </Alert>
+      </React.Fragment>
     );
   }
 }
@@ -72,62 +74,62 @@ function prettifyDate(raw_date) {
 };
 
 const PatientDropdown = (props) => {
-    const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-    const toggle = () => setDropdownOpen(prevState => !prevState);
+  const toggle = () => setDropdownOpen(prevState => !prevState);
 
-    console.log('Props');
-    console.log(props);
-    if (!props.patient_data) {
-      return null;
-    }
+  console.log('Props');
+  console.log(props);
+  if (!props.patient_data) {
+    return null;
+  }
 
-    var list = props.patient_data.map((entry, index) => {
-      return (
-        <DropdownItem key={entry.pk}>{entry.name}</DropdownItem>
-      );
-    });
-    var toggle_sign = (dropdownOpen
-      ? <span style={{ 'font-size': '9px' }}>&#9650;</span>
-      : <span style={{ 'font-size': '9px' }}>&#9660;</span>
-    );
+  var list = props.patient_data.map((entry, index) => {
     return (
-      <CardSubtitle>
-        <Dropdown isOpen={dropdownOpen} toggle={toggle} color="secondary">
-          <DropdownToggle>
-            <Row>
-              <Col md="10">
-                Filter messages of a patient
-              </Col>
-              <Col md="2">
-                {toggle_sign}
-              </Col>
-            </Row>
-          </DropdownToggle>
-          <DropdownMenu>
-            <DropdownItem>All patients</DropdownItem>
-            <DropdownItem divider />
-            {list}
-          </DropdownMenu>
-        </Dropdown>
-      </CardSubtitle>
+      <DropdownItem key={entry.pk}>{entry.name}</DropdownItem>
     );
+  });
+  var toggle_sign = (dropdownOpen
+    ? <span style={{ 'font-size': '9px' }}>&#9650;</span>
+    : <span style={{ 'font-size': '9px' }}>&#9660;</span>
+  );
+  return (
+    <CardSubtitle>
+      <Dropdown isOpen={dropdownOpen} toggle={toggle} color="secondary">
+        <DropdownToggle>
+          <Row>
+            <Col md="10">
+              Filter messages of a patient
+              </Col>
+            <Col md="2">
+              {toggle_sign}
+            </Col>
+          </Row>
+        </DropdownToggle>
+        <DropdownMenu>
+          <DropdownItem>All patients</DropdownItem>
+          <DropdownItem divider />
+          {list}
+        </DropdownMenu>
+      </Dropdown>
+    </CardSubtitle>
+  );
 }
 
 function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
+  var cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i].trim();
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
     }
-    return cookieValue;
+  }
+  return cookieValue;
 }
 
 class MessageComposerForm extends React.Component {
@@ -170,13 +172,13 @@ class MessageComposerForm extends React.Component {
           <Col md="12">
             <Button
               color="secondary"
-              onClick={() => this.setState({isOpen: !this.state.isOpen})}
+              onClick={() => this.setState({ isOpen: !this.state.isOpen })}
               style={{ marginBottom: '1rem' }}>
               <Row>
-              <Col md="10">Compose new message
+                <Col md="10">Compose new message
               </Col>
-              <Col md="2">{toggle_sign}
-              </Col>
+                <Col md="2">{toggle_sign}
+                </Col>
               </Row></Button>
           </Col>
         </Row>
@@ -218,35 +220,35 @@ class FamilyNotifications extends React.Component {
   }
   componentDidMount() {
     fetch("/rest/messages/")
-            .then(response => {
-                console.log('Response');
-                console.log(response);
-                if (response.status > 400) {
-                  throw new Error(response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Data');
-                console.log(data);
-                this.setState(() => {
-                    return {
-                        data,
-                        loaded: true
-                    };
-                });
-            })
-            .catch(error => {
-              console.log('Error');
-              console.log(error);
-              this.setState(() => {
-                return {
-                  loaded: true,
-                  placeholder: "Failed to load",
-                  error_message: "You don't have permission to view these messages.",
-                };
-              });
-            });
+      .then(response => {
+        console.log('Response');
+        console.log(response);
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Data');
+        console.log(data);
+        this.setState(() => {
+          return {
+            data,
+            loaded: true
+          };
+        });
+      })
+      .catch(error => {
+        console.log('Error');
+        console.log(error);
+        this.setState(() => {
+          return {
+            loaded: true,
+            placeholder: "Failed to load",
+            error_message: "You don't have permission to view these messages.",
+          };
+        });
+      });
     fetch("/rest/patients/")
       .then(response => {
         if (response.status > 400) {
@@ -256,7 +258,7 @@ class FamilyNotifications extends React.Component {
       })
       .then(data => {
         this.setState({
-          patient_data: data.results,
+          patient_data: IS_DEV ? data.results : data,
         });
       })
       .catch(error => {
@@ -314,22 +316,24 @@ class FamilyNotifications extends React.Component {
     console.log(this.state.data);
     console.log(this.state.data.length);
     let messages;
+    const results = IS_DEV ? this.state.data.results : this.state.data;
+
     if (this.state.error_message.length > 0) {
       messages = (
         <Alert color="danger">
           {this.state.error_message} Are you <a href="/admin/" className="alert-link"> logged in?</a>
         </Alert>
       );
-    } else if (this.state.data.results?.length > 0) {
-      messages = this.state.data.results.map((entry, index) => (
+    } else if (results?.length > 0) {
+      messages = results.map((entry, index) => (
         <DoctorMessage
           key={entry.pk}
           doctorName={entry.sender_lastname}
           patientName={entry.patient_lastname}
           time={prettifyDate(entry.date)}
           message={entry.message}
-          />
-        )
+        />
+      )
       );
     } else {
       messages = (

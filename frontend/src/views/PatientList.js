@@ -29,6 +29,8 @@ import {
   Col
 } from "reactstrap";
 
+const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
 class PatientRow extends React.Component {
   render() {
     return (
@@ -93,14 +95,16 @@ class PatientList extends React.Component {
       );
     }
     let patients;
+    const results = IS_DEV ? this.state.data.results : this.state.data;
+
     if (this.state.error_message.length > 0) {
       patients = (
         <Alert color="danger">
           {this.state.error_message} Are you <a href="/admin" className="alert-link"> logged in?</a>
         </Alert>
       );
-    } else if (this.state.data.results.length > 0) {
-      patients = this.state.data.results.map((entry, index) => (
+    } else if (results.length > 0) {
+      patients = results.map((entry, index) => (
         <PatientRow
           key={entry.pk}
           pk={entry.pk}
