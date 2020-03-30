@@ -39,7 +39,7 @@ class Patient(models.Model):
     admission_date = models.DateTimeField('Admission date: ', default=timezone.now)
     location = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
-    machine_assigned = models.ForeignKey('Machine', null=True, on_delete=models.SET_NULL)
+    machine_assigned = models.ForeignKey('Machine', null=True, blank=True, on_delete=models.SET_NULL)
     # History
     history_severity_x = models.TextField(blank=True, editable=False)
     history_severity_y = models.TextField(blank=True, editable=False)
