@@ -106,15 +106,17 @@ class TaskList extends React.Component {
           pk={props.pk}
           machine={props.machine}
           patient={props.patient}
+          bool_install={props.bool_install}
           machine_model={props.machine_model}
           patient_name={props.patient_name}
           machine_location={props.machine_location}
           patient_location={props.patient_location}
-          bool_install={props.bool_install}
+          date={props.date}
         />
       ),
       type: type,
       icon: "tim-icons icon-bell-55",
+      fade: false,
     };
     this.refs.notificationAlert.notificationAlert(options);
   };
@@ -137,11 +139,12 @@ class TaskList extends React.Component {
       tasks = this.state.data.results.map((props, index) => (
         <Button
           key = {props.pk}
+          ref = "taskButton"
           block
           color={props.bool_install == 0 ? "primary" : "info"}
           onClick={() => this.pop(props)}
         >
-          {props.machine_model} - {props.patient_name}
+          {props.bool_install == 0 ? "Install" : "Remove"} {props.machine_model} {props.bool_install == 0 ? "to" : "from"} {props.patient_name} due {props.date}
         </Button>
         )
       );

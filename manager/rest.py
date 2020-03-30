@@ -66,14 +66,14 @@ class PermissionTaskEdit(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role.permission_task_edit
 class AssignmentTaskViewSet(viewsets.ModelViewSet):
-    queryset = AssignmentTask.objects.all()
+    queryset = AssignmentTask.objects.all().order_by('date')
     serializer_class = AssignmentTaskSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
     def get_queryset(self):
         print(self.kwargs)
         return self.queryset
 class AssignmentTaskQueryViewSet(viewsets.ModelViewSet):
-    queryset = AssignmentTask.objects.all()
+    queryset = AssignmentTask.objects.all().order_by('date')
     serializer_class = AssignmentTaskSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
     def get_queryset(self):

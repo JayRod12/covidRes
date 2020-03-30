@@ -70,7 +70,8 @@ class AssignmentTaskWindow extends React.Component {
   render() {
     return (
           <React.Fragment>
-            {this.props.bool_install == 1 ? <h>Remove Machine</h> : <h>Install Machine</h>}
+            {this.props.bool_install == 1 ? <h3>Remove Machine</h3> : <h3>Install Machine</h3>}
+            <div align="right">Due: {this.props.date}</div>
             <hr/>
             <Row>
               <Link to={'/machine/'+this.props.machine}><h4>{this.props.machine_model}</h4></Link> #{this.props.machine}
