@@ -113,7 +113,7 @@ class Admin extends React.Component {
             routes={sidebar_routes}
             bgColor={this.state.backgroundColor}
             logo={{
-              text: "Res Manager",
+              text: "OSER",
               imgSrc: logo
             }}
             toggleSidebar={this.toggleSidebar}
