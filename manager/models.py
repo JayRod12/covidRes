@@ -64,9 +64,10 @@ class Patient(models.Model):
         if len(self.history_severity_y)==0:
             self.history_severity_x = time_str
             self.history_severity_y = str(machine_pk)
-        elif not machine_pk == int(self.history_severity_y.split(', ')[-1]):
+        elif not self.severity == int(self.history_severity_y.split(', ')[-1]):
             self.history_severity_x += ', ' + time_str
-            self.history_severity_y += ', ' + str(machine_pk)
+            self.history_severity_y += ', ' + str(self.severity)
+        print("HERE")
         super(Patient, self).save(*args, **kwargs)
     def get_history_severity(self):
         xx = [datetime.strptime(a, "%Y-%m-%d %H:%M:%S.%f%z") for a in self.history_severity_x.split(', ')]
