@@ -451,7 +451,7 @@ class Dashboard extends React.Component {
                  // barPercentage: 1.6,
                   gridLines: {
                     drawBorder: false,
-                    color: "rgba(0,242,195,0.1)",
+                    color: "rgba(0,242,195,0.0)",
                     zeroLineColor: "transparent"
                   },
                   ticks: {
@@ -558,7 +558,7 @@ class Dashboard extends React.Component {
                  // barPercentage: 1.6,
                   gridLines: {
                     drawBorder: false,
-                    color: "rgba(0,242,195,0.1)",
+                    color: "rgba(0,242,195,0.0)",
                     zeroLineColor: "transparent"
                   },
                   ticks: {
@@ -710,6 +710,7 @@ class Dashboard extends React.Component {
     return (
       <>
         <div className="content">
+          {/*}
           <Row>
             <Col xs="12">
               <Card className="card-chart">
@@ -806,9 +807,10 @@ class Dashboard extends React.Component {
               </Card>
             </Col>
           </Row>
+        */}
 
           <Row>
-            <Col lg="4">
+            <Col lg="6">
               <Card className="card-chart">
                 <CardHeader>
                   <h5 className="card-category">{"Today "+"(Total: " + total_machines + " Ventilators)"}</h5>
@@ -826,7 +828,7 @@ class Dashboard extends React.Component {
                 </CardBody>
               </Card>
             </Col>
-            <Col lg="4">
+            <Col lg="6">
               <Card className="card-chart">
                 <CardHeader>
                   <h5 className="card-category">{"Today "+"(Total: " + total_machines + " Ventilators)"}</h5>
@@ -846,11 +848,18 @@ class Dashboard extends React.Component {
               </Card>
             </Col>
             <Col lg="4">
+              
+            </Col>
+          </Row>
+
+
+          <Row>
+            <Col lg="6">
               <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">Patient Numbers</h5>
+                  <h5 className="card-category">Evolution</h5>
                   <CardTitle tag="h3">
-                    <i className="tim-icons icon-single-02 text-success" /> {" Total usage of Ventilators from today"}
+                    <i className="tim-icons icon-single-02 text-success" /> {" Ventilators in use"}
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
@@ -863,33 +872,10 @@ class Dashboard extends React.Component {
                 </CardBody>
               </Card>
             </Col>
-          </Row>
-
-
-          <Row>
             <Col lg="6">
               <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">Machine per Type</h5>
-                  <CardTitle tag="h3">
-                    <i className="tim-icons icon-support-17 text-primary" />{ total_machines + " Total Machines "}
-                   
-                  </CardTitle>
-                </CardHeader>
-                <CardBody>
-                  <div className="chart-area">
-                    <Bar
-                      data={ourChartMachinesTotal.data}
-                      options={ourChartMachinesTotal.options}
-                    />
-                  </div>
-                </CardBody>
-              </Card>
-            </Col>
-            <Col lg="6">
-              <Card className="card-chart">
-                <CardHeader>
-                  <h5 className="card-category">Projection for Vaud (VD)</h5>
+                  <h5 className="card-category">Future projection for Vaud (VD)</h5>
                   <CardTitle tag="h3">
                     <i className="tim-icons icon-single-02 text-success" /> {"Daily Hospitalization"}
                   </CardTitle>
