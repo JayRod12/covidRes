@@ -319,7 +319,7 @@ class Dashboard extends React.Component {
 
     var tempDate = new Date();
     var date_today = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + tempDate.getDate() + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
-    const AD = this.state.assignement_data.results.filter(item => new Date(item.start_date) - new Date(date_today) < 0);
+    const AD = this.state.results.filter(item => new Date(item.start_date) - new Date(date_today) < 0);
     const ADn = AD.filter(item => new Date(item.end_date) - new Date(date_today) > 0);
     const Machines_today_pk = ADn.map(item => item.machine)
     const Machines_today = Machines_today_pk.map(item => {
