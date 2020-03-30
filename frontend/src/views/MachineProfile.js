@@ -43,6 +43,8 @@ import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
 
 import $ from 'jquery';
 
+const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -124,9 +126,10 @@ class MachineProfile extends React.Component {
             })
             .then(data_tasks => {
                 console.log(data_tasks);
+                const results = IS_DEV ? data_tasks.results : data_tasks;
                 this.setState(() => {
                     return {
-                        data_tasks: data_tasks,
+                        data_tasks: results,
                         loaded_tasks: true
                     };
                 });
@@ -305,8 +308,8 @@ class MachineProfile extends React.Component {
           {this.state.error_message_tasks} Are you <a href="/admin" className="alert-link"> logged in?</a>
         </Alert>
       );
-    } else if (this.state.data_tasks.results.length > 0) {
-      tasks = this.state.data_tasks.results.map((props, index) => (
+    } else if (this.state.data_tasks.length > 0) {
+      tasks = this.state.data_tasks.map((props, index) => (
         <Button
           key = {props.pk}
           block
