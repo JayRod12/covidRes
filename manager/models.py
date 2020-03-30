@@ -55,8 +55,9 @@ class Patient(models.Model):
     def save(self, *args, **kwargs):
         if self.user is None:
             random.seed()
+            print(self.name.split(" ")[0].lower()+str(self.pk))
             self.default_pass = '_'.join([random.choice("ant bee cow dog cat pet dot map set pig pen mat let wet".split(" ")) for n in range(4)])
-            self.user = User.objects.create(username=self.name.split(" ")[0].lower()+str(self.pk), password = self.default_pass, email="")
+            self.user = User.objects.create(username=self.name.split(" ").replace("_", "")[0].lower()+"_"+str(self.pk), password = self.default_pass, email="")
             self.user.save()
         if self.user.role is None:
             patient_role = Role.objects.filter(name="Patient")

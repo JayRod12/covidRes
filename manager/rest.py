@@ -28,7 +28,7 @@ class PatientViewSet(viewsets.ModelViewSet):
             return PatientDetailedSerializer
         return self.serializer_class
     def update(self, *args, **kwargs):
-        print(vars(self))
+        print(vars(self.request))
         print(args)
         print(kwargs)
         super().update(*args, **kwargs)
