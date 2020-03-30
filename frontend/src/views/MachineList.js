@@ -21,6 +21,7 @@ import { NavLink, Link } from "react-router-dom";
 // reactstrap components
 import {
   Alert,
+  Button,
   Card,
   CardHeader,
   CardBody,
@@ -28,6 +29,9 @@ import {
   CardText,
   CardTitle,
   Table,
+  FormGroup,
+  Form,
+  Input,
   Row,
   Col
 } from "reactstrap";
@@ -167,7 +171,27 @@ class MachineList extends React.Component {
             <Col md="12">
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h4">Machines</CardTitle>
+                  <Col className="px-md-1" md="4">
+                    <CardTitle tag="h4">Machines</CardTitle>
+                  </Col>
+                  <Form>
+                    <Row>
+                      <Col className="px-md-1" md={{ span: 2, offset: 2 }}>
+                        <FormGroup>
+                          <Input
+                            placeholder="Model"
+                            name="name"
+                            type="text"
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
+                        <Button>
+                          Create
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Form>
                 </CardHeader>
                 <CardBody>
                   <Table className="tablesorter" responsive>
