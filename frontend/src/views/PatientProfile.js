@@ -53,6 +53,22 @@ class PatientProfile extends React.Component {
       placeholder_tasks: "Loading",
       error_message_tasks: "",
     };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+
+    fetch('/rest/patients/'+this.state.data.pk+"/", {
+      method: 'PATCH',
+      body: JSON.stringify({
+          location: data.get('location'),
+          description: data.get('description')
+      }),
+      headers: {
+          "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+      }
+    }).then(response => {console.log(response)});
   }
   componentDidMount() {
     const { pk } = this.props.match.params
@@ -81,7 +97,7 @@ class PatientProfile extends React.Component {
                 };
               });
             });
-    fetch('/rest/assignment_tasks/query/bool_completed=0&patient='+pk+'/')
+    fetch('/rest/assignment_tasks/query/patient='+pk+'/')
             .then(response => {
                 if (response.status > 400) {
                   throw new Error(response.status);
@@ -171,7 +187,7 @@ class PatientProfile extends React.Component {
         <Col md="8">
           <Card>
             <CardHeader>
-              <th className="title">Patient Profile</th>
+              <h5 className="title">Patient Profile</h5>
             </CardHeader>
             <CardBody>
               <Form>
@@ -258,27 +274,23 @@ class PatientProfile extends React.Component {
                       <CardBody>
                         {this.state.data.machine_assigned === null
                           ?
-                          <Row><th>None</th></Row>
+                          <Row><h3>None</h3></Row>
                           :
                           <div>
                             <Row>
-                              <th><Link to={'/machine/'+this.state.data.machine_assigned}>{this.state.data.machine_assigned_model}</Link></th>
-                            </Row>
-                            <Row>
-                              <th><small>ID: {this.state.data.machine_assigned}</small></th>
+                              <h3><Link to={'/machine/'+this.state.data.machine_assigned}>{this.state.data.machine_assigned_model}</Link></h3>
+                              <small>ID: {this.state.data.machine_assigned}</small>
                             </Row>
                           </div>
                         }
                       </CardBody>
                     </Col>
                 </Row>
+                <Button className="btn-fill" color="primary" type="submit" value="Submit">
+                  Save
+                </Button>
               </Form>
             </CardBody>
-            <CardFooter>
-              <Button className="btn-fill" color="primary" type="submit" value="Submit">
-                Save
-              </Button>
-            </CardFooter>
           </Card>
         </Col>
       );
@@ -304,15 +316,14 @@ class PatientProfile extends React.Component {
       );
     } else if (this.state.data_tasks.results.length > 0) {
       tasks = this.state.data_tasks.results.map((props, index) => (
-        <React.Fragment>
-          <Button
-            block
-            color={props.bool_install == 0 ? "primary" : "info"}
-            onClick={() => this.pop(props)}
-          >
-            {props.machine_model} - {props.patient_name}
-          </Button>
-        </React.Fragment>
+        <Button
+          key = {props.pk}
+          block
+          color={props.bool_install == 0 ? "primary" : "info"}
+          onClick={() => this.pop(props)}
+        >
+          {props.machine_model} - {props.patient_name}
+        </Button>
         )
       );
     } else {
@@ -332,7 +343,7 @@ class PatientProfile extends React.Component {
             <Col md="4">
               <Card className="card-user">
                 <CardHeader>
-                  <th className="title">Associated Tasks</th>
+                  <h6>Associated Tasks</h6>
                 </CardHeader>
                 <CardBody>
                   {tasks}

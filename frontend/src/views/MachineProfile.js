@@ -277,7 +277,7 @@ class MachineProfile extends React.Component {
                       </CardBody>
                     </Col>
                 </Row>
-                <Button>
+                <Button className="btn-fill" color="primary" type="submit" value="Submit">
                   Save
                 </Button>
               </Form>
