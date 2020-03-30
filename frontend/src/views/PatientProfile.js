@@ -330,22 +330,22 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                    <Col md="4">
-                      <label>Assigned Machine</label>
-                      <CardBody>
-                        {this.state.data.machine_assigned === null
-                          ?
-                          <Row><h3>None</h3></Row>
-                          :
-                          <div>
-                            <Row>
-                              <h3><Link to={'/machine/'+this.state.data.machine_assigned}>{this.state.data.machine_assigned_model}</Link></h3>
-                              <small>ID: {this.state.data.machine_assigned}</small>
-                            </Row>
-                          </div>
-                        }
-                      </CardBody>
-                    </Col>
+                  <Col md="4">
+                    <label>Assigned Machine</label>
+                    <CardBody>
+                      {this.state.data.machine_assigned === null
+                        ?
+                        <Row><h3>None</h3></Row>
+                        :
+                        <div>
+                          <Row>
+                            <h3><Link to={'/machine/'+this.state.data.machine_assigned}>{this.state.data.machine_assigned_model}</Link></h3>
+                            <small>ID: {this.state.data.machine_assigned}</small>
+                          </Row>
+                        </div>
+                      }
+                    </CardBody>
+                  </Col>
                 </Row>
                 <Button className="btn-fill" color="primary" type="submit" value="Submit">
                   Save

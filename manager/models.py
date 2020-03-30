@@ -4,6 +4,8 @@ from django.urls import reverse
 from datetime import datetime
 from django.contrib.auth.models import AbstractUser
 
+import random
+
 # Users
 class Role(models.Model):
     name = models.CharField(max_length=100)
@@ -26,6 +28,7 @@ class User(AbstractUser):
 class Patient(models.Model):
     name = models.CharField(max_length=100)
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    default_pass = models.CharField(max_length=20, editable=False)
     SEVERITY = (
     	(0, 'Healed'),
         (1, 'Low'),
@@ -50,6 +53,10 @@ class Patient(models.Model):
     def get_absolute_url(self):
         return reverse('patient', kwargs={'pk': self.pk})
     def save(self, *args, **kwargs):
+        if self.user is None:
+            self.default_pass = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(16)])
+            self.user = User.objects.create(username=self.name.split(" ")[0].lower()+str(self.pk), password = self.default_pass, email="email")
+            self.user.save()
         if self.machine_assigned is None:
             machine_pk = 0
         else:
@@ -67,7 +74,6 @@ class Patient(models.Model):
         elif not self.severity == int(self.history_severity_y.split(', ')[-1]):
             self.history_severity_x += ', ' + time_str
             self.history_severity_y += ', ' + str(self.severity)
-        print("HERE")
         super(Patient, self).save(*args, **kwargs)
     def get_history_severity(self):
         xx = [datetime.strptime(a, "%Y-%m-%d %H:%M:%S.%f%z") for a in self.history_severity_x.split(', ')]
