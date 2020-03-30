@@ -27,6 +27,11 @@ class PatientViewSet(viewsets.ModelViewSet):
         if 'pk' in self.kwargs:
             return PatientDetailedSerializer
         return self.serializer_class
+    def update(self, *args, **kwargs):
+        print(vars(self))
+        print(args)
+        print(kwargs)
+        super().update(*args, **kwargs)
 
 class PermissionMachineTypeEdit(permissions.BasePermission):
     def has_permission(self, request, view):
