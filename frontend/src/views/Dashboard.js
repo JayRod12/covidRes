@@ -374,9 +374,9 @@ class Dashboard extends React.Component {
             return {
               labels: label_machines,
               datasets: [
-                {
+                {          
                   stack: arbitraryStackkey2,
-                  label: "Number of machines in use",
+                  label: "In use",
                   fill: true,
                   backgroundColor: "#d048b6",
                   borderColor: "#d048b6",
@@ -394,7 +394,7 @@ class Dashboard extends React.Component {
                 },
                 {
                   stack: arbitraryStackkey2,
-                  label: "Number of machines",
+                  label: "Available",
                   fill: true,
                   backgroundColor: gradientStroke,
                   borderColor: "#d048b6",
@@ -483,7 +483,7 @@ class Dashboard extends React.Component {
               datasets: [
                  {
                   stack:arbitraryStackkey,
-                  label: "Number of machines in use today",
+                  label: "In use",
                   fill: true,
                   backgroundColor: "#1f8ef1",
                   borderColor: "#1f8ef1",
@@ -501,7 +501,7 @@ class Dashboard extends React.Component {
                 },
                 {
                   stack: arbitraryStackkey,
-                  label: "Number of machines not in use",
+                  label: "Available",
                   fill: true,
                   backgroundColor: gradientStroke,
                   borderColor: "#1f8ef1",
@@ -681,9 +681,9 @@ class Dashboard extends React.Component {
             <Col lg="4">
               <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">Machines per Location</h5>
+                  <h5 className="card-category">{"Today "+"(Total: " + total_machines + " Ventilators)"}</h5>
                   <CardTitle tag="h3">
-                    <i className="tim-icons icon-square-pin text-info" />{total_machines + " Total Machines "}
+                    <i className="tim-icons icon-square-pin text-info" />{" Machine per Location "}
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
@@ -699,9 +699,9 @@ class Dashboard extends React.Component {
             <Col lg="4">
               <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">Machine per Type</h5>
+                  <h5 className="card-category">{"Today "+"(Total: " + total_machines + " Ventilators)"}</h5>
                   <CardTitle tag="h3">
-                    <i className="tim-icons icon-support-17 text-primary" />{ total_machines + " Total Machines "}
+                    <i className="tim-icons icon-support-17 text-primary"/>{" Machine per Type"}
                    
                   </CardTitle>
                 </CardHeader>
