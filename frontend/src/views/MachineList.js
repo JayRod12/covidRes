@@ -24,6 +24,8 @@ import {
   Card,
   CardHeader,
   CardBody,
+  CardFooter,
+  CardText,
   CardTitle,
   Table,
   Row,
@@ -154,7 +156,7 @@ class MachineList extends React.Component {
       );
     } else {
       machines = (
-        <CardText>No message history</CardText>
+        <CardText>No machines</CardText>
       );
     }
     console.log(machines);
