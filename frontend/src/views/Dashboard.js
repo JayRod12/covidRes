@@ -112,7 +112,7 @@ class Dashboard extends React.Component {
         });
       });
 
-    // fetch machine assignements 
+    // fetch machine assignements
     fetch("rest/assignment_tasks/")
       .then(response => {
         if (response.status > 400) {
@@ -323,8 +323,7 @@ class Dashboard extends React.Component {
     const ADn = AD.filter(item => new Date(item.end_date) - new Date(date_today) > 0);
     const Machines_today_pk = ADn.map(item => item.machine)
     const Machines_today = Machines_today_pk.map(item => {
-      return this.state.machine_data
-        .results.find(element => element.pk == item)
+      return results.find(element => element.pk == item)
     })
 
     console.log(date_today)
@@ -620,7 +619,7 @@ class Dashboard extends React.Component {
     const ADn5 = AD5.filter(item => new Date(item.end_date) - new Date(date_today5) > 0);
     const D5_count = ADn5.length
 
-    
+
     const date_today6= new Date(date_today5)
       date_today6.setDate(date_today6.getDate() + 1)
     const AD6 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today6) < 0);
