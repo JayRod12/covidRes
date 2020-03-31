@@ -16,6 +16,7 @@
 
 */
 import React from "react";
+import { Redirect } from 'react-router';
 import { NavLink, Link } from "react-router-dom";
 
 // reactstrap components
@@ -83,6 +84,34 @@ class PatientList extends React.Component {
       error_message: "",
       severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"],
     };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+
+    console.log({
+        name: data.get('name'),
+        severity: data.get('severity')
+    })
+
+    fetch('/rest/patients/', {
+      method: 'POST',
+      body: JSON.stringify({
+          name: data.get('name'),
+          severity: parseInt(data.get('severity'))
+      }),
+      headers: {
+          "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+      }
+    }).then(response => {return response.json()}).then(data => {
+      this.setState({redirect: data.pk})
+    })
+  }
+  renderRedirect = () => {
+    if (this.state.redirect > 0) {
+      return (<Redirect to={'/patient/'+this.state.redirect} />)
+    }
   }
   componentDidMount() {
     fetch("rest/patients/")
@@ -156,7 +185,8 @@ class PatientList extends React.Component {
                   <Col className="px-md-1" md="4">
                     <CardTitle tag="h4">Patients</CardTitle>
                   </Col>
-                  <Form>
+                  <Form onSubmit={this.handleSubmit}>
+                  {this.renderRedirect()}
                     <Row>
                       <Col className="px-md-1" md={{ span: 3, offset: 1 }}>
                         <FormGroup>
