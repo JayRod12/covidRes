@@ -150,7 +150,7 @@ class PatientProfile extends React.Component {
                 };
               });
             });
-    fetch('/rest/assignment_tasks/query/patient='+pk+'/')
+    fetch('/rest/assignment_tasks/query/bool_completed=0&patient='+pk+'/')
             .then(response => {
                 if (response.status > 400) {
                   throw new Error(response.status);
