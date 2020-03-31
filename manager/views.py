@@ -25,6 +25,9 @@ from . import functions
 # Home
 def home(request):
     return render(request, 'home.html')
+# Home
+def roll(request):
+    return render(request, 'roll.html')
 
 # Main pages
 def patients(request):
