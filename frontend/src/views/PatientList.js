@@ -65,7 +65,7 @@ class PatientRow extends React.Component {
           <td><Link to={'/patient/' + this.props.pk}>{this.props.name}</Link></td>
           <td className="text-center">{this.props.severity}</td>
           <td className="text-center">{this.props.machine_assigned_model}</td>
-          <td>{moment(this.props.admission_date).format("HH:mm (DD-MMM-YYYY)")}}</td>
+          <td>{moment(this.props.admission_date).format("HH:mm (DD-MMM-YYYY)")}</td>
         </tr>
       </React.Fragment>
     );
