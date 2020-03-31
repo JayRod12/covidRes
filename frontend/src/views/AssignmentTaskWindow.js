@@ -1,4 +1,5 @@
 import React from "react";
+import { Redirect } from 'react-router';
 import { NavLink, Link } from "react-router-dom";
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
@@ -47,27 +48,11 @@ class AssignmentTaskWindow extends React.Component {
               "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
           }
       }).then(response => {
-          return response.json();
-      }).then(json => {
-          // optimistically update the state with the new item
-          this.setState(prevState => {
-              return {
-                  ...prevState,
-                  items: prevState.items.map(item =>
-                      item.id === json.pk
-                          ? Object.assign({}, item, {
-                              start_time: moment(json.start_date).valueOf(),
-                              end_time: moment(json.end_date).valueOf(),
-                              group: json.machine
-                          })
-                          : item
-                  ),
-                  pendingItemMove: null,
-              };
-          })
-      }).catch(error => {
-          console.log("Something bad happened while trying to edit the current machine assignment." + error);
-      });
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      }).then(data => {window.location.reload()})
   }
   render() {
     return (
