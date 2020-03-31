@@ -74,7 +74,8 @@ class PatientProfile extends React.Component {
       loaded_tasks: false,
       placeholder_tasks: "Loading",
       error_message_tasks: "",
-      graph_xy: []
+      severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"],
+      graph_xy: [],
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -258,7 +259,7 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                  <Col className="px-md-1" md="4">
+                  <Col className="px-md-1" md="3">
                     <FormGroup>
                       <label>Nickname</label>
                       <Input
@@ -269,15 +270,18 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                  <Col className="pl-md-1" md="1">
+                  <Col className="px-md-1" md="2">
                     <FormGroup>
                       <label>Severity</label>
                       <Input
                         defaultValue={this.state.data.severity}
-                        placeholder="Severity"
                         name="severity"
-                        type="text"
-                      />
+                        type="select"
+                      >
+                        {this.state.severity_list.map((val, i) => {return (
+                          <option key={i+1} value={i}>{val}</option>
+                        )})}
+                      </Input>
                     </FormGroup>
                   </Col>
                   <Col className="pl-md-1" md="5">

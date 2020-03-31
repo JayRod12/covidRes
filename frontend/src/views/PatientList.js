@@ -81,7 +81,7 @@ class PatientList extends React.Component {
       loaded: false,
       placeholder: "Loading",
       error_message: "",
-      severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"]
+      severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"],
     };
   }
   componentDidMount() {
