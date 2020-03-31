@@ -319,7 +319,7 @@ class Dashboard extends React.Component {
 
     var tempDate = new Date();
     var date_today = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + tempDate.getDate() + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
-    const AD = this.state.assignement_data.results.filter(item => new Date(item.start_date) - new Date(date_today) < 0);
+    const AD = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today) < 0);
     const ADn = AD.filter(item => new Date(item.end_date) - new Date(date_today) > 0);
     const Machines_today_pk = ADn.map(item => item.machine)
     const Machines_today = Machines_today_pk.map(item => {
@@ -584,49 +584,59 @@ class Dashboard extends React.Component {
     };
 
     ///////////////////////////////// TOTAL MACHINES AVAILABLE PER DAY THIS WEEK
-
+    if (this.state.assignement_data.length == 0) return (<div>Loading</div>);
     const D0_count = ADn.length
 
-    var date_today1 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 1) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
-    const AD1 = assignmentResults.filter(item => item.start_date < date_today1);
+    const date_today1= new Date(date_today)
+      date_today1.setDate(date_today1.getDate() + 1)
+
+    //var date_today1 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 1) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
+    const AD1 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today1) < 0);
     const ADn1 = AD1.filter(item => new Date(item.end_date) - new Date(date_today1) > 0);
     const D1_count = ADn1.length
 
 
-    var date_today2 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 2) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
-    const AD2 = assignmentResults.filter(item => item.start_date < date_today2);
+    const date_today2= new Date(date_today1)
+      date_today2.setDate(date_today1.getDate() + 1)
+    const AD2 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today2) < 0);
     const ADn2 = AD2.filter(item => new Date(item.end_date) - new Date(date_today2) > 0);
     const D2_count = ADn2.length
 
-    var date_today3 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 3) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
-    const AD3 = assignmentResults.filter(item => item.start_date < date_today3);
+    const date_today3= new Date(date_today2)
+      date_today3.setDate(date_today3.getDate() + 1)
+    const AD3 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today3) < 0);
     const ADn3 = AD3.filter(item => new Date(item.end_date) - new Date(date_today3) > 0);
     const D3_count = ADn3.length
 
-    var date_today4 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 4) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
-    const AD4 = assignmentResults.filter(item => item.start_date < date_today4);
+    const date_today4= new Date(date_today3)
+      date_today4.setDate(date_today4.getDate() + 1)
+    const AD4 =  assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today4) < 0);
     const ADn4 = AD4.filter(item => new Date(item.end_date) - new Date(date_today4) > 0);
     const D4_count = ADn4.length
 
-    var date_today5 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 5) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
-    const AD5 = assignmentResults.filter(item => item.start_date < date_today5);
+    const date_today5= new Date(date_today4)
+      date_today5.setDate(date_today5.getDate() + 1)
+    const AD5 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today5) < 0);
     const ADn5 = AD5.filter(item => new Date(item.end_date) - new Date(date_today5) > 0);
     const D5_count = ADn5.length
 
-    var date_today6 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 6) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
-    const AD6 = assignmentResults.filter(item => item.start_date < date_today6);
+    
+    const date_today6= new Date(date_today5)
+      date_today6.setDate(date_today6.getDate() + 1)
+    const AD6 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today6) < 0);
     const ADn6 = AD6.filter(item => new Date(item.end_date) - new Date(date_today6) > 0);
     const D6_count = ADn6.length
 
-    var date_today7 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 7) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
-    const AD7 = assignmentResults.filter(item => item.start_date < date_today7);
+    const date_today7= new Date(date_today6)
+      date_today7.setDate(date_today7.getDate() + 1)
+    const AD7 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today7) < 0);
     const ADn7 = AD7.filter(item => new Date(item.end_date) - new Date(date_today7) > 0);
     const D7_count = ADn7.length
 
     const M_used_week = [D0_count, D1_count, D2_count, D3_count, D4_count, D5_count, D6_count, D7_count]
     console.log(M_used_week)
 
-    console.log(date_today1)
+    console.log(this.state.assigement_data)
     const days_from_today = ["today", "1", "2", "3", "4", "5", "6", "7"]
 
 
