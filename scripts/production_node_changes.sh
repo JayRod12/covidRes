@@ -6,3 +6,4 @@ npm run build
 cd ..
 python manage.py collectstatic
 sudo supervisorctl restart covidres
+sudo service nginx restart
