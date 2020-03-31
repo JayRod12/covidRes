@@ -112,13 +112,13 @@ class Machine(models.Model):
 
 class AssignmentTask(models.Model):
     date = models.DateTimeField('Task by:', editable=False, default=timezone.now)
-    bool_completed = models.BooleanField(default=False)
 
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='machine_assignments')
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='machine_assignments')
     start_date = models.DateTimeField('initial date:', default=timezone.now)
     end_date = models.DateTimeField('end date:', default=timezone.now)
     bool_install = models.BooleanField('installed', default=False)
+    bool_completed = models.BooleanField(default=False)
     def __str__(self):
     	return str(self.machine) + '->' + str(self.patient) + ' | ' + str(self.start_date) + ' --- ' + str(self.end_date)
     def get_absolute_url(self):
