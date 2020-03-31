@@ -39,10 +39,9 @@ import {
   Col
 } from "reactstrap";
 
-import moment from 'moment'
-
 import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
 
+import moment from 'moment'
 import $ from 'jquery';
 
 const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
@@ -416,7 +415,7 @@ class PatientProfile extends React.Component {
                     position: "nearest",
                     callbacks: {
                         title: function (tooltipItem, data) {
-                            return "Date: " + data.labels[tooltipItem[0].index];
+                            return "Date: " + moment(data.labels[tooltipItem[0].index]).format("HH:mm (D-MMM-YYYY)")};
                         },
                         label: function(tooltipItems, data) {
                             return "Severity: " + tooltipItems.yLabel;
