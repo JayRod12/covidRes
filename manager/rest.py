@@ -91,7 +91,6 @@ class AssignmentTaskQueryViewSet(viewsets.ModelViewSet):
     serializer_class = AssignmentTaskSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
     def get_queryset(self):
-        print(self.kwargs)
         if 'query' in self.kwargs:
             query = self.kwargs['query'].split('&')
             query = [q.split('=') for q in query]
@@ -109,10 +108,8 @@ class UserViewSet(viewsets.ModelViewSet):
 class CurrentUserViewSet(viewsets.ViewSet):
     queryset = User.objects.all()
     permission_classes = [permissions.IsAuthenticated]
-
     def retrieve(self, request):
         user = get_object_or_404(queryset, pk=request.user.pk)
-        print('HEEEEEy')
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
