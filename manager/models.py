@@ -55,8 +55,9 @@ class Patient(models.Model):
     def save(self, *args, **kwargs):
         if self.user is None:
             random.seed()
+            print(self.name.split(" ")[0].lower()+str(self.pk))
             self.default_pass = '_'.join([random.choice("ant bee cow dog cat pet dot map set pig pen mat let wet".split(" ")) for n in range(4)])
-            self.user = User.objects.create(username=self.name.split(" ")[0].lower()+str(self.pk), password = self.default_pass, email="")
+            self.user = User.objects.create(username=self.name.split(" ").replace("_", "")[0].lower()+"_"+str(self.pk), password = self.default_pass, email="")
             self.user.save()
         if self.user.role is None:
             patient_role = Role.objects.filter(name="Patient")
@@ -101,7 +102,7 @@ class MachineType(models.Model):
 
 class Machine(models.Model):
     model = models.ForeignKey(MachineType, on_delete=models.CASCADE)
-    location = models.CharField(max_length=100)
+    location = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
     patient_assigned = models.ForeignKey(Patient, null=True, blank=True, on_delete=models.SET_NULL)
     def __str__(self):
@@ -111,13 +112,13 @@ class Machine(models.Model):
 
 class AssignmentTask(models.Model):
     date = models.DateTimeField('Task by:', editable=False, default=timezone.now)
-    bool_completed = models.BooleanField(default=False)
 
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='machine_assignments')
     machine = models.ForeignKey(Machine, on_delete=models.CASCADE, related_name='machine_assignments')
     start_date = models.DateTimeField('initial date:', default=timezone.now)
     end_date = models.DateTimeField('end date:', default=timezone.now)
     bool_install = models.BooleanField('installed', default=False)
+    bool_completed = models.BooleanField(default=False)
     def __str__(self):
     	return str(self.machine) + '->' + str(self.patient) + ' | ' + str(self.start_date) + ' --- ' + str(self.end_date)
     def get_absolute_url(self):

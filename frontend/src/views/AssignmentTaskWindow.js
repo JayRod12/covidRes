@@ -41,7 +41,7 @@ class AssignmentTaskWindow extends React.Component {
           method: 'PATCH',
           body: JSON.stringify({
               bool_completed: props.bool_install,
-              bool_install: 1
+              bool_install: true
           }),
           headers: {
               "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),

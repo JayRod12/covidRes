@@ -21,6 +21,7 @@ import { NavLink, Link } from "react-router-dom";
 // reactstrap components
 import {
   Alert,
+  Button,
   Card,
   CardHeader,
   CardBody,
@@ -28,11 +29,31 @@ import {
   CardText,
   CardTitle,
   Table,
+  FormGroup,
+  Form,
+  Input,
   Row,
   Col
 } from "reactstrap";
 
+import $ from 'jquery';
+
 const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = $.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 class PatientRow extends React.Component {
   render() {
@@ -60,6 +81,7 @@ class PatientList extends React.Component {
       loaded: false,
       placeholder: "Loading",
       error_message: "",
+      severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"],
     };
   }
   componentDidMount() {
@@ -131,7 +153,36 @@ class PatientList extends React.Component {
             <Col md="12">
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h4">Patients</CardTitle>
+                  <Col className="px-md-1" md="4">
+                    <CardTitle tag="h4">Patients</CardTitle>
+                  </Col>
+                  <Form>
+                    <Row>
+                      <Col className="px-md-1" md={{ span: 3, offset: 1 }}>
+                        <FormGroup>
+                          <Input
+                            placeholder="Nickname"
+                            name="name"
+                            type="text"
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col className="px-md-1" md="1">
+                        <FormGroup>
+                          <Input type="select" name="severity">
+                            {this.state.severity_list.map((val, i) => {return (
+                              <option key={i+1} value={i}>{val}</option>
+                            )})}
+                          </Input>
+                        </FormGroup>
+                      </Col>
+                      <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
+                        <Button>
+                          Create
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Form>
                 </CardHeader>
                 <CardBody>
                   <Table className="tablesorter" responsive>

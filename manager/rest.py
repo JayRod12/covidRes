@@ -1,5 +1,6 @@
 from rest_framework import generics, permissions, viewsets
 from rest_framework.response import Response
+from django.http import HttpResponseForbidden
 
 from django.shortcuts import get_object_or_404
 
@@ -69,9 +70,24 @@ class AssignmentTaskViewSet(viewsets.ModelViewSet):
     queryset = AssignmentTask.objects.all().order_by('date')
     serializer_class = AssignmentTaskSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
-    def get_queryset(self):
-        print(self.kwargs)
-        return self.queryset
+    def partial_update(self, request, *args, **kwargs):
+        if 'bool_completed' in request.data or 'bool_install' in request.data:
+            task = AssignmentTask.objects.get(pk=kwargs['pk'])
+            if not (request.data['bool_completed'] == task.bool_completed and request.data['bool_install'] == task.bool_install):
+                if not request.data['bool_completed']:
+                    if not task.patient.machine_assigned is None:
+                        return HttpResponseForbidden('403 Forbidden, machine already has a patient', content_type='text/html')
+                    if not task.machine.patient_assigned is None:
+                        return HttpResponseForbidden('403 Forbidden, patient already has a machine', content_type='text/html')
+                    task.patient.machine_assigned = task.machine
+                    task.machine.patient_assigned = task.patient
+                else:
+                    task.patient.machine_assigned = None
+                    task.machine.patient_assigned = None
+                task.patient.save()
+                task.machine.save()
+                task.save()
+        return super(AssignmentTaskViewSet, self).partial_update(request, *args, **kwargs)
 class AssignmentTaskQueryViewSet(viewsets.ModelViewSet):
     queryset = AssignmentTask.objects.all().order_by('date')
     serializer_class = AssignmentTaskSerializer
