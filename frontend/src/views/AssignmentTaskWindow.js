@@ -19,6 +19,7 @@ import {
   Col
 } from "reactstrap";
 
+import moment from 'moment'
 import $ from 'jquery';
 
 function getCookie(name) {
@@ -58,7 +59,7 @@ class AssignmentTaskWindow extends React.Component {
     return (
           <React.Fragment>
             {this.props.bool_install == 1 ? <h3>Remove Machine</h3> : <h3>Install Machine</h3>}
-            <div align="right">Due: {this.props.date}</div>
+            <div align="right">Due: {moment(this.props.date).format("HH:mm (D-MMM-YYYY)")}</div>
             <hr/>
             <Row>
               <Link to={'/machine/'+this.props.machine}><h4>{this.props.machine_model}</h4></Link> #{this.props.machine}

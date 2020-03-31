@@ -37,6 +37,7 @@ import {
   Col
 } from "reactstrap";
 
+import moment from 'moment'
 import $ from 'jquery';
 
 const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
@@ -64,15 +65,12 @@ class PatientRow extends React.Component {
           <td><Link to={'/patient/' + this.props.pk}>{this.props.name}</Link></td>
           <td className="text-center">{this.props.severity}</td>
           <td className="text-center">{this.props.machine_assigned_model}</td>
-          <td>{this.props.admission_date}</td>
+          <td>{moment(this.props.admission_date).format("HH:mm (DD-MMM-YYYY)")}}</td>
         </tr>
       </React.Fragment>
     );
   }
 }
-function prettifyDate(raw_date) {
-  return new Date(raw_date).toGMTString();
-};
 
 class PatientList extends React.Component {
   constructor(props) {
@@ -163,7 +161,7 @@ class PatientList extends React.Component {
           key={entry.pk}
           pk={entry.pk}
           name={entry.name}
-          admission_date={prettifyDate(entry.admission_date)}
+          admission_date={entry.admission_date}
           severity={entry.severity}
           machine_assigned_model={entry.machine_assigned_model}
         />

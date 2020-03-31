@@ -35,6 +35,8 @@ import {
   Col
 } from "reactstrap";
 
+import moment from 'moment'
+
 import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
 
 const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
@@ -148,7 +150,7 @@ class TaskList extends React.Component {
           color={props.bool_install == 0 ? "primary" : "info"}
           onClick={() => this.pop(props)}
         >
-          {props.bool_install == 0 ? "Install" : "Remove"} {props.machine_model} {props.bool_install == 0 ? "to" : "from"} {props.patient_name} due {props.date}
+          {props.bool_install == 0 ? "Install" : "Remove"} {props.machine_model} {props.bool_install == 0 ? "to" : "from"} {props.patient_name} due {moment(props.date).format("HH:mm (D-MMM-YYYY)")}
         </Button>
       )
       );
