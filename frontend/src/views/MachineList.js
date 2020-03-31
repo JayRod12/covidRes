@@ -16,6 +16,7 @@
 
 */
 import React from "react";
+import { Redirect } from 'react-router';
 import { NavLink, Link } from "react-router-dom";
 
 // reactstrap components
@@ -82,6 +83,7 @@ class MachineList extends React.Component {
       loaded_machinetype: false,
       placeholder: "Loading",
       error_message: "",
+      redirect: 0,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -97,7 +99,14 @@ class MachineList extends React.Component {
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
       }
+    }).then(response => {return response.json()}).then(data => {
+      this.setState({redirect: data.pk})
     })
+  }
+  renderRedirect = () => {
+    if (this.state.redirect > 0) {
+      return (<Redirect to={'/machine/'+this.state.redirect} />)
+    }
   }
   componentDidMount() {
     fetch("rest/machines/")
@@ -205,6 +214,7 @@ class MachineList extends React.Component {
     console.log(machines);
     return (
       <>
+      {this.renderRedirect()}
         <div className="content">
           <Row>
             <Col md="12">
@@ -214,6 +224,7 @@ class MachineList extends React.Component {
                     <CardTitle tag="h4">Machines</CardTitle>
                   </Col>
                   <Form onSubmit={this.handleSubmit}>
+                  {this.renderRedirect()}
                     <Row>
                       <Col className="px-md-1" md={{ span: 2, offset: 2 }}>
                         <FormGroup>
