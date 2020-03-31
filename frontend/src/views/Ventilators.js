@@ -317,6 +317,19 @@ class Ventilators extends React.Component {
         const startDate = moment(this.state.selectedStartDate).valueOf();
         const endDate = moment(this.state.selectedEndDate).valueOf();
 
+        if (startDate > endDate) {
+            this.setState(prevState => ({
+                ...prevState,
+                dialogState: {
+                    showDialog: true,
+                    dialogTitle: "Error",
+                    dialogText: "The start date needs to be before the end date.",
+                    showCancelButton: false,
+                },
+            }));
+            return;
+        }
+
         const isValidOperation = this._isValidOperation(null, startDate, endDate, this.state.selectedPatient, this.state.selectedMachine);
         if (!isValidOperation) {
             this._showMachineOrPatientAssignedDialog();

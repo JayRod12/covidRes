@@ -28,8 +28,6 @@ class PatientViewSet(viewsets.ModelViewSet):
         if 'pk' in self.kwargs:
             return PatientDetailedSerializer
         return self.serializer_class
-    def get_queryset(self):
-        return self.queryset
 
 class PermissionMachineTypeEdit(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -51,7 +49,7 @@ class MachineQueryViewSet(viewsets.ModelViewSet):
     serializer_class = MachineSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachineEdit]
     def get_queryset(self):
-        print(self.kwargs)
+        queryset = super().get_queryset()
         if 'query' in self.kwargs:
             query = self.kwargs['query'].split('&')
             query = [q.split('=') for q in query]
@@ -59,9 +57,9 @@ class MachineQueryViewSet(viewsets.ModelViewSet):
         if 'date' in query:
             overlaping_tasks = AssignmentTask.objects.filter(start_date__lte=query['date'], end_date__gte=query['date'])
             machine_pks = overlaping_tasks.values_list('machine', flat=True)
-            self.queryset = self.queryset.filter(pk__in=machine_pks)
+            queryset = queryset.filter(pk__in=machine_pks)
             query.pop('date', None);
-        return self.queryset.filter(**query)
+        return queryset.filter(**query)
 
 class PermissionTaskEdit(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -98,7 +96,7 @@ class AssignmentTaskQueryViewSet(viewsets.ModelViewSet):
             query = self.kwargs['query'].split('&')
             query = [q.split('=') for q in query]
             query = {q[0]:q[1] for q in query}
-        return self.queryset.filter(**query)
+        return super().get_queryset().filter(**query)
 
 class PermissionUserEdit(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -126,7 +124,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMessageEdit]
     def get_queryset(self):
-        return self.queryset.filter(sender__pk=self.request.user.pk)
+        return super().get_queryset().filter(sender__pk=self.request.user.pk)
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
 
@@ -135,4 +133,4 @@ class MessagePatientViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMessageEdit]
     def get_queryset(self):
-        return self.queryset.filter(patient__pk=self.kwargs['patient_pk'])
+        return super().get_queryset().filter(patient__pk=self.kwargs['patient_pk'])
