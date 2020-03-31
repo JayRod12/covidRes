@@ -246,7 +246,7 @@ class PatientProfile extends React.Component {
             <CardBody>
               <Form onSubmit={this.handleSubmit}>
                 <Row>
-                  <Col className="pr-md-1" md="1">
+                  <Col className="pr-md-1" md="2">
                     <FormGroup>
                       <label>ID</label>
                       <Input
@@ -269,14 +269,14 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                  <Col className="pl-md-1" md="2">
+                  <Col className="pl-md-1" md="1">
                     <FormGroup>
                       <label>Severity</label>
                       <Input
                         defaultValue={this.state.data.severity}
                         placeholder="Severity"
                         name="severity"
-                        type="number"
+                        type="text"
                       />
                     </FormGroup>
                   </Col>

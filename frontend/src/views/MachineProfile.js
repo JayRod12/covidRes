@@ -213,7 +213,7 @@ class MachineProfile extends React.Component {
             <CardBody>
               <Form onSubmit={this.handleSubmit}>
                 <Row>
-                  <Col className="pr-md-1" md="1">
+                  <Col className="pr-md-1" md="2">
                     <FormGroup>
                       <label>ID</label>
                       <Input
@@ -225,7 +225,7 @@ class MachineProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                  <Col className="px-md-1" md="5">
+                  <Col className="px-md-1" md="4">
                     <FormGroup>
                       <label>Model</label>
                       <Input
