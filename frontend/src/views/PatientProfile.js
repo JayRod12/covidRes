@@ -210,11 +210,12 @@ class PatientProfile extends React.Component {
           pk={props.pk}
           machine={props.machine}
           patient={props.patient}
+          bool_install={props.bool_install}
           machine_model={props.machine_model}
           patient_name={props.patient_name}
           machine_location={props.machine_location}
           patient_location={props.patient_location}
-          bool_install={props.bool_install}
+          date={props.date}
         />
       ),
       type: type,
