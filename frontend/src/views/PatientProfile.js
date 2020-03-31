@@ -415,7 +415,7 @@ class PatientProfile extends React.Component {
                     position: "nearest",
                     callbacks: {
                         title: function (tooltipItem, data) {
-                            return "Date: " + moment(data.labels[tooltipItem[0].index]).format("HH:mm (D-MMM-YYYY)")};
+                            return "Date: " + moment(data.labels[tooltipItem[0].index]).format("HH:mm (D-MMM-YYYY)");
                         },
                         label: function(tooltipItems, data) {
                             return "Severity: " + tooltipItems.yLabel;
