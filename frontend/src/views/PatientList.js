@@ -83,6 +83,7 @@ class PatientList extends React.Component {
       placeholder: "Loading",
       error_message: "",
       severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"],
+      redirect: 0,
       create_isOpen: false,
       filter_isOpen: false,
       filter_name: "--(All)--",
