@@ -1,8 +1,10 @@
-from rest_framework import generics, permissions, viewsets
+from rest_framework import generics, permissions, viewsets, serializers
 from rest_framework.response import Response
 from django.http import HttpResponseForbidden
 
 from django.shortcuts import get_object_or_404
+import io
+from rest_framework.parsers import JSONParser
 
 from .models import Patient, MachineType, Machine, AssignmentTask
 from .models import User, Message
@@ -16,6 +18,14 @@ from .serializers import (
 from .serializers import UserSerializer, MessageSerializer
 from .serializers import User, Message
 from . import functions
+
+class serializer_Date(serializers.Serializer):
+    date = serializers.DateTimeField()
+
+def parseDate(date_str):
+    serializer = serializer_Date(data = {"date": date_str})
+    serializer.is_valid()
+    return serializer.validated_data['date']
 
 class PermissionUserEdit(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -68,7 +78,78 @@ class AssignmentTaskViewSet(viewsets.ModelViewSet):
     queryset = AssignmentTask.objects.all().order_by('date')
     serializer_class = AssignmentTaskSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
+    def create(self, request, *args, **kwargs):
+        if 'start_date' in request.data or 'end_date' in request.data:
+            date_serializer = serializers.DateTimeField()
+            start_date = parseDate(request.data['start_date'])
+            end_date = parseDate(request.data['end_date'])
+            machine_pk = int(request.data['machine'])
+            patient_pk = int(request.data['patient'])
+            other_tasks_machine = AssignmentTask.objects.filter(machine__pk=machine_pk)
+            other_tasks_patient = AssignmentTask.objects.filter(patient__pk=patient_pk)
+            if other_tasks_machine.filter(start_date__gt=start_date, end_date__lt=start_date) or other_tasks_machine.filter(start_date__gt=end_date, end_date__lt=end_date):
+                return HttpResponseForbidden('403 Forbidden, machine busy', content_type='text/html')
+            if other_tasks_patient.filter(start_date__gt=start_date, end_date__lt=start_date) or other_tasks_patient.filter(start_date__gt=end_date, end_date__lt=end_date):
+                return HttpResponseForbidden('403 Forbidden, patient busy', content_type='text/html')
+            if other_tasks_machine.filter(start_date__lt=start_date, end_date__gt=start_date) or other_tasks_machine.filter(start_date__lt=end_date, end_date__gt=end_date):
+                return HttpResponseForbidden('403 Forbidden, machine busy', content_type='text/html')
+            if other_tasks_patient.filter(start_date__lt=start_date, end_date__gt=start_date) or other_tasks_patient.filter(start_date__lt=end_date, end_date__gt=end_date):
+                return HttpResponseForbidden('403 Forbidden, patient busy', content_type='text/html')
+        return super(AssignmentTaskViewSet, self).create(request, *args, **kwargs)
+    def update(self, request, *args, **kwargs):
+        if 'start_date' in request.data or 'end_date' in request.data:
+            date_serializer = serializers.DateTimeField()
+            task = AssignmentTask.objects.get(pk=kwargs['pk'])
+            start_date = task.start_date
+            end_date = task.end_date
+            machine_pk = task.machine.pk
+            patient_pk = task.patient.pk
+            if 'start_date' in request.data:
+                start_date = parseDate(request.data['start_date'])
+            if 'end_date' in request.data:
+                end_date = parseDate(request.data['end_date'])
+            if 'machine' in request.data:
+                machine_pk = int(request.data['machine'])
+            if 'patient' in request.data:
+                patient_pk = int(request.data['patient'])
+            other_tasks_machine = AssignmentTask.objects.filter(machine__pk=machine_pk).exclude(pk=kwargs['pk'])
+            other_tasks_patient = AssignmentTask.objects.filter(patient__pk=patient_pk).exclude(pk=kwargs['pk'])
+            print([len(other_tasks_machine), len(other_tasks_patient)])
+            if other_tasks_machine.filter(start_date__gt=start_date, end_date__lt=start_date) or other_tasks_machine.filter(start_date__gt=end_date, end_date__lt=end_date):
+                return HttpResponseForbidden('403 Forbidden, machine busy', content_type='text/html')
+            if other_tasks_patient.filter(start_date__gt=start_date, end_date__lt=start_date) or other_tasks_patient.filter(start_date__gt=end_date, end_date__lt=end_date):
+                return HttpResponseForbidden('403 Forbidden, patient busy', content_type='text/html')
+            if other_tasks_machine.filter(start_date__lt=start_date, end_date__gt=start_date) or other_tasks_machine.filter(start_date__lt=end_date, end_date__gt=end_date):
+                return HttpResponseForbidden('403 Forbidden, machine busy', content_type='text/html')
+            if other_tasks_patient.filter(start_date__lt=start_date, end_date__gt=start_date) or other_tasks_patient.filter(start_date__lt=end_date, end_date__gt=end_date):
+                return HttpResponseForbidden('403 Forbidden, patient busy', content_type='text/html')
+        return super(AssignmentTaskViewSet, self).update(request, *args, **kwargs)
     def partial_update(self, request, *args, **kwargs):
+        if 'start_date' in request.data or 'end_date' in request.data:
+            date_serializer = serializers.DateTimeField()
+            task = AssignmentTask.objects.get(pk=kwargs['pk'])
+            start_date = task.start_date
+            end_date = task.end_date
+            machine_pk = task.machine.pk
+            patient_pk = task.patient.pk
+            if 'start_date' in request.data:
+                start_date = parseDate(request.data['start_date'])
+            if 'end_date' in request.data:
+                end_date = parseDate(request.data['end_date'])
+            if 'machine' in request.data:
+                machine_pk = int(request.data['machine'])
+            if 'patient' in request.data:
+                patient_pk = int(request.data['patient'])
+            other_tasks_machine = AssignmentTask.objects.filter(machine__pk=machine_pk).exclude(pk=kwargs['pk'])
+            other_tasks_patient = AssignmentTask.objects.filter(patient__pk=patient_pk).exclude(pk=kwargs['pk'])
+            if other_tasks_machine.filter(start_date__gt=start_date, end_date__lt=start_date) or other_tasks_machine.filter(start_date__gt=end_date, end_date__lt=end_date):
+                return HttpResponseForbidden('403 Forbidden, machine busy', content_type='text/html')
+            if other_tasks_patient.filter(start_date__gt=start_date, end_date__lt=start_date) or other_tasks_patient.filter(start_date__gt=end_date, end_date__lt=end_date):
+                return HttpResponseForbidden('403 Forbidden, patient busy', content_type='text/html')
+            if other_tasks_machine.filter(start_date__lt=start_date, end_date__gt=start_date) or other_tasks_machine.filter(start_date__lt=end_date, end_date__gt=end_date):
+                return HttpResponseForbidden('403 Forbidden, machine busy', content_type='text/html')
+            if other_tasks_patient.filter(start_date__lt=start_date, end_date__gt=start_date) or other_tasks_patient.filter(start_date__lt=end_date, end_date__gt=end_date):
+                return HttpResponseForbidden('403 Forbidden, patient busy', content_type='text/html')
         if 'bool_completed' in request.data or 'bool_install' in request.data:
             task = AssignmentTask.objects.get(pk=kwargs['pk'])
             if not (request.data['bool_completed'] == task.bool_completed and request.data['bool_install'] == task.bool_install):
