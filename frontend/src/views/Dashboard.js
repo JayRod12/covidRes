@@ -82,8 +82,18 @@ class Dashboard extends React.Component {
       data: { datasets: [], labels: [], total: 0 },
       //      date: '',
       //plotmachine: { datasets: [], labels: [], total: 0 }
+      filter_per_location: "--(All)--",
+      filter_per_model: "--(All)--"
     }
     this.updateData = this.updateData.bind(this);
+  }
+  on_location_change = (event) => {
+    const value = event.target.value
+    this.setState(prevState => ({...prevState, filter_per_location: value}))
+  }
+  on_model_change = (event) => {
+    const value = event.target.value
+    this.setState(prevState => ({...prevState, filter_per_model: value}))
   }
   setBgChartData = name => {
     this.setState({
@@ -378,6 +388,258 @@ class Dashboard extends React.Component {
     const data_plot_machines_type_sub = data_plot_machines
       .map((item, index) => data_plot_machines[index] - data_plot_machines_today_type[index])
 
+
+      ///////////////////////////////// TOTAL MACHINES AVAILABLE PER DAY THIS WEEK
+      if (this.state.assignement_data.length == 0) return (<div>Loading</div>);
+      const D0_count = ADn.length
+
+      const date_today1= new Date(date_today)
+        date_today1.setDate(date_today1.getDate() + 1)
+
+      //var date_today1 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 1) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
+      const AD1 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today1) < 0);
+      const ADn1 = AD1.filter(item => new Date(item.end_date) - new Date(date_today1) > 0);
+      const D1_count = ADn1.length
+
+
+      const date_today2= new Date(date_today1)
+        date_today2.setDate(date_today1.getDate() + 1)
+      const AD2 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today2) < 0);
+      const ADn2 = AD2.filter(item => new Date(item.end_date) - new Date(date_today2) > 0);
+      const D2_count = ADn2.length
+
+      const date_today3= new Date(date_today2)
+        date_today3.setDate(date_today3.getDate() + 1)
+      const AD3 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today3) < 0);
+      const ADn3 = AD3.filter(item => new Date(item.end_date) - new Date(date_today3) > 0);
+      const D3_count = ADn3.length
+
+      const date_today4= new Date(date_today3)
+        date_today4.setDate(date_today4.getDate() + 1)
+      const AD4 =  assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today4) < 0);
+      const ADn4 = AD4.filter(item => new Date(item.end_date) - new Date(date_today4) > 0);
+      const D4_count = ADn4.length
+
+      const date_today5= new Date(date_today4)
+        date_today5.setDate(date_today5.getDate() + 1)
+      const AD5 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today5) < 0);
+      const ADn5 = AD5.filter(item => new Date(item.end_date) - new Date(date_today5) > 0);
+      const D5_count = ADn5.length
+
+
+      const date_today6= new Date(date_today5)
+        date_today6.setDate(date_today6.getDate() + 1)
+      const AD6 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today6) < 0);
+      const ADn6 = AD6.filter(item => new Date(item.end_date) - new Date(date_today6) > 0);
+      const D6_count = ADn6.length
+
+      const date_today7= new Date(date_today6)
+        date_today7.setDate(date_today7.getDate() + 1)
+      const AD7 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today7) < 0);
+      const ADn7 = AD7.filter(item => new Date(item.end_date) - new Date(date_today7) > 0);
+      const D7_count = ADn7.length
+
+      const M_used_week = [D0_count, D1_count, D2_count, D3_count, D4_count, D5_count, D6_count, D7_count]
+      console.log(M_used_week)
+
+      console.log(this.state.assigement_data)
+      const days_from_today = ["today", "1", "2", "3", "4", "5", "6", "7"]
+
+      /// JOAN TIME
+      const install_tasks = assignmentResults.map(item => { return ({
+        date: new Date(item.start_date),
+        model: item.machine_model,
+        value: 1
+      })});
+      const remove_tasks = assignmentResults.map(item => { return ({
+        date: new Date(item.end_date),
+        model: item.machine_model,
+        value: -1
+      })});
+      const tasks = install_tasks.concat(remove_tasks).filter(
+        item => item.date > new Date(date_today)
+      ).filter(
+        item => item.date < new Date(date_today7)
+      ).sort(function(a, b) {
+        if (a.date < b.date) return -1;
+        if (a.date > b.date) return 1;
+        return 0;
+      })
+      const machinetypes = [...new Set(assignmentResults.map(item => item.machine_model))];/// The Set trick is to get unique values
+      const locations = [...new Set(results.map(item => item.location))];
+      var time_evolution_per_machine = {}
+      machinetypes.forEach((model, i) => {
+        const used_now = assignmentResults.filter(
+          item => item.machine_model == model
+        ).filter(
+          item => new Date(item.start_date) < new Date(date_today)
+        ).filter(
+          item => new Date(item.end_date) > new Date(date_today)
+        ).length
+        time_evolution_per_machine[model] = [{x: new Date(date_today), y:used_now}];
+      });
+      tasks.forEach((item, i) => {
+        const last_item_y = time_evolution_per_machine[item.model][time_evolution_per_machine[item.model].length-1].y;
+        time_evolution_per_machine[item.model] = [...time_evolution_per_machine[item.model], {x: item.date, y: last_item_y+item.value}]
+      });
+      machinetypes.forEach((item, i) => {
+        const last_item_y = time_evolution_per_machine[item][time_evolution_per_machine[item].length-1].y;
+        time_evolution_per_machine[item] = [...time_evolution_per_machine[item], {x: new Date(date_today7), y: last_item_y}]
+      });
+      const data_joan = canvas => {
+        let ctx = canvas.getContext("2d");
+
+        return {
+          datasets: machinetypes.map((item, ii) => {
+            let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
+
+            gradientStroke.addColorStop(1, convertHex(colors[ii%colors.length], 0.15));
+            gradientStroke.addColorStop(0, convertHex(colors[ii%colors.length], 0)); //blue colors
+            return({
+              label: item,
+              fill: true,
+              showLine: true,
+              lineTension: 0.2,
+              backgroundColor: gradientStroke,
+              borderColor: colors[ii%colors.length],
+              borderWidth: 2,
+              borderDash: [],
+              borderDashOffset: 0.0,
+              pointBackgroundColor: colors[ii%colors.length],
+              pointBorderColor: "rgba(255,255,255,0)",
+              pointHoverBackgroundColor: colors[ii%colors.length],
+              pointBorderWidth: 20,
+              pointHoverRadius: 4,
+              pointHoverBorderWidth: 15,
+              pointRadius: 4,
+              data: time_evolution_per_machine[item]
+          })})
+        };
+      }
+
+      const options_joan = {
+        maintainAspectRatio: false,
+        legend: {
+          display: true
+        },
+        tooltips: {
+          backgroundColor: "#f5f5f5",
+          titleFontColor: "#333",
+          bodyFontColor: "#666",
+          bodySpacing: 4,
+          xPadding: 12,
+          mode: "nearest",
+          intersect: 0,
+          position: "nearest",
+          callbacks: {
+              title: function (tooltipItem, data) {
+                return "Date: " + moment(tooltipItem[0].xLabel).format("HH:mm (D-MMM-YYYY)");
+              },
+              label: function(tooltipItems, data) {
+                return (
+                      "Used: " + tooltipItems.yLabel
+                  );
+              },
+              footer: function (tooltipItem, data) { return "..."; }
+          }
+        },
+        responsive: true,
+        scales: {
+          yAxes: [
+            {
+              barPercentage: 1.6,
+              gridLines: {
+                drawBorder: false,
+                color: "rgba(29,140,248,0.0)",
+                zeroLineColor: "transparent"
+              },
+              ticks: {
+                suggestedMin: 0,
+                padding: 2,
+                fontColor: "#9a9a9a"
+              }
+            }
+          ],
+          xAxes: [
+            {
+              barPercentage: 1.6,
+              gridLines: {
+                display: false,
+                drawBorder: false,
+                color: "rgba(29,140,248,0.1)",
+                zeroLineColor: "transparent"
+              },
+              ticks: {
+                suggestedMin: new Date(date_today),
+                suggestedMax: new Date(date_today7),
+                display: false,
+                padding: 20,
+                fontColor: "#9a9a9a"
+              }
+            }
+          ]
+        }
+      };
+
+      var machines_taken_per_location_total = {}
+      var machines_taken_per_model_total = {}
+      var machines_available_per_location_total = {}
+      var machines_available_per_model_total = {}
+      var machines_taken_per_location = {}
+      var machines_taken_per_model = {}
+      var machines_available_per_location = {}
+      var machines_available_per_model = {}
+      // Initialize to 0
+      locations.forEach((location, ii) => {
+        machines_taken_per_location_total[location] = 0;
+        machines_available_per_location_total[location] = 0;
+      });
+      machinetypes.forEach((model, ii) => {
+        machines_taken_per_model_total[model] = 0;
+        machines_available_per_model_total[model] = 0;
+      });
+      locations.forEach((location, ii) => {
+        machines_taken_per_model[location] = Object.assign({}, machines_taken_per_model_total);
+        machines_available_per_model[location] = Object.assign({}, machines_taken_per_model_total);
+      });
+      machinetypes.forEach((model, ii) => {
+        machines_taken_per_location[model] = Object.assign({}, machines_taken_per_location_total);
+        machines_available_per_location[model] = Object.assign({}, machines_taken_per_location_total);
+      });
+      // Fill them
+      results.forEach((machine, ii) => {
+        if (machine.patient_assigned_name == null) {
+          machines_available_per_location_total[machine.location]++
+          machines_available_per_model_total[machine.model_name]++
+          machines_available_per_location[machine.model_name][machine.location]++
+          machines_available_per_model[machine.location][machine.model_name]++
+        } else {
+          machines_taken_per_location_total[machine.location]++
+          machines_taken_per_model_total[machine.model_name]++
+          machines_taken_per_location[machine.model_name][machine.location]++
+          machines_taken_per_model[machine.location][machine.model_name]++
+        }
+      });
+      console.log(results)
+      console.log("mtplt", machines_taken_per_location_total)
+      console.log("mtpl", machines_taken_per_location)
+      console.log("mtpmt", machines_taken_per_model_total)
+      console.log("mtpm", machines_taken_per_model)
+      // Turn into arrays
+      machines_available_per_location_total = locations.map(location => machines_available_per_location_total[location])
+      machines_available_per_model_total = machinetypes.map(model => machines_available_per_model_total[model])
+      machines_taken_per_location_total = locations.map(location => machines_taken_per_location_total[location])
+      machines_taken_per_model_total = machinetypes.map(model => machines_taken_per_model_total[model])
+      locations.forEach((location, ii) => {
+        machines_available_per_model[location] = machinetypes.map(model => machines_available_per_model[location][model])
+        machines_taken_per_model[location] = machinetypes.map(model => machines_taken_per_model[location][model])
+      });
+      machinetypes.forEach((model, ii) => {
+        machines_available_per_location[model] = locations.map(location => machines_available_per_location[model][location])
+        machines_taken_per_location[model] = locations.map(location => machines_taken_per_location[model][location])
+      });
+
+      /// JOAN TIME END
     /////////////////////////////////////////////////////////////////////////////////
 
     const ourChartMachinesTotal = {
@@ -393,7 +655,8 @@ class Dashboard extends React.Component {
         const arbitraryStackkey2 = "stack1";
 
         return {
-          labels: label_machines,
+          //labels: label_machines,
+          labels: machinetypes,
           datasets: [
             {
               stack: arbitraryStackkey2,
@@ -411,7 +674,8 @@ class Dashboard extends React.Component {
               pointHoverRadius: 4,
               pointHoverBorderWidth: 15,
               pointRadius: 4,
-              data: data_plot_machines_today_type,
+              //data: data_plot_machines_today_type,
+              data: this.state.filter_per_location == "--(All)--" ? machines_taken_per_model_total : machines_taken_per_model[this.state.filter_per_location],
             },
             {
               stack: arbitraryStackkey2,
@@ -429,7 +693,8 @@ class Dashboard extends React.Component {
               pointHoverRadius: 4,
               pointHoverBorderWidth: 15,
               pointRadius: 4,
-              data: data_plot_machines_type_sub,
+              //data: data_plot_machines_type_sub,
+              data: this.state.filter_per_location == "--(All)--" ? machines_available_per_model_total : machines_available_per_model[this.state.filter_per_location],
             }
           ]
         };
@@ -500,7 +765,8 @@ class Dashboard extends React.Component {
         const arbitraryStackkey = "stack1";
 
         return {
-          labels: label_machines_location,
+          //labels: label_machines_location,
+          labels: locations,
           datasets: [
             {
               stack: arbitraryStackkey,
@@ -518,7 +784,8 @@ class Dashboard extends React.Component {
               pointHoverRadius: 4,
               pointHoverBorderWidth: 15,
               pointRadius: 4,
-              data: data_plot_machines_today_location,
+              //data: data_plot_machines_today_location,
+              data: this.state.filter_per_model == "--(All)--" ? machines_taken_per_location_total : machines_taken_per_location[this.state.filter_per_model],
             },
             {
               stack: arbitraryStackkey,
@@ -536,7 +803,8 @@ class Dashboard extends React.Component {
               pointHoverRadius: 4,
               pointHoverBorderWidth: 15,
               pointRadius: 4,
-              data: data_plot_machines_location_sub,
+              //data: data_plot_machines_location_sub,
+              data: this.state.filter_per_model == "--(All)--" ? machines_available_per_location_total : machines_available_per_location[this.state.filter_per_model],
             }
           ]
         };
@@ -593,201 +861,6 @@ class Dashboard extends React.Component {
         }
       }
     };
-
-    ///////////////////////////////// TOTAL MACHINES AVAILABLE PER DAY THIS WEEK
-    if (this.state.assignement_data.length == 0) return (<div>Loading</div>);
-    const D0_count = ADn.length
-
-    const date_today1= new Date(date_today)
-      date_today1.setDate(date_today1.getDate() + 1)
-
-    //var date_today1 = tempDate.getFullYear() + '-' + (tempDate.getMonth() + 1) + '-' + (tempDate.getDate() + 1) + ' ' + tempDate.getHours() + ':' + tempDate.getMinutes() + ':' + tempDate.getSeconds();
-    const AD1 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today1) < 0);
-    const ADn1 = AD1.filter(item => new Date(item.end_date) - new Date(date_today1) > 0);
-    const D1_count = ADn1.length
-
-
-    const date_today2= new Date(date_today1)
-      date_today2.setDate(date_today1.getDate() + 1)
-    const AD2 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today2) < 0);
-    const ADn2 = AD2.filter(item => new Date(item.end_date) - new Date(date_today2) > 0);
-    const D2_count = ADn2.length
-
-    const date_today3= new Date(date_today2)
-      date_today3.setDate(date_today3.getDate() + 1)
-    const AD3 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today3) < 0);
-    const ADn3 = AD3.filter(item => new Date(item.end_date) - new Date(date_today3) > 0);
-    const D3_count = ADn3.length
-
-    const date_today4= new Date(date_today3)
-      date_today4.setDate(date_today4.getDate() + 1)
-    const AD4 =  assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today4) < 0);
-    const ADn4 = AD4.filter(item => new Date(item.end_date) - new Date(date_today4) > 0);
-    const D4_count = ADn4.length
-
-    const date_today5= new Date(date_today4)
-      date_today5.setDate(date_today5.getDate() + 1)
-    const AD5 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today5) < 0);
-    const ADn5 = AD5.filter(item => new Date(item.end_date) - new Date(date_today5) > 0);
-    const D5_count = ADn5.length
-
-
-    const date_today6= new Date(date_today5)
-      date_today6.setDate(date_today6.getDate() + 1)
-    const AD6 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today6) < 0);
-    const ADn6 = AD6.filter(item => new Date(item.end_date) - new Date(date_today6) > 0);
-    const D6_count = ADn6.length
-
-    const date_today7= new Date(date_today6)
-      date_today7.setDate(date_today7.getDate() + 1)
-    const AD7 = assignmentResults.filter(item => new Date(item.start_date) - new Date(date_today7) < 0);
-    const ADn7 = AD7.filter(item => new Date(item.end_date) - new Date(date_today7) > 0);
-    const D7_count = ADn7.length
-
-    const M_used_week = [D0_count, D1_count, D2_count, D3_count, D4_count, D5_count, D6_count, D7_count]
-    console.log(M_used_week)
-
-    console.log(this.state.assigement_data)
-    const days_from_today = ["today", "1", "2", "3", "4", "5", "6", "7"]
-
-    /// JOAN TIME
-    const install_tasks = assignmentResults.map(item => { return ({
-      date: new Date(item.start_date),
-      model: item.machine_model,
-      value: 1
-    })});
-    const remove_tasks = assignmentResults.map(item => { return ({
-      date: new Date(item.end_date),
-      model: item.machine_model,
-      value: -1
-    })});
-    const tasks = install_tasks.concat(remove_tasks).filter(
-      item => item.date > new Date(date_today)
-    ).filter(
-      item => item.date < new Date(date_today7)
-    ).sort(function(a, b) {
-      if (a.date < b.date) return -1;
-      if (a.date > b.date) return 1;
-      return 0;
-    })
-    const machinetypes = [...new Set(assignmentResults.map(item => item.machine_model))];/// The Set trick is to get unique values
-    var time_evolution_per_machine = {}
-    machinetypes.forEach((model, i) => {
-      const used_now = assignmentResults.filter(
-        item => item.machine_model == model
-      ).filter(
-        item => new Date(item.start_date) < new Date(date_today)
-      ).filter(
-        item => new Date(item.end_date) > new Date(date_today)
-      ).length
-      console.log("Joan, model", model)
-      console.log("Joan, assignmentResults", assignmentResults)
-      console.log("Joan, used_now", used_now)
-      time_evolution_per_machine[model] = [{x: new Date(date_today), y:used_now}];
-    });
-    tasks.forEach((item, i) => {
-      const last_item_y = time_evolution_per_machine[item.model][time_evolution_per_machine[item.model].length-1].y;
-      time_evolution_per_machine[item.model] = [...time_evolution_per_machine[item.model], {x: item.date, y: last_item_y+item.value}]
-    });
-    machinetypes.forEach((item, i) => {
-      const last_item_y = time_evolution_per_machine[item][time_evolution_per_machine[item].length-1].y;
-      time_evolution_per_machine[item] = [...time_evolution_per_machine[item], {x: new Date(date_today7), y: last_item_y}]
-    });
-    const data_joan = canvas => {
-      let ctx = canvas.getContext("2d");
-
-      return {
-        datasets: machinetypes.map((item, ii) => {
-          let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
-
-          gradientStroke.addColorStop(1, convertHex(colors[ii%colors.length], 0.15));
-          gradientStroke.addColorStop(0, convertHex(colors[ii%colors.length], 0)); //blue colors
-          return({
-            label: item,
-            fill: true,
-            showLine: true,
-            lineTension: 0.2,
-            backgroundColor: gradientStroke,
-            borderColor: colors[ii%colors.length],
-            borderWidth: 2,
-            borderDash: [],
-            borderDashOffset: 0.0,
-            pointBackgroundColor: colors[ii%colors.length],
-            pointBorderColor: "rgba(255,255,255,0)",
-            pointHoverBackgroundColor: colors[ii%colors.length],
-            pointBorderWidth: 20,
-            pointHoverRadius: 4,
-            pointHoverBorderWidth: 15,
-            pointRadius: 4,
-            data: time_evolution_per_machine[item]
-        })})
-      };
-    }
-
-    const options_joan = {
-      maintainAspectRatio: false,
-      legend: {
-        display: true
-      },
-      tooltips: {
-        backgroundColor: "#f5f5f5",
-        titleFontColor: "#333",
-        bodyFontColor: "#666",
-        bodySpacing: 4,
-        xPadding: 12,
-        mode: "nearest",
-        intersect: 0,
-        position: "nearest",
-        callbacks: {
-            title: function (tooltipItem, data) {
-              return "Date: " + moment(tooltipItem[0].xLabel).format("HH:mm (D-MMM-YYYY)");
-            },
-            label: function(tooltipItems, data) {
-              return (
-                    "Used: " + tooltipItems.yLabel
-                );
-            },
-            footer: function (tooltipItem, data) { return "..."; }
-        }
-      },
-      responsive: true,
-      scales: {
-        yAxes: [
-          {
-            barPercentage: 1.6,
-            gridLines: {
-              drawBorder: false,
-              color: "rgba(29,140,248,0.0)",
-              zeroLineColor: "transparent"
-            },
-            ticks: {
-              suggestedMin: 0,
-              padding: 2,
-              fontColor: "#9a9a9a"
-            }
-          }
-        ],
-        xAxes: [
-          {
-            barPercentage: 1.6,
-            gridLines: {
-              display: false,
-              drawBorder: false,
-              color: "rgba(29,140,248,0.1)",
-              zeroLineColor: "transparent"
-            },
-            ticks: {
-              suggestedMin: new Date(date_today),
-              suggestedMax: new Date(date_today7),
-              display: false,
-              padding: 20,
-              fontColor: "#9a9a9a"
-            }
-          }
-        ]
-      }
-    };
-    /// JOAN TIME END
 
     const ourChartweek = {
       data: canvas => {
@@ -984,10 +1057,25 @@ class Dashboard extends React.Component {
             <Col lg="6">
               <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">{"Today " + "(Total: " + total_machines + " Ventilators)"}</h5>
-                  <CardTitle tag="h3">
-                    <i className="tim-icons icon-square-pin text-info" />{" Machine per Location "}
-                  </CardTitle>
+                  <Row>
+                    <Col className="text-left" sm="6">
+                      <h5 className="card-category">{"Today " + "(Total: " + total_machines + " Ventilators)"}</h5>
+                      <CardTitle tag="h3"><i className="tim-icons icon-square-pin text-primary" />{" Machine per Location"}</CardTitle>
+                    </Col>
+                    <Col sm="4">
+                    <Input
+                      defaultValue="--(All)--"
+                      name="location"
+                      type="select"
+                      id="locationSelect"
+                      onChange={this.on_model_change}
+                    >
+                      {[<option key={0} value="--(All)--">--(All)--</option>, ...machinetypes.map((val, i) => {return (
+                        <option key={i+1} value={val}>{val}</option>
+                      )})]}
+                    </Input>
+                    </Col>
+                  </Row>
                 </CardHeader>
                 <CardBody>
                   <div className="chart-area">
@@ -1002,11 +1090,25 @@ class Dashboard extends React.Component {
             <Col lg="6">
               <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">{"Today " + "(Total: " + total_machines + " Ventilators)"}</h5>
-                  <CardTitle tag="h3">
-                    <i className="tim-icons icon-support-17 text-primary" />{" Machine per Type"}
-
-                  </CardTitle>
+                  <Row>
+                    <Col className="text-left" sm="6">
+                      <h5 className="card-category">{"Today " + "(Total: " + total_machines + " Ventilators)"}</h5>
+                      <CardTitle tag="h3"><i className="tim-icons icon-support-17 text-primary" />{" Machine per Type"}</CardTitle>
+                    </Col>
+                    <Col sm="4">
+                    <Input
+                      defaultValue="--(All)--"
+                      name="location"
+                      type="select"
+                      id="locationSelect"
+                      onChange={this.on_location_change}
+                    >
+                      {[<option key={0} value="--(All)--">--(All)--</option>, ...locations.map((val, i) => {return (
+                        <option key={i+1} value={val}>{val}</option>
+                      )})]}
+                    </Input>
+                    </Col>
+                  </Row>
                 </CardHeader>
                 <CardBody>
                   <div className="chart-area">
