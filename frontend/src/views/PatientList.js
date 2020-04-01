@@ -23,6 +23,7 @@ import { NavLink, Link } from "react-router-dom";
 import {
   Alert,
   Button,
+  Collapse,
   Card,
   CardHeader,
   CardBody,
@@ -82,6 +83,12 @@ class PatientList extends React.Component {
       placeholder: "Loading",
       error_message: "",
       severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"],
+      create_isOpen: false,
+      filter_isOpen: false,
+      filter_name: "--(All)--",
+      filter_severity: "--(All)--",
+      filter_machine: "--(All)--",
+      filter_location: "--(All)--"
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -150,6 +157,9 @@ class PatientList extends React.Component {
     let patients;
     const results = IS_DEV ? this.state.data.results : this.state.data;
 
+    const models = [...new Set(results.map(patient => patient.machine_assigned_model))]
+    const locations = [...new Set(results.map(patient => patient.location))]
+
     if (this.state.error_message.length > 0) {
       patients = (
         <Alert color="danger">
@@ -157,24 +167,35 @@ class PatientList extends React.Component {
         </Alert>
       );
     } else if (results.length > 0) {
-      patients = results.map((entry, index) => (
-        <PatientRow
-          key={entry.pk}
-          pk={entry.pk}
-          name={entry.name}
-          admission_date={entry.admission_date}
-          severity={entry.severity}
-          location={entry.location}
-          machine_assigned_model={entry.machine_assigned_model}
-        />
-      )
-      );
+      patients = results.map((entry, index) => {
+        if (
+          (this.state.filter_severity == "--(All)--" || this.state.filter_severity == entry.severity) &&
+          (this.state.filter_machine == "--(All)--" || this.state.filter_machine == entry.machine_assigned_model || this.state.filter_machine == "" && entry.machine_assigned_model == null) &&
+          (this.state.filter_location == "--(All)--" || this.state.filter_location == entry.location) &&
+          (this.state.filter_name == "--(All)--" || this.state.filter_name.length <= entry.name.length && this.state.filter_name.toLowerCase() == entry.name.substring(0, this.state.filter_name.length).toLowerCase())
+        ) {return (
+          <PatientRow
+            key={entry.pk}
+            pk={entry.pk}
+            name={entry.name}
+            admission_date={entry.admission_date}
+            severity={entry.severity}
+            location={entry.location}
+            machine_assigned_model={entry.machine_assigned_model}
+          />
+        )}
+      });
     } else {
       patients = (
         <CardText>No patients</CardText>
       );
     }
+
     console.log(patients);
+    const toggle_sign = (my_bool) => {return(my_bool
+      ? <span style={{ 'font-size': '9px' }}>&#9650;</span>
+      : <span style={{ 'font-size': '9px' }}>&#9660;</span>
+    )};
     return (
       <>
         <div className="content">
@@ -182,37 +203,120 @@ class PatientList extends React.Component {
             <Col md="12">
               <Card>
                 <CardHeader>
-                  <Col className="px-md-1" md="4">
-                    <CardTitle tag="h4">Patients</CardTitle>
-                  </Col>
-                  <Form onSubmit={this.handleSubmit}>
-                  {this.renderRedirect()}
-                    <Row>
-                      <Col className="px-md-1" md={{ span: 3, offset: 1 }}>
-                        <FormGroup>
-                          <Input
-                            placeholder="Nickname"
-                            name="name"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col className="px-md-1" md="1">
-                        <FormGroup>
-                          <Input type="select" name="severity">
-                            {this.state.severity_list.map((val, i) => {return (
-                              <option key={i+1} value={i}>{val}</option>
-                            )})}
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                      <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
-                        <Button>
-                          Create
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
+                  <Row>
+                    <Col className="px-md-1" md="8">
+                      <CardTitle tag="h4">Patients</CardTitle>
+                    </Col>
+                    <Col className="px-md-1" md="2">
+                      <Button
+                        color="secondary"
+                        onClick={() => this.setState({
+                          create_isOpen: !this.state.create_isOpen,
+                          filter_isOpen: false
+                        })}
+                        >
+                        Create patient
+                      </Button>
+                    </Col>
+                    <Col className="px-md-1" md="2">
+                      <Button
+                        color="secondary"
+                        onClick={() => this.setState({
+                          create_isOpen: false,
+                          filter_isOpen: !this.state.filter_isOpen
+                        })}
+                        >
+                        Filter patients
+                      </Button>
+                    </Col>
+                  </Row>
+                  <Collapse isOpen={this.state.filter_isOpen}>
+                    <Form>
+                      <Row>
+                        <Col className="px-md-1" md="2">
+                          <FormGroup>
+                            <Input
+                              name="name"
+                              type="text"
+                              onChange={(event) => {this.setState({filter_name: event.target.value})}}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md="2">
+                          <FormGroup>
+                            <Input
+                              name="model"
+                              type="select"
+                              onChange={(event) => {this.setState({filter_machine: event.target.value})}}
+                            >
+                              <option key={0} value="--(All)--">--(All)--</option>
+                              {models.map((val, i) => {return (
+                                <option key={i+1} value={val}>{val}</option>
+                              )})}
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md="1">
+                          <FormGroup>
+                            <Input
+                              name="location"
+                              type="select"
+                              onChange={(event) => {this.setState({filter_location: event.target.value})}}
+                            >
+                              <option key={0} value="--(All)--">--(All)--</option>
+                              {locations.map((val, i) => {return (
+                                <option key={i+1} value={val}>{val}</option>
+                              )})}
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md="1">
+                          <FormGroup>
+                            <Input
+                              name="severity"
+                              type="select"
+                              onChange={(event) => {this.setState({filter_severity: event.target.value})}}
+                            >
+                              <option key={0} value="--(All)--">--(All)--</option>
+                              {this.state.severity_list.map((val, i) => {return (
+                                <option key={i+1} value={i}>{val}</option>
+                              )})}
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Collapse>
+                  <Collapse isOpen={this.state.create_isOpen}>
+                    <Form onSubmit={this.handleSubmit}>
+                      {this.renderRedirect()}
+                      <Row>
+                        <Col className="px-md-1" md={{ span: 3, offset: 1 }}>
+                          <FormGroup>
+                            <Input
+                              placeholder="Nickname"
+                              name="name"
+                              type="text"
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md="1">
+                          <FormGroup>
+                            <Input type="select" name="severity">
+                              {this.state.severity_list.map((val, i) => {return (
+                                <option key={i+1} value={i}>{val}</option>
+                              )})}
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
+                          <Button>
+                            Create
+                          </Button>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Collapse>
                 </CardHeader>
                 <CardBody>
                   <Table className="tablesorter" responsive>
