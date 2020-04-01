@@ -236,6 +236,9 @@ class PatientList extends React.Component {
                       <Row>
                         <Col className="px-md-1" md="2">
                           <FormGroup>
+                            <label>
+                              Nickname
+                            </label>
                             <Input
                               name="name"
                               type="text"
@@ -245,6 +248,9 @@ class PatientList extends React.Component {
                         </Col>
                         <Col className="px-md-1" md="2">
                           <FormGroup>
+                            <label>
+                              Model
+                            </label>
                             <Input
                               name="model"
                               type="select"
@@ -257,8 +263,11 @@ class PatientList extends React.Component {
                             </Input>
                           </FormGroup>
                         </Col>
-                        <Col className="px-md-1" md="1">
+                        <Col className="px-md-1" md="2">
                           <FormGroup>
+                            <label>
+                              Location
+                            </label>
                             <Input
                               name="location"
                               type="select"
@@ -273,6 +282,9 @@ class PatientList extends React.Component {
                         </Col>
                         <Col className="px-md-1" md="1">
                           <FormGroup>
+                            <label>
+                              Severity
+                            </label>
                             <Input
                               name="severity"
                               type="select"

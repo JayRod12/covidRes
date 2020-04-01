@@ -23,6 +23,7 @@ import { NavLink, Link } from "react-router-dom";
 import {
   Alert,
   Button,
+  Collapse,
   Card,
   CardHeader,
   CardBody,
@@ -84,6 +85,11 @@ class MachineList extends React.Component {
       placeholder: "Loading",
       error_message: "",
       redirect: 0,
+      create_isOpen: false,
+      filter_isOpen: false,
+      filter_availability: "--(All)--",
+      filter_machine: "--(All)--",
+      filter_location: "--(All)--"
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -177,6 +183,10 @@ class MachineList extends React.Component {
     }
     let machines;
     const results = IS_DEV ? this.state.data.results : this.state.data;
+
+    const models = [...new Set(results.map(machine => machine.model_name))]
+    const locations = [...new Set(results.map(machine => machine.location))]
+
     if (this.state.error_message.length > 0) {
       machines = (
         <Alert color="danger">
@@ -184,7 +194,12 @@ class MachineList extends React.Component {
         </Alert>
       );
     } else if (results.length > 0) {
-      machines = results.map((entry, index) => (
+      machines = results.map((entry, index) => {
+        if (
+          (this.state.filter_availability == "--(All)--" || this.state.filter_availability == (entry.patient_assigned != null)) &&
+          (this.state.filter_machine == "--(All)--" || this.state.filter_machine == entry.model_name) &&
+          (this.state.filter_location == "--(All)--" || this.state.filter_location == entry.location)
+        ) {return(
         <MachineRow
           key={entry.pk}
           pk={entry.pk}
@@ -192,8 +207,8 @@ class MachineList extends React.Component {
           location={entry.location}
           patient_assigned_name={entry.patient_assigned_name}
         />
-      )
-      );
+      )}
+      });
     } else {
       machines = (
         <CardText>No machines</CardText>
@@ -220,26 +235,108 @@ class MachineList extends React.Component {
             <Col md="12">
               <Card>
                 <CardHeader>
-                  <Col className="px-md-1" md="4">
-                    <CardTitle tag="h4">Machines</CardTitle>
-                  </Col>
-                  <Form onSubmit={this.handleSubmit}>
-                  {this.renderRedirect()}
-                    <Row>
-                      <Col className="px-md-1" md={{ span: 2, offset: 2 }}>
-                        <FormGroup>
-                          <Input type="select" name="model">
-                            {machinetypes}
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                      <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
-                        <Button>
-                          Create
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form>
+                  <Row>
+                    <Col className="px-md-1" md="8">
+                      <CardTitle tag="h4">Machines</CardTitle>
+                    </Col>
+                    <Col className="px-md-1" md="2">
+                      <Button
+                        color="secondary"
+                        onClick={() => this.setState({
+                          create_isOpen: !this.state.create_isOpen,
+                          filter_isOpen: false
+                        })}
+                        >
+                        Create machine
+                      </Button>
+                    </Col>
+                    <Col className="px-md-1" md="2">
+                      <Button
+                        color="secondary"
+                        onClick={() => this.setState({
+                          create_isOpen: false,
+                          filter_isOpen: !this.state.filter_isOpen
+                        })}
+                        >
+                        Filter machines
+                      </Button>
+                    </Col>
+                  </Row>
+                  <Collapse isOpen={this.state.filter_isOpen}>
+                    <Form>
+                      <Row>
+                        <Col className="px-md-1" md="2">
+                          <FormGroup>
+                            <label>
+                              Model
+                            </label>
+                            <Input
+                              name="model"
+                              type="select"
+                              onChange={(event) => {this.setState({filter_machine: event.target.value})}}
+                            >
+                              <option key={0} value="--(All)--">--(All)--</option>
+                              {models.map((val, i) => {return (
+                                <option key={i+1} value={val}>{val}</option>
+                              )})}
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md="2">
+                          <FormGroup>
+                            <label>
+                              Location
+                            </label>
+                            <Input
+                              name="location"
+                              type="select"
+                              onChange={(event) => {this.setState({filter_location: event.target.value})}}
+                            >
+                              <option key={0} value="--(All)--">--(All)--</option>
+                              {locations.map((val, i) => {return (
+                                <option key={i+1} value={val}>{val}</option>
+                              )})}
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md="1">
+                          <FormGroup>
+                            <label>
+                              Available?
+                            </label>
+                            <Input
+                              name="severity"
+                              type="select"
+                              onChange={(event) => {this.setState({filter_availability: event.target.value})}}
+                            >
+                              <option key={0} value="--(All)--">--(All)--</option>
+                              <option key={1} value={1}>No</option>
+                              <option key={2} value={0}>Yes</option>
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Collapse>
+                  <Collapse isOpen={this.state.create_isOpen}>
+                    <Form onSubmit={this.handleSubmit}>
+                    {this.renderRedirect()}
+                      <Row>
+                        <Col className="px-md-1" md={{ span: 2, offset: 2 }}>
+                          <FormGroup>
+                            <Input type="select" name="model">
+                              {machinetypes}
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
+                          <Button>
+                            Create
+                          </Button>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Collapse>
                 </CardHeader>
                 <CardBody>
                   <Table className="tablesorter" responsive>
