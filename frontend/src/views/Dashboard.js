@@ -19,10 +19,11 @@ import React from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
+import { Line, Bar, Scatter } from "react-chartjs-2";
 
 import csvData from 'assets/files/data.csv';
 
+import moment from 'moment'
 import Papa from "papaparse"
 
 // reactstrap components
@@ -55,6 +56,8 @@ import {
 } from "variables/charts.js";
 
 const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
+const colors = ["#00d6b4", "#d048b6", "#1f8ef1", "#f1c40f", "#e74c3c", " #d35400", "#2e4053", "#48c9b0"];
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -638,6 +641,144 @@ class Dashboard extends React.Component {
     console.log(this.state.assigement_data)
     const days_from_today = ["today", "1", "2", "3", "4", "5", "6", "7"]
 
+    /// JOAN TIME
+    const install_tasks = assignmentResults.map(item => { return ({
+      date: new Date(item.start_date),
+      model: item.machine_model,
+      value: 1
+    })});
+    const remove_tasks = assignmentResults.map(item => { return ({
+      date: new Date(item.end_date),
+      model: item.machine_model,
+      value: -1
+    })});
+    const tasks = install_tasks.concat(remove_tasks).filter(
+      item => item.date > new Date(date_today)
+    ).filter(
+      item => item.date < new Date(date_today7)
+    ).sort(function(a, b) {
+      if (a.date < b.date) return -1;
+      if (a.date > b.date) return 1;
+      return 0;
+    })
+    const machinetypes = [...new Set(assignmentResults.map(item => item.machine_model))];/// The Set trick is to get unique values
+    var time_evolution_per_machine = {}
+    machinetypes.forEach((model, i) => {
+      const used_now = assignmentResults.filter(
+        item => item.machine_model == model
+      ).filter(
+        item => new Date(item.start_date) < new Date(date_today)
+      ).filter(
+        item => new Date(item.end_date) > new Date(date_today)
+      ).length
+      console.log("Joan, model", model)
+      console.log("Joan, assignmentResults", assignmentResults)
+      console.log("Joan, used_now", used_now)
+      time_evolution_per_machine[model] = [{x: new Date(date_today), y:used_now}];
+    });
+    tasks.forEach((item, i) => {
+      const last_item_y = time_evolution_per_machine[item.model][time_evolution_per_machine[item.model].length-1].y;
+      time_evolution_per_machine[item.model] = [...time_evolution_per_machine[item.model], {x: item.date, y: last_item_y+item.value}]
+    });
+    machinetypes.forEach((item, i) => {
+      const last_item_y = time_evolution_per_machine[item][time_evolution_per_machine[item].length-1].y;
+      time_evolution_per_machine[item] = [...time_evolution_per_machine[item], {x: new Date(date_today7), y: last_item_y}]
+    });
+    const data_joan = canvas => {
+      let ctx = canvas.getContext("2d");
+
+      let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
+
+      gradientStroke.addColorStop(1, "rgba(140,140,140,0.1)");
+      gradientStroke.addColorStop(0, "rgba(140,140,140,0)"); //blue colors
+
+      return {
+        datasets: machinetypes.map((item, ii) => {return({
+            label: item,
+            fill: true,
+            showLine: true,
+            lineTension: 0.2,
+            backgroundColor: gradientStroke,
+            borderColor: colors[ii%colors.length],
+            borderWidth: 2,
+            borderDash: [],
+            borderDashOffset: 0.0,
+            pointBackgroundColor: colors[ii%colors.length],
+            pointBorderColor: "rgba(255,255,255,0)",
+            pointHoverBackgroundColor: colors[ii%colors.length],
+            pointBorderWidth: 20,
+            pointHoverRadius: 4,
+            pointHoverBorderWidth: 15,
+            pointRadius: 4,
+            data: time_evolution_per_machine[item]
+        })})
+      };
+    }
+
+    const options_joan = {
+      maintainAspectRatio: false,
+      legend: {
+        display: true
+      },
+      tooltips: {
+        backgroundColor: "#f5f5f5",
+        titleFontColor: "#333",
+        bodyFontColor: "#666",
+        bodySpacing: 4,
+        xPadding: 12,
+        mode: "nearest",
+        intersect: 0,
+        position: "nearest",
+        callbacks: {
+            title: function (tooltipItem, data) {
+              return "Date: " + moment(tooltipItem[0].xLabel).format("HH:mm (D-MMM-YYYY)");
+            },
+            label: function(tooltipItems, data) {
+              return (
+                    "Used: " + tooltipItems.yLabel
+                );
+            },
+            footer: function (tooltipItem, data) { return "..."; }
+        }
+      },
+      responsive: true,
+      scales: {
+        yAxes: [
+          {
+            barPercentage: 1.6,
+            gridLines: {
+              drawBorder: false,
+              color: "rgba(29,140,248,0.0)",
+              zeroLineColor: "transparent"
+            },
+            ticks: {
+              suggestedMin: 0,
+              padding: 2,
+              fontColor: "#9a9a9a"
+            }
+          }
+        ],
+        xAxes: [
+          {
+            barPercentage: 1.6,
+            gridLines: {
+              display: false,
+              drawBorder: false,
+              color: "rgba(29,140,248,0.1)",
+              zeroLineColor: "transparent"
+            },
+            ticks: {
+              suggestedMin: new Date(date_today),
+              suggestedMax: new Date(date_today7),
+              display: false,
+              padding: 20,
+              fontColor: "#9a9a9a"
+            }
+          }
+        ]
+      }
+    };
+    /// JOAN TIME END
 
     const ourChartweek = {
       data: canvas => {
@@ -906,6 +1047,26 @@ class Dashboard extends React.Component {
                     <Line
                       data={ourChartData.data}
                       options={ourChartData.options}
+                    />
+                  </div>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg="12">
+              <Card className="card-chart">
+                <CardHeader>
+                  <h5 className="card-category">Evolution (NEW)</h5>
+                  <CardTitle tag="h3">
+                    <i className="tim-icons icon-single-02 text-success" /> {" Ventilators in use per model"}
+                  </CardTitle>
+                </CardHeader>
+                <CardBody>
+                  <div className="chart-area">
+                    <Scatter
+                      data={data_joan}
+                      options={options_joan}
                     />
                   </div>
                 </CardBody>
