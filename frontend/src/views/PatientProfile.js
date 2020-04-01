@@ -374,7 +374,6 @@ class PatientProfile extends React.Component {
                     gradientStroke.addColorStop(0, "rgba(29,140,248,0)"); //blue colors
 
                     return {
-                      labels: [...this.state.graph_xy, {x: new Date().valueOf(), y: this.state.graph_xy[this.state.graph_xy.length-1]}].map((xy) => {return new Date(xy['x']).toISOString()}),
                       datasets: [
                         {
                           label: "Data",
