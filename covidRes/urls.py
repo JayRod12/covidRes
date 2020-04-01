@@ -19,6 +19,7 @@ from rest_framework import routers
 from frontend import views as react_views
 #from resourceManager import views
 from manager import rest as views_manager
+from manager import authentication as views_auth
 from manager.views import roll
 
 router = routers.DefaultRouter()
@@ -44,6 +45,9 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     #path('', include('resourceManager.urls')), # template based views
     path('manager/', include('manager.urls')), # template based views
+    path('login/', views_auth.login_view),
+    path('logout/', views_auth.logout_view),
+    path('password/', views_auth.password_view),
     path('secret/', roll),
     re_path(r'^(?:.*)/?$', react_views.index),
 ]
