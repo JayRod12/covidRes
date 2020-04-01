@@ -58,6 +58,15 @@ import {
 const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 
 const colors = ["#00d6b4", "#d048b6", "#1f8ef1", "#f1c40f", "#e74c3c", " #d35400", "#2e4053", "#48c9b0"];
+function convertHex(hex,opacity){
+    hex = hex.replace('#','');
+    var r = parseInt(hex.substring(0,2), 16);
+    var g = parseInt(hex.substring(2,4), 16);
+    var b = parseInt(hex.substring(4,6), 16);
+
+    var result = 'rgba('+r+','+g+','+b+','+opacity+')';
+    return result;
+}
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -687,13 +696,13 @@ class Dashboard extends React.Component {
     const data_joan = canvas => {
       let ctx = canvas.getContext("2d");
 
-      let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
-
-      gradientStroke.addColorStop(1, "rgba(140,140,140,0.1)");
-      gradientStroke.addColorStop(0, "rgba(140,140,140,0)"); //blue colors
-
       return {
-        datasets: machinetypes.map((item, ii) => {return({
+        datasets: machinetypes.map((item, ii) => {
+          let gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
+
+          gradientStroke.addColorStop(1, convertHex(colors[ii%colors.length], 0.15));
+          gradientStroke.addColorStop(0, convertHex(colors[ii%colors.length], 0)); //blue colors
+          return({
             label: item,
             fill: true,
             showLine: true,
