@@ -145,6 +145,8 @@ class Ventilators extends React.Component {
                             end_time: moment(assignment.end_date).valueOf(),
                             canChangeGroup: true,
                             patient_id: assignment.patient,
+                            canMove: assignment.bool_install == 0,
+                            canResize: assignment.bool_install == 0 ? "both" : assignment.bool_completed ? false : "right",
                         });
                     });
                     this.setState(prevState => ({
@@ -437,6 +439,7 @@ class Ventilators extends React.Component {
                 );
             });
         }
+        console.log("Joan, items", this.state.items)
         return (
             <div className="content">
                 <Row>
@@ -471,8 +474,8 @@ class Ventilators extends React.Component {
                                 items={this.state.items}
                                 traditionalZoom
                                 itemTouchSendsClick={true}
-                                canMove={true}
-                                canResize={"both"}
+                                //canMove={true}
+                                //canResize={"both"}
                                 defaultTimeStart={moment().add(-12, 'day')}
                                 defaultTimeEnd={moment().add(12, 'day')}
                                 onItemMove={this._handleItemMove}
