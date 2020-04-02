@@ -16,6 +16,8 @@ import {
     CardBody,
     CardFooter,
     CardText,
+    CardTitle,
+    Collapse,
     FormGroup,
     Form,
     Input,
@@ -77,6 +79,12 @@ class Ventilators extends React.Component {
             selectedMachine: -1,
             selectedStartDate: null,
             selectedEndDate: null,
+            selectedItem: null,
+            create_isOpen: false,
+            filter_isOpen: false,
+            filter_machine: "--(All)--",
+            filter_location: "--(All)--",
+            filter_follow: false,
         };
     }
 
@@ -114,8 +122,8 @@ class Ventilators extends React.Component {
                 const groups = []; const allMachines = [];
                 results.forEach(ventilator => {
                     const ventilatorName = ventilator.model_name + " #" + ventilator.pk;
-                    groups.push({ id: ventilator.pk, title: ventilatorName });
-                    allMachines.push({ id: ventilator.pk, name: ventilatorName })
+                    groups.push({ id: ventilator.pk, title: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location});
+                    allMachines.push({ id: ventilator.pk, name: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location})
                 });
                 this.setState(prevState => ({
                     ...prevState, groups: groups, allMachines: allMachines
@@ -145,6 +153,8 @@ class Ventilators extends React.Component {
                             end_time: moment(assignment.end_date).valueOf(),
                             canChangeGroup: true,
                             patient_id: assignment.patient,
+                            machine_location: assignment.machine_location,
+                            machine_model: assignment.machine_model,
                             canMove: assignment.bool_install == 0,
                             canResize: assignment.bool_install == 0 ? "both" : assignment.bool_completed ? false : "right",
                         });
@@ -289,14 +299,16 @@ class Ventilators extends React.Component {
         // select all items with the same patient, so we highlight the history of the patient
         this.setState(prevState => ({
             ...prevState,
-            selected: selected
+            selected: selected,
+            selectedItem: selectedItem,
         }));
     }
 
     _handleItemDeselect = (e) => {
         this.setState(prevState => ({
             ...prevState,
-            selected: []
+            selected: [],
+            selectedItem: null,
         }));
     }
 
@@ -369,6 +381,10 @@ class Ventilators extends React.Component {
                 end_time: moment(json.end_date).valueOf(),
                 canChangeGroup: true,
                 patient_id: json.patient,
+                machine_location: json.machine_location,
+                machine_model: json.machine_model,
+                canMove: true,
+                canResize: "both",
             };
             this.setState(prevState => ({
                 ...prevState,
@@ -427,6 +443,9 @@ class Ventilators extends React.Component {
             this.state.allMachines !== null &&
             this.state.items !== null;
 
+        var locations = []
+        var machinetypes = []
+        var bool_machine_followed_dict = {}
         if (isLoaded) {
             var patient_list = this.state.allPatients.map(patient => {
                 return (
@@ -438,8 +457,23 @@ class Ventilators extends React.Component {
                     <option value={machine.id}>{machine.name}</option>
                 );
             });
+            locations = [...new Set(this.state.allMachines.map(machine => machine.machine_location))]
+            machinetypes = [...new Set(this.state.allMachines.map(machine => machine.machine_model))]
+            this.state.allMachines.forEach((item, i) => { bool_machine_followed_dict[item.id] = this.state.selectedItem == null });
+            this.state.items.filter(task => (this.state.selectedItem == null || task.patient_id == this.state.selectedItem.patient_id)).forEach((item, i) => {
+              bool_machine_followed_dict[item.group] = true
+            });
         }
-        console.log("Joan, items", this.state.items)
+        var the_filter = (item) => {
+          return (
+            (this.state.filter_machine == "--(All)--" || this.state.filter_machine == item.machine_model) &&
+            (this.state.filter_location == "--(All)--" || this.state.filter_location == item.machine_location)
+          );
+        }
+        console.log("Machines", this.state.allMachines);
+        console.log("Items", this.state.items);
+        console.log("Follow", bool_machine_followed_dict);
+        console.log("filter_follow", this.state.filter_follow)
         return (
             <div className="content">
                 <Row>
@@ -470,8 +504,8 @@ class Ventilators extends React.Component {
                     <Card className="card-chart" style={{ zIndex: 1 }}>
                         {!isLoaded ? <div>Loading...</div> :
                             <Timeline
-                                groups={this.state.groups}
-                                items={this.state.items}
+                                groups={this.state.groups.filter(the_filter).filter(item => (!this.state.filter_follow || bool_machine_followed_dict[item.id]))}
+                                items={this.state.items.filter(the_filter).filter(item => (!this.state.filter_follow || this.state.selectedItem == null || this.state.selectedItem.patient_id == item.patient_id))}
                                 traditionalZoom
                                 itemTouchSendsClick={true}
                                 //canMove={true}
@@ -507,9 +541,89 @@ class Ventilators extends React.Component {
                 <Row>
                     <Card>
                         <CardHeader>
-                            <h5 className="title">New Machine Assignment</h5>
+                          <Row>
+                            <Col className="px-md-1" md="8">
+                              <CardTitle tag="h4">Assignments</CardTitle>
+                            </Col>
+                            <Col className="px-md-1" md="2">
+                              <Button
+                                color="secondary"
+                                onClick={() => this.setState({
+                                  create_isOpen: !this.state.create_isOpen,
+                                  filter_isOpen: false
+                                })}
+                                >
+                                Create assignemnt
+                              </Button>
+                            </Col>
+                            <Col className="px-md-1" md="2">
+                              <Button
+                                color="secondary"
+                                onClick={() => this.setState({
+                                  create_isOpen: false,
+                                  filter_isOpen: !this.state.filter_isOpen
+                                })}
+                                >
+                                Filter assignments
+                              </Button>
+                            </Col>
+                          </Row>
                         </CardHeader>
                         <CardBody>
+                        <Collapse isOpen={this.state.filter_isOpen}>
+                          <Form>
+                            <Row>
+                              <Col className="px-md-1" md="2">
+                                <FormGroup>
+                                  <label>
+                                    Model
+                                  </label>
+                                  <Input
+                                    name="model"
+                                    type="select"
+                                    onChange={(event) => {this.setState({filter_machine: event.target.value})}}
+                                  >
+                                    <option key={0} value="--(All)--">--(All)--</option>
+                                    {machinetypes.map((val, i) => {return (
+                                      <option key={i+1} value={val}>{val}</option>
+                                    )})}
+                                  </Input>
+                                </FormGroup>
+                              </Col>
+                              <Col className="px-md-1" md="2">
+                                <FormGroup>
+                                  <label>
+                                    Location
+                                  </label>
+                                  <Input
+                                    name="location"
+                                    type="select"
+                                    onChange={(event) => {this.setState({filter_location: event.target.value})}}
+                                  >
+                                    <option key={0} value="--(All)--">--(All)--</option>
+                                    {locations.map((val, i) => {return (
+                                      <option key={i+1} value={val}>{val}</option>
+                                    )})}
+                                  </Input>
+                                </FormGroup>
+                              </Col>
+                              <Col className="px-md-1" md="2">
+                                <FormGroup>
+                                  <label>
+                                    Follow
+                                  </label>
+                                  <Input
+                                    name="name"
+                                    type="checkbox"
+                                    checked={this.state.filter_follow}
+                                    onChange={(event) => {this.setState({filter_follow: !this.state.filter_follow})}}
+                                  />
+                                </FormGroup>
+                              </Col>
+                            </Row>
+                          </Form>
+                        </Collapse>
+                        <Collapse isOpen={this.state.create_isOpen}>
                             <Form>
                                 <Row>
                                     <Col className="pr-md-1" md="3">
@@ -572,6 +686,7 @@ class Ventilators extends React.Component {
                             >
                                 Save
                             </Button>
+                        </Collapse>
                         </CardBody>
                     </Card>
                 </Row>
