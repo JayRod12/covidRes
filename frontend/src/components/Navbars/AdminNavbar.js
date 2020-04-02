@@ -355,13 +355,13 @@ class AdminNavbar extends React.Component {
           </Container>
         </Navbar>
         <Modal
-          modalClassName="modal-search"
+          style={{width:'240px', height: '400px'}}
           isOpen={this.state.modalLogin}
           toggle={() => {this.setState({modalLogin: false})}}
         >
           <div className="modal-header">
-            <Form onSubmit={this.submitLogin}>
-              <Col className="px-md-1" md="6">
+            <Container>
+              <Form onSubmit={this.submitLogin}>
                 <Row>
                   <FormGroup>
                     <label>
@@ -385,25 +385,23 @@ class AdminNavbar extends React.Component {
                   </FormGroup>
                 </Row>
                 <Row>
-                  <Col md={{ span: 2, offset: 2 }}>
-                    <Button>
-                      Login
-                    </Button>
-                  </Col>
+                  <Button>
+                    Login
+                  </Button>
                 </Row>
-              </Col>
-            </Form>
+              </Form>
+            </Container>
           </div>
         </Modal>
         <Modal
-          modalClassName="modal-search"
+          style={{width:'240px', height: '600px'}}
           isOpen={this.state.modalPassword}
           toggle={() => {this.setState({modalPassword: false})}}
         >
           <div className="modal-header">
-            <Form onSubmit={this.submitPassword}>
-              <Col className="px-md-1" md="6">
-                <Row>
+            <Container>
+              <Form onSubmit={this.submitPassword}>
+                <Row className="justify-content-md-center">
                   <FormGroup>
                     <label>
                       Old password
@@ -414,7 +412,7 @@ class AdminNavbar extends React.Component {
                     />
                   </FormGroup>
                 </Row>
-                <Row>
+                <Row className="justify-content-md-center">
                   <FormGroup>
                     <label>
                       Password
@@ -425,7 +423,7 @@ class AdminNavbar extends React.Component {
                     />
                   </FormGroup>
                 </Row>
-                <Row>
+                <Row className="justify-content-md-center">
                   <FormGroup>
                     <label>
                       Password (repeat)
@@ -436,19 +434,17 @@ class AdminNavbar extends React.Component {
                     />
                   </FormGroup>
                 </Row>
-                <Row>
-                  <Col md={{ span: 2, offset: 2 }}>
-                    <Button>
-                      Change password
-                    </Button>
-                  </Col>
+                <Row className="justify-content-md-center">
+                  <Button>
+                    Change password
+                  </Button>
                 </Row>
-              </Col>
-            </Form>
+              </Form>
+            </Container>
           </div>
         </Modal>
         <Modal
-          modalClassName="modal-search"
+          style={{width:'200px', height: '100px'}}
           isOpen={this.state.modalLogout}
           toggle={() => {this.setState({modalLogout: false})}}
         >
