@@ -73,6 +73,10 @@ class PatientProfile extends React.Component {
       loaded_tasks: false,
       placeholder_tasks: "Loading",
       error_message_tasks: "",
+      data_messages: [],
+      loaded_messages: false,
+      placeholder_messages: "Loading",
+      error_message_messages: "",
       severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"],
       graph_xy: [],
     };
@@ -173,6 +177,32 @@ class PatientProfile extends React.Component {
                   loaded_tasks: true,
                   placeholder_tasks: "Failed to load",
                   error_message_tasks: error,
+                };
+              });
+            });
+    fetch('/rest/messages/to/'+pk+'/')
+            .then(response => {
+                if (response.status > 400) {
+                  throw new Error(response.status);
+                }
+                return response.json();
+            })
+            .then(data_messages => {
+                console.log(data_messages);
+                const results = IS_DEV ? data_messages.results : data_messages;
+                this.setState(() => {
+                    return {
+                        data_messages: results,
+                        loaded_messages: true
+                    };
+                });
+            })
+            .catch(error => {
+              this.setState(() => {
+                return {
+                  loaded_messages: true,
+                  placeholder_messages: "Failed to load",
+                  error_message_messages: error,
                 };
               });
             });
@@ -500,7 +530,38 @@ class PatientProfile extends React.Component {
         <CardText>No tasks</CardText>
       );
     }
-    console.log(tasks);
+    let messages;
+    if (this.state.error_message_messages.length > 0) {
+      tasks = (
+        <Alert color="danger">
+          {this.state.error_message_messages} Are you <a href="/admin" className="alert-link"> logged in?</a>
+        </Alert>
+      );
+    } else if (this.state.data_messages.length > 0) {
+      messages = this.state.data_messages.map((props, index) => (
+        <React.Fragment>
+          <Row>
+            <Col md="3">
+              <CardText style={{ 'font-size': '11px' }}>{props.sender_role} {props.last_name}</CardText>
+            </Col>
+            <Col md="6">
+              <span className="pull-right">
+                <CardText style={{ 'font-size': '11px' }}>{moment(props.date).format("HH:mm (D-MMM-YYYY)")}</CardText>
+              </span>
+            </Col>
+          </Row>
+          <Alert color="info" style={{ 'padding': '0.4rem 1.25rem' }}>
+            <span>{props.message}</span>
+          </Alert>
+        </React.Fragment>
+        )
+      );
+    } else {
+      messages = (
+        <CardText>No messages</CardText>
+      );
+    }
+    console.log(messages);
     return (
       <div className="content">
         <div className="react-notification-alert-container">
@@ -516,6 +577,14 @@ class PatientProfile extends React.Component {
                 </CardHeader>
                 <CardBody>
                   {tasks}
+                </CardBody>
+              </Card>
+              <Card className="card-user">
+                <CardHeader>
+                  <h6>Messages</h6>
+                </CardHeader>
+                <CardBody>
+                  {messages}
                 </CardBody>
               </Card>
             </Col>
