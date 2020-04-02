@@ -4,12 +4,15 @@ from django.http import HttpResponse
 import json
 
 def login_view(request):
-    username = request.POST['username']
-    password = request.POST['password']
+    if request.method != "POST":
+        return HttpResponse("Hi there, wrong method")
+    data = json.loads(request.body)
+    username = data['username']
+    password = data['password']
     user = authenticate(request, username=username, password=password)
-    if user is not None:
+    if user is not None and user.is_authenticated:
         login(request, user)
-        return HttpResponse(user.role.name) # Return role when login
+        return HttpResponse("Success") # Return role when login
     else:
         return HttpResponse("Wrong credentials") # Return this
 
@@ -18,11 +21,13 @@ def logout_view(request):
     return HttpResponse("Success")
 
 def password_view(request):
-    username = request.POST['username']
-    password_old = request.POST['password_old']
-    password = request.POST['password']
-    user = authenticate(request, username=username, password=password_old)
-    if user is not None:
+    if request.method != "POST":
+        return HttpResponse("Hi there, wrong method")
+    data = json.loads(request.body)
+    password_old = data['password_old']
+    password = data['password']
+    user = authenticate(request, username=user.username, password=password_old)
+    if user is not None and user.is_authenticated:
         user.set_password(password)
         return("Success")
     else:

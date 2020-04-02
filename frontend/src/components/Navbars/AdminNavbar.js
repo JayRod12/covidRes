@@ -23,31 +23,86 @@ import classNames from "classnames";
 import {
   Button,
   Collapse,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  CardText,
+  CardTitle,
+  Col,
+  Container,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Form,
+  FormGroup,
   UncontrolledDropdown,
   Input,
   InputGroup,
+  Modal,
   NavbarBrand,
   Navbar,
   NavLink,
   Nav,
-  Container,
-  Modal
+  Row
 } from "reactstrap";
+
+import $ from 'jquery';
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = $.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 class AdminNavbar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       collapseOpen: false,
-      modalSearch: false,
+      modalLogin: false,
+      modalLogout: false,
+      modalPassword: false,
+      logged_in: false,
+      me: {},
       color: "navbar-transparent"
     };
+    this.submitLogin = this.submitLogin.bind(this);
+    this.submitLogout = this.submitLogout.bind(this);
+    this.submitPassword = this.submitPassword.bind(this);
   }
   componentDidMount() {
     window.addEventListener("resize", this.updateColor);
+    fetch("myself/")
+      .then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        if (data != "Not logged in") {
+          this.setState(() => {
+            return {
+              me: data,
+              modalLogin: false,
+              logged_in: true
+            };
+          });
+        }
+      })
+      .catch(error => {
+        console.log(error)
+      });
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this.updateColor);
@@ -80,10 +135,112 @@ class AdminNavbar extends React.Component {
     });
   };
   // this function is to open the Search modal
-  toggleModalSearch = () => {
+  openModalLogin = () => {
     this.setState({
-      modalSearch: !this.state.modalSearch
+      modalLogin: true,
+      modalLogout: false,
+      modalPassword: false
     });
+  };
+  openModalLogout = () => {
+    this.setState({
+      modalLogin: false,
+      modalLogout: true,
+      modalPassword: false
+    });
+  };
+  openModalPassword = () => {
+    this.setState({
+      modalLogin: false,
+      modalLogout: false,
+      modalPassword: true
+    });
+  };
+  submitLogin = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.target);
+    fetch('login/', {
+      method: 'POST',
+      body: JSON.stringify({
+          username: data.get('username'),
+          password: data.get('password'),
+      }),
+      headers: {
+          "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+      }
+    }).then(response => {
+      if (response.status > 400) {
+        throw new Error(response.status);
+      }
+      return response.text();
+    }).then(data => {
+      if (data == "Success") {
+        console.log("DATA", data);
+        window.location.reload()
+      }else {
+        console.log("DATA", data);
+      }
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  };
+  submitLogout = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.target);
+    fetch('logout/', {
+      method: 'POST',
+      body: "",
+      headers: {
+          "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+      }
+    }).then(response => {
+      if (response.status > 400) {
+        throw new Error(response.status);
+      }
+      return response.text();
+    }).then(data => {
+      if (data == "Success") {
+        console.log("DATA", data);
+        window.location.reload()
+      }else {
+        console.log("DATA", data);
+      }
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  };
+  submitPassword = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.target);
+    if (data.get('password') == data.get('password')) {
+      fetch('password/', {
+        method: 'POST',
+        body: JSON.stringify({
+            password_old: data.get('old_password'),
+            password: data.get('password'),
+        }),
+        headers: {
+            "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+        }
+      }).then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.text();
+      }).then(data => {
+        if (data == "Success") {
+          console.log("DATA", data);
+          window.location.reload()
+        }else {
+          console.log("DATA", data);
+        }
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    }
   };
   render() {
     return (
@@ -109,9 +266,6 @@ class AdminNavbar extends React.Component {
                   <span className="navbar-toggler-bar bar3" />
                 </button>
               </div>
-              <NavbarBrand href="#pablo" onClick={e => e.preventDefault()}>
-                {this.props.brandText}
-              </NavbarBrand>
             </div>
             <button
               aria-expanded={false}
@@ -129,18 +283,6 @@ class AdminNavbar extends React.Component {
             </button>
             <Collapse navbar isOpen={this.state.collapseOpen}>
               <Nav className="ml-auto" navbar>
-                <InputGroup className="search-bar">
-                  <Button
-                    color="link"
-                    data-target="#searchModal"
-                    data-toggle="modal"
-                    id="search-button"
-                    onClick={this.toggleModalSearch}
-                  >
-                    <i className="tim-icons icon-zoom-split" />
-                    <span className="d-lg-none d-md-block">Search</span>
-                  </Button>
-                </InputGroup>
                 <UncontrolledDropdown nav>
                   <DropdownToggle
                     caret
@@ -195,16 +337,16 @@ class AdminNavbar extends React.Component {
                     <p className="d-lg-none">Log out</p>
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-navbar" right tag="ul">
-                    <NavLink tag="li">
-                      <DropdownItem className="nav-item">Profile</DropdownItem>
-                    </NavLink>
-                    <NavLink tag="li">
-                      <DropdownItem className="nav-item">Settings</DropdownItem>
+                    {!this.state.logged_in && (<NavLink tag="li">
+                      <DropdownItem className="nav-item" onClick={this.openModalLogin}>Login</DropdownItem>
+                    </NavLink>)}
+                    {this.state.logged_in && (<><NavLink tag="li">
+                      <DropdownItem className="nav-item" onClick={this.openModalPassword}>Reset password</DropdownItem>
                     </NavLink>
                     <DropdownItem divider tag="li" />
                     <NavLink tag="li">
-                      <DropdownItem className="nav-item">Log out</DropdownItem>
-                    </NavLink>
+                      <DropdownItem className="nav-item" onClick={this.openModalLogout}>Log out</DropdownItem>
+                    </NavLink></>)}
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <li className="separator d-lg-none" />
@@ -214,20 +356,110 @@ class AdminNavbar extends React.Component {
         </Navbar>
         <Modal
           modalClassName="modal-search"
-          isOpen={this.state.modalSearch}
-          toggle={this.toggleModalSearch}
+          isOpen={this.state.modalLogin}
+          toggle={() => {this.setState({modalLogin: false})}}
         >
           <div className="modal-header">
-            <Input id="inlineFormInputGroup" placeholder="SEARCH" type="text" />
-            <button
-              aria-label="Close"
-              className="close"
-              data-dismiss="modal"
-              type="button"
-              onClick={this.toggleModalSearch}
-            >
-              <i className="tim-icons icon-simple-remove" />
-            </button>
+            <Form onSubmit={this.submitLogin}>
+              <Col className="px-md-1" md="6">
+                <Row>
+                  <FormGroup>
+                    <label>
+                      Username
+                    </label>
+                    <Input
+                      name="username"
+                      type="text"
+                    />
+                  </FormGroup>
+                </Row>
+                <Row>
+                  <FormGroup>
+                    <label>
+                      Password
+                    </label>
+                    <Input
+                      name="password"
+                      type="password"
+                    />
+                  </FormGroup>
+                </Row>
+                <Row>
+                  <Col md={{ span: 2, offset: 2 }}>
+                    <Button>
+                      Login
+                    </Button>
+                  </Col>
+                </Row>
+              </Col>
+            </Form>
+          </div>
+        </Modal>
+        <Modal
+          modalClassName="modal-search"
+          isOpen={this.state.modalPassword}
+          toggle={() => {this.setState({modalPassword: false})}}
+        >
+          <div className="modal-header">
+            <Form onSubmit={this.submitPassword}>
+              <Col className="px-md-1" md="6">
+                <Row>
+                  <FormGroup>
+                    <label>
+                      Old password
+                    </label>
+                    <Input
+                      name="old_password"
+                      type="password"
+                    />
+                  </FormGroup>
+                </Row>
+                <Row>
+                  <FormGroup>
+                    <label>
+                      Password
+                    </label>
+                    <Input
+                      name="password"
+                      type="password"
+                    />
+                  </FormGroup>
+                </Row>
+                <Row>
+                  <FormGroup>
+                    <label>
+                      Password (repeat)
+                    </label>
+                    <Input
+                      name="password2"
+                      type="password"
+                    />
+                  </FormGroup>
+                </Row>
+                <Row>
+                  <Col md={{ span: 2, offset: 2 }}>
+                    <Button>
+                      Change password
+                    </Button>
+                  </Col>
+                </Row>
+              </Col>
+            </Form>
+          </div>
+        </Modal>
+        <Modal
+          modalClassName="modal-search"
+          isOpen={this.state.modalLogout}
+          toggle={() => {this.setState({modalLogout: false})}}
+        >
+          <div className="modal-header">
+            <Form onSubmit={this.submitLogout}>
+              <Col className="px-md-1" md="4">
+                <Button>
+                  Logout
+                </Button>
+              </Col>
+            </Form>
           </div>
         </Modal>
       </>

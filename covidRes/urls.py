@@ -48,6 +48,7 @@ urlpatterns = [
     path('login/', views_auth.login_view),
     path('logout/', views_auth.logout_view),
     path('password/', views_auth.password_view),
+    path('myself/', views_auth.user_view),
     path('secret/', roll),
     re_path(r'^(?:.*)/?$', react_views.index),
 ]
