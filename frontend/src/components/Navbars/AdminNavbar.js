@@ -69,7 +69,6 @@ class AdminNavbar extends React.Component {
     this.state = {
       collapseOpen: false,
       modalLogin: false,
-      modalLogout: false,
       modalPassword: false,
       logged_in: false,
       me: {},
@@ -138,21 +137,12 @@ class AdminNavbar extends React.Component {
   openModalLogin = () => {
     this.setState({
       modalLogin: true,
-      modalLogout: false,
-      modalPassword: false
-    });
-  };
-  openModalLogout = () => {
-    this.setState({
-      modalLogin: false,
-      modalLogout: true,
       modalPassword: false
     });
   };
   openModalPassword = () => {
     this.setState({
       modalLogin: false,
-      modalLogout: false,
       modalPassword: true
     });
   };
@@ -186,8 +176,6 @@ class AdminNavbar extends React.Component {
     })
   };
   submitLogout = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.target);
     fetch('logout/', {
       method: 'POST',
       body: "",
@@ -345,7 +333,7 @@ class AdminNavbar extends React.Component {
                     </NavLink>
                     <DropdownItem divider tag="li" />
                     <NavLink tag="li">
-                      <DropdownItem className="nav-item" onClick={this.openModalLogout}>Log out</DropdownItem>
+                      <DropdownItem className="nav-item" onClick={this.submitLogout}>Log out</DropdownItem>
                     </NavLink></>)}
                   </DropdownMenu>
                 </UncontrolledDropdown>
@@ -441,21 +429,6 @@ class AdminNavbar extends React.Component {
                 </Row>
               </Form>
             </Container>
-          </div>
-        </Modal>
-        <Modal
-          style={{width:'200px', height: '100px'}}
-          isOpen={this.state.modalLogout}
-          toggle={() => {this.setState({modalLogout: false})}}
-        >
-          <div className="modal-header">
-            <Form onSubmit={this.submitLogout}>
-              <Col className="px-md-1" md="4">
-                <Button>
-                  Logout
-                </Button>
-              </Col>
-            </Form>
           </div>
         </Modal>
       </>
