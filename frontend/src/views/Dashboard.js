@@ -465,7 +465,7 @@ class Dashboard extends React.Component {
         if (a.date > b.date) return 1;
         return 0;
       })
-      const machinetypes = [...new Set(assignmentResults.map(item => item.machine_model))];/// The Set trick is to get unique values
+      const machinetypes = [...new Set(results.map(item => item.model_name))];/// The Set trick is to get unique values
       const locations = [...new Set(results.map(item => item.location))];
       var time_evolution_per_machine = {}
       machinetypes.forEach((model, i) => {
