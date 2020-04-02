@@ -499,7 +499,7 @@ class Dashboard extends React.Component {
               label: item,
               fill: true,
               showLine: true,
-              lineTension: 0.2,
+              lineTension: 0,
               backgroundColor: gradientStroke,
               borderColor: colors[ii%colors.length],
               borderWidth: 2,
