@@ -26,7 +26,7 @@ router = routers.DefaultRouter()
 #router.register(r'patients', views.PatientViewSet)
 #router.register(r'machines', views.MachineViewSet)
 #router.register(r'machine_assignments', views.MachineAssignmentViewSet)
-router.register(r'rest/user', views_manager.CurrentUserViewSet),
+#router.register(r'rest/user', views_manager.CurrentUserViewSet),
 router.register(r'rest/patients', views_manager.PatientViewSet),
 router.register(r'rest/machinetypes', views_manager.MachineTypeViewSet),
 router.register(r'rest/machines', views_manager.MachineViewSet),

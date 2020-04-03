@@ -9,13 +9,23 @@ import random
 # Users
 class Role(models.Model):
     name = models.CharField(max_length=100)
-    # permission fields defined here
+    ### permission fields defined here
+    # Edit
+    permission_patient_edit = models.BooleanField(default=False)
     permission_user_edit = models.BooleanField(default=False)
     permission_machinetype_edit = models.BooleanField(default=False)
     permission_machine_edit = models.BooleanField(default=False)
     permission_task_edit = models.BooleanField(default=False)
     permission_user_edit = models.BooleanField(default=False)
     permission_message_edit = models.BooleanField(default=False)
+    # See
+    permission_patient_see = models.BooleanField(default=False)
+    permission_user_see = models.BooleanField(default=False)
+    permission_machinetype_see = models.BooleanField(default=False)
+    permission_machine_see = models.BooleanField(default=False)
+    permission_task_see = models.BooleanField(default=False)
+    permission_user_see = models.BooleanField(default=False)
+    permission_message_see = models.BooleanField(default=False)
     def __str__(self):
     	return self.name
 

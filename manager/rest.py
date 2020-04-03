@@ -27,37 +27,37 @@ def parseDate(date_str):
     serializer.is_valid()
     return serializer.validated_data['date']
 
-class PermissionUserEdit(permissions.BasePermission):
+class PermissionPatient(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.role.permission_user_edit
+        return request.user.role.permission_patient_edit or (request.user.role.permission_patient_see and request.method in permissions.SAFE_METHODS)
 class PatientViewSet(viewsets.ModelViewSet):
     queryset = Patient.objects.all().order_by('-admission_date')
     serializer_class = PatientSerializer
-    permission_classes = [permissions.IsAuthenticated & PermissionUserEdit]
+    permission_classes = [permissions.IsAuthenticated & PermissionPatient]
     def get_serializer_class(self):
         if 'pk' in self.kwargs:
             return PatientDetailedSerializer
         return self.serializer_class
 
-class PermissionMachineTypeEdit(permissions.BasePermission):
+class PermissionMachineType(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.role.permission_machinetype_edit
+        return request.user.role.permission_machinetype_edit or (request.user.role.permission_machinetype_see and request.method in permissions.SAFE_METHODS)
 class MachineTypeViewSet(viewsets.ModelViewSet):
     queryset = MachineType.objects.all()
     serializer_class = MachineTypeSerializer
-    permission_classes = [permissions.IsAuthenticated & PermissionMachineTypeEdit]
+    permission_classes = [permissions.IsAuthenticated & PermissionMachineType]
 
-class PermissionMachineEdit(permissions.BasePermission):
+class PermissionMachine(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.role.permission_machine_edit
+        return request.user.role.permission_machine_edit or (request.user.role.permission_machine_see and request.method in permissions.SAFE_METHODS)
 class MachineViewSet(viewsets.ModelViewSet):
     queryset = Machine.objects.all().order_by('model')
     serializer_class = MachineSerializer
-    permission_classes = [permissions.IsAuthenticated & PermissionMachineEdit]
+    permission_classes = [permissions.IsAuthenticated & PermissionMachine]
 class MachineQueryViewSet(viewsets.ModelViewSet):
     queryset = Machine.objects.all()
     serializer_class = MachineSerializer
-    permission_classes = [permissions.IsAuthenticated & PermissionMachineEdit]
+    permission_classes = [permissions.IsAuthenticated & PermissionMachine]
     def get_queryset(self):
         queryset = super().get_queryset()
         if 'query' in self.kwargs:
@@ -71,13 +71,13 @@ class MachineQueryViewSet(viewsets.ModelViewSet):
             query.pop('date', None);
         return queryset.filter(**query)
 
-class PermissionTaskEdit(permissions.BasePermission):
+class PermissionTask(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.role.permission_task_edit
+        return request.user.role.permission_task_edit or (request.user.role.permission_task_see and request.method in permissions.SAFE_METHODS)
 class AssignmentTaskViewSet(viewsets.ModelViewSet):
     queryset = AssignmentTask.objects.all().order_by('date')
     serializer_class = AssignmentTaskSerializer
-    permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
+    permission_classes = [permissions.IsAuthenticated & PermissionTask]
     def create(self, request, *args, **kwargs):
         if 'start_date' in request.data or 'end_date' in request.data:
             date_serializer = serializers.DateTimeField()
@@ -170,7 +170,7 @@ class AssignmentTaskViewSet(viewsets.ModelViewSet):
 class AssignmentTaskQueryViewSet(viewsets.ModelViewSet):
     queryset = AssignmentTask.objects.all().order_by('date')
     serializer_class = AssignmentTaskSerializer
-    permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
+    permission_classes = [permissions.IsAuthenticated & PermissionTask]
     def get_queryset(self):
         if 'query' in self.kwargs:
             query = self.kwargs['query'].split('&')
@@ -178,14 +178,19 @@ class AssignmentTaskQueryViewSet(viewsets.ModelViewSet):
             query = {q[0]:q[1] for q in query}
         return super().get_queryset().filter(**query)
 
-class PermissionUserEdit(permissions.BasePermission):
+class PermissionUser(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.role.permission_user_edit
+        try:
+            if request.user.pk == 1 and request.method in permissions.SAFE_METHODS:
+                return True
+        except:
+            return False
+        return request.user.role.permission_user_edit or (request.user.role.permission_user_see and request.method in permissions.SAFE_METHODS)
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated & PermissionTaskEdit]
-
+    permission_classes = [permissions.IsAuthenticated & PermissionUser]
+"""
 class CurrentUserViewSet(viewsets.ViewSet):
     queryset = User.objects.all()
     permission_classes = [permissions.IsAuthenticated]
@@ -193,14 +198,15 @@ class CurrentUserViewSet(viewsets.ViewSet):
         user = get_object_or_404(queryset, pk=request.user.pk)
         serializer = UserSerializer(user)
         return Response(serializer.data)
+"""
 
-class PermissionMessageEdit(permissions.BasePermission):
+class PermissionMessage(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.role.permission_message_edit
+        return request.user.role.permission_message_edit or (request.user.role.permission_message_see and request.method in permissions.SAFE_METHODS)
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all().order_by('-date')
     serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticated & PermissionMessageEdit]
+    permission_classes = [permissions.IsAuthenticated & PermissionMessage]
     def get_queryset(self):
         return super().get_queryset().filter(sender__pk=self.request.user.pk)
     def perform_create(self, serializer):
@@ -209,6 +215,6 @@ class MessageViewSet(viewsets.ModelViewSet):
 class MessagePatientViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all().order_by('-date')
     serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticated & PermissionMessageEdit]
+    permission_classes = [permissions.IsAuthenticated & PermissionMessage]
     def get_queryset(self):
         return super().get_queryset().filter(patient__pk=self.kwargs['patient_pk'])
