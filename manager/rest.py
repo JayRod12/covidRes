@@ -29,7 +29,15 @@ def parseDate(date_str):
 
 class PermissionPatient(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.role.permission_patient_edit or (request.user.role.permission_patient_see and request.method in permissions.SAFE_METHODS)
+        if request.user.role.permission_patient_edit or (request.user.role.permission_patient_see and request.method in permissions.SAFE_METHODS):
+            return True
+        else:
+            try:
+                if request.user.pk == Patient.objects.get(pk=view.kwargs['pk']).user.pk and request.method in permissions.SAFE_METHODS:
+                    return True
+            except:
+                return False
+            return False
 class PatientViewSet(viewsets.ModelViewSet):
     queryset = Patient.objects.all().order_by('-admission_date')
     serializer_class = PatientSerializer
@@ -73,7 +81,8 @@ class MachineQueryViewSet(viewsets.ModelViewSet):
 
 class PermissionTask(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.role.permission_task_edit or (request.user.role.permission_task_see and request.method in permissions.SAFE_METHODS)
+        if request.user.role.permission_task_edit or (request.user.role.permission_task_see and request.method in permissions.SAFE_METHODS):
+            return True
 class AssignmentTaskViewSet(viewsets.ModelViewSet):
     queryset = AssignmentTask.objects.all().order_by('date')
     serializer_class = AssignmentTaskSerializer
@@ -180,12 +189,15 @@ class AssignmentTaskQueryViewSet(viewsets.ModelViewSet):
 
 class PermissionUser(permissions.BasePermission):
     def has_permission(self, request, view):
-        try:
-            if request.user.pk == 1 and request.method in permissions.SAFE_METHODS:
-                return True
-        except:
+        if request.user.role.permission_user_edit or (request.user.role.permission_user_see and request.method in permissions.SAFE_METHODS):
+            return True
+        else:
+            try:
+                if request.user.pk == view.kwargs['pk'] and request.method in permissions.SAFE_METHODS:
+                    return True
+            except:
+                return False
             return False
-        return request.user.role.permission_user_edit or (request.user.role.permission_user_see and request.method in permissions.SAFE_METHODS)
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -212,9 +224,20 @@ class MessageViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
 
+class PermissionPatientMessage(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user.role.permission_message_edit or (request.user.role.permission_message_see and request.method in permissions.SAFE_METHODS):
+            return True
+        else:
+            try:
+                if request.user.pk == Patient.objects.get(pk=view.kwargs['patient_pk']).user.pk and request.method in permissions.SAFE_METHODS:
+                    return True
+            except:
+                return False
+            return False
 class MessagePatientViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all().order_by('-date')
     serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticated & PermissionMessage]
+    permission_classes = [permissions.IsAuthenticated & PermissionPatientMessage]
     def get_queryset(self):
         return super().get_queryset().filter(patient__pk=self.kwargs['patient_pk'])
