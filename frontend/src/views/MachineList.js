@@ -184,8 +184,8 @@ class MachineList extends React.Component {
     let machines;
     const results = IS_DEV ? this.state.data.results : this.state.data;
 
-    const models = [...new Set(results.map(machine => machine.model_name))]
-    const locations = [...new Set(results.map(machine => machine.location))]
+    var models = []
+    var locations = []
 
     if (this.state.error_message.length > 0) {
       machines = (
@@ -194,6 +194,8 @@ class MachineList extends React.Component {
         </Alert>
       );
     } else if (results.length > 0) {
+      models = [...new Set(results.map(machine => machine.model_name))]
+      locations = [...new Set(results.map(machine => machine.location))]
       machines = results.map((entry, index) => {
         if (
           (this.state.filter_availability == "--(All)--" || this.state.filter_availability == (entry.patient_assigned != null)) &&

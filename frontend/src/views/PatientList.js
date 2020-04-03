@@ -158,8 +158,8 @@ class PatientList extends React.Component {
     let patients;
     const results = IS_DEV ? this.state.data.results : this.state.data;
 
-    const models = [...new Set(results.map(patient => patient.machine_assigned_model))]
-    const locations = [...new Set(results.map(patient => patient.location))]
+    var models = []
+    var locations = []
 
     if (this.state.error_message.length > 0) {
       patients = (
@@ -168,6 +168,8 @@ class PatientList extends React.Component {
         </Alert>
       );
     } else if (results.length > 0) {
+      models = [...new Set(results.map(patient => patient.machine_assigned_model))]
+      locations = [...new Set(results.map(patient => patient.location))]
       patients = results.map((entry, index) => {
         if (
           (this.state.filter_severity == "--(All)--" || this.state.filter_severity == entry.severity) &&
