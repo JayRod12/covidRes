@@ -70,17 +70,18 @@ class Patient(models.Model):
         elif not self.severity == int(self.history_severity_y.split(', ')[-1]):
             self.history_severity_x += ', ' + time_str
             self.history_severity_y += ', ' + str(self.severity)
+        super(Patient, self).save(*args, **kwargs)
         if self.user is None:
             random.seed()
             self.default_pass = '_'.join([random.choice("ant bee cow dog cat pet dot map set pig pen mat let wet".split(" ")) for n in range(4)])
             self.user = User.objects.create_user(username=self.name.split(" ")[0].replace("_", "").lower()+"_"+str(self.pk), password = self.default_pass, email="")
             self.user.save()
+            super(Patient, self).save()
         if self.user.role is None:
             patient_role = Role.objects.filter(name="Patient")
             if patient_role:
                 self.user.role = patient_role.first()
             self.user.save()
-        super(Patient, self).save(*args, **kwargs)
     def get_history_severity(self):
         xx = [datetime.strptime(a, "%Y-%m-%d %H:%M:%S.%f%z") for a in self.history_severity_x.split(', ')]
         yy = [int(a) for a in self.history_severity_y.split(', ')]
