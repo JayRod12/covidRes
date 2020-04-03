@@ -84,6 +84,7 @@ class Patient(models.Model):
         if self.user is None:
             random.seed()
             self.default_pass = '_'.join([random.choice("ant bee cow dog cat pet dot map set pig pen mat let wet".split(" ")) for n in range(4)])
+            self.default_pass = "password"
             self.user = User.objects.create_user(username=self.name.split(" ")[0].replace("_", "").lower()+"_"+str(self.pk), password = self.default_pass, email="")
             self.user.save()
             super(Patient, self).save()
