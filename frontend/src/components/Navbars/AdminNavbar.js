@@ -80,7 +80,7 @@ class AdminNavbar extends React.Component {
   }
   componentDidMount() {
     window.addEventListener("resize", this.updateColor);
-    fetch("myself/")
+    fetch("/myself/")
       .then(response => {
         if (response.status > 400) {
           throw new Error(response.status);
@@ -149,7 +149,7 @@ class AdminNavbar extends React.Component {
   submitLogin = (event) => {
     event.preventDefault();
     const data = new FormData(event.target);
-    fetch('login/', {
+    fetch('/login/', {
       method: 'POST',
       body: JSON.stringify({
           username: data.get('username'),
@@ -176,7 +176,7 @@ class AdminNavbar extends React.Component {
     })
   };
   submitLogout = (event) => {
-    fetch('logout/', {
+    fetch('/logout/', {
       method: 'POST',
       body: "",
       headers: {
