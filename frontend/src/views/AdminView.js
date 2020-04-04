@@ -70,7 +70,7 @@ class AdminView extends React.Component {
       loaded_models: false,
       placeholder_models: "Loading",
       error_models: "",
-      redirect: 0,
+      redirect: null,
       create_isOpen: false,
       filter_isOpen: false,
       filter_username: "--(All)--",
@@ -78,33 +78,73 @@ class AdminView extends React.Component {
       filter_last_name: "--(All)--",
       filter_role: "--(All)--"
     };
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleRoleSubmit = this.handleRoleSubmit.bind(this);
+    this.handleModelSubmit = this.handleModelSubmit.bind(this);
+    this.handleUserSubmit = this.handleUserSubmit.bind(this);
   }
-  handleSubmit(event) {
+  handleRoleSubmit(event) {
     event.preventDefault();
     const data = new FormData(event.target);
 
-    console.log({
-        name: data.get('name'),
-        severity: data.get('severity')
-    })
+    console.log("ROLE DATA: ", data)
 
-    fetch('/rest/patients/', {
+    fetch('/rest/roles/', {
       method: 'POST',
       body: JSON.stringify({
-          name: data.get('name'),
-          severity: parseInt(data.get('severity'))
+          name: data.get('name')
       }),
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
       }
     }).then(response => {return response.json()}).then(data => {
-      this.setState({redirect: data.pk})
+      this.setState({redirect: '/role/'+data.pk})
+    })
+  }
+  handleModelSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+
+    console.log("MODEL NAME", data.get('name'));
+
+    fetch('/rest/machinetypes/', {
+      method: 'POST',
+      body: JSON.stringify({
+          name: data.get('name')
+      }),
+      headers: {
+          "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+      }
+    }).then(response => {return response.json()}).then(data => {
+      if (IS_DEV) {
+        var new_data_models = this.state.data_models
+        new_data_models.results = [...new_data_models.results, data]
+        this.setState({data_models: new_data_models})
+      } else {
+        var new_data_models = this.state.data_models
+        new_data_models = [...new_data_models, data]
+        this.setState({data_models: new_data_models})
+      }
+    })
+  }
+  handleUserSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+
+    fetch('/rest/users/', {
+      method: 'POST',
+      body: JSON.stringify({
+          username: data.get('username')
+      }),
+      headers: {
+          "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+      }
+    }).then(response => {return response.json()}).then(data => {
+      this.setState({redirect: '/user/'+data.pk})
     })
   }
   renderRedirect = () => {
-    if (this.state.redirect > 0) {
-      return (<Redirect to={'/patient/'+this.state.redirect} />)
+    if (this.state.redirect != null) {
+      return (<Redirect to={this.state.redirect} />)
     }
   }
   componentDidMount() {
@@ -213,7 +253,7 @@ class AdminView extends React.Component {
                     </Col>
                     { true && (//this.props.me && this.props.me.permission_role_edit && (
                       <Col className="px-md-1" md="5">
-                        <Form>
+                        <Form onSubmit={this.handleRoleSubmit}>
                           <Row>
                             <Col className="px-md-1" md="8">
                               <FormGroup>
@@ -262,7 +302,7 @@ class AdminView extends React.Component {
                     </Col>
                     { true && (//this.props.me && this.props.me.permission_role_edit && (
                       <Col className="px-md-1" md="5">
-                        <Form>
+                        <Form onSubmit={this.handleModelSubmit}>
                           <Row>
                             <Col className="px-md-1" md="8">
                               <FormGroup>
@@ -396,7 +436,7 @@ class AdminView extends React.Component {
                     </Form>
                   </Collapse>
                   <Collapse isOpen={this.state.create_isOpen}>
-                    <Form onSubmit={this.handleSubmit}>
+                    <Form onSubmit={this.handleUserSubmit}>
                       {this.renderRedirect()}
                       <Row>
                         <Col className="px-md-1" md={{ span: 3, offset: 1 }}>
@@ -406,15 +446,6 @@ class AdminView extends React.Component {
                               name="username"
                               type="text"
                             />
-                          </FormGroup>
-                        </Col>
-                        <Col className="px-md-1" md="1">
-                          <FormGroup>
-                            <Input type="select" name="role">
-                              {results_roles.map((val, i) => {return (
-                                <option key={i} value={val.id}>{val.name}</option>
-                              )})}
-                            </Input>
                           </FormGroup>
                         </Col>
                         <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
