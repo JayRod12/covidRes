@@ -245,17 +245,6 @@ class MachineList extends React.Component {
                       <Button
                         color="secondary"
                         onClick={() => this.setState({
-                          create_isOpen: !this.state.create_isOpen,
-                          filter_isOpen: false
-                        })}
-                        >
-                        Create machine
-                      </Button>
-                    </Col>
-                    <Col className="px-md-1" md="2">
-                      <Button
-                        color="secondary"
-                        onClick={() => this.setState({
                           create_isOpen: false,
                           filter_isOpen: !this.state.filter_isOpen
                         })}
@@ -263,6 +252,19 @@ class MachineList extends React.Component {
                         Filter machines
                       </Button>
                     </Col>
+                    {this.props.me && this.props.me.permission_machine_edit && (
+                      <Col className="px-md-1" md="2">
+                        <Button
+                          color="secondary"
+                          onClick={() => this.setState({
+                            create_isOpen: !this.state.create_isOpen,
+                            filter_isOpen: false
+                          })}
+                          >
+                          Create machine
+                        </Button>
+                      </Col>
+                    )}
                   </Row>
                   <Collapse isOpen={this.state.filter_isOpen}>
                     <Form>

@@ -155,8 +155,8 @@ class Ventilators extends React.Component {
                             patient_id: assignment.patient,
                             machine_location: assignment.machine_location,
                             machine_model: assignment.machine_model,
-                            canMove: assignment.bool_install == 0,
-                            canResize: assignment.bool_install == 0 ? "both" : assignment.bool_completed ? false : "right",
+                            canMove: this.props.me && this.props.me.permission_task_edit && assignment.bool_install == 0,
+                            canResize: this.props.me && this.props.me.permission_task_edit ? (assignment.bool_install == 0 ? "both" : assignment.bool_completed ? false : "right") : false,
                         });
                     });
                     this.setState(prevState => ({
@@ -383,8 +383,8 @@ class Ventilators extends React.Component {
                 patient_id: json.patient,
                 machine_location: json.machine_location,
                 machine_model: json.machine_model,
-                canMove: true,
-                canResize: "both",
+                canMove: this.props.me && this.props.me.permission_task_edit,
+                canResize: this.props.me && this.props.me.permission_task_edit ? "both" : false,
             };
             this.setState(prevState => ({
                 ...prevState,
@@ -549,17 +549,6 @@ class Ventilators extends React.Component {
                               <Button
                                 color="secondary"
                                 onClick={() => this.setState({
-                                  create_isOpen: !this.state.create_isOpen,
-                                  filter_isOpen: false
-                                })}
-                                >
-                                Create assignemnt
-                              </Button>
-                            </Col>
-                            <Col className="px-md-1" md="2">
-                              <Button
-                                color="secondary"
-                                onClick={() => this.setState({
                                   create_isOpen: false,
                                   filter_isOpen: !this.state.filter_isOpen
                                 })}
@@ -567,6 +556,19 @@ class Ventilators extends React.Component {
                                 Filter assignments
                               </Button>
                             </Col>
+                            {this.props.me && this.props.me.permission_task_edit && (
+                              <Col className="px-md-1" md="2">
+                                <Button
+                                  color="secondary"
+                                  onClick={() => this.setState({
+                                    create_isOpen: !this.state.create_isOpen,
+                                    filter_isOpen: false
+                                  })}
+                                  >
+                                  Create assignemnt
+                                </Button>
+                              </Col>
+                            )}
                           </Row>
                         </CardHeader>
                         <CardBody>

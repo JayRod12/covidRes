@@ -214,17 +214,6 @@ class PatientList extends React.Component {
                       <Button
                         color="secondary"
                         onClick={() => this.setState({
-                          create_isOpen: !this.state.create_isOpen,
-                          filter_isOpen: false
-                        })}
-                        >
-                        Create patient
-                      </Button>
-                    </Col>
-                    <Col className="px-md-1" md="2">
-                      <Button
-                        color="secondary"
-                        onClick={() => this.setState({
                           create_isOpen: false,
                           filter_isOpen: !this.state.filter_isOpen
                         })}
@@ -232,6 +221,19 @@ class PatientList extends React.Component {
                         Filter patients
                       </Button>
                     </Col>
+                    {this.props.me && this.props.me.permission_patient_edit && (
+                      <Col className="px-md-1" md="2">
+                        <Button
+                          color="secondary"
+                          onClick={() => this.setState({
+                            create_isOpen: !this.state.create_isOpen,
+                            filter_isOpen: false
+                          })}
+                          >
+                          Create patient
+                        </Button>
+                      </Col>
+                    )}
                   </Row>
                   <Collapse isOpen={this.state.filter_isOpen}>
                     <Form>
