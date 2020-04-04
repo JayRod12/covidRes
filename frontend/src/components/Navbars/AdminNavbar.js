@@ -87,7 +87,6 @@ class AdminNavbar extends React.Component {
         return response.json();
       })
       .then(data => {
-        console.log(data);
         if (data != "Not logged in") {
           this.props.set_me(data)
           this.setState(() => {
@@ -166,11 +165,11 @@ class AdminNavbar extends React.Component {
       if (data == "Success") {
         window.location.reload()
       }else {
-        console.log("DATA", data);
+        console.log("Unsucces POST", data);
       }
     })
     .catch(error => {
-      console.log(error)
+      console.log("Error POST", error)
     })
   };
   submitLogout = (event) => {
@@ -190,11 +189,11 @@ class AdminNavbar extends React.Component {
         this.props.set_me(null)
         window.location.reload()
       }else {
-        console.log("DATA", data);
+        console.log("Unsucces POST", data);
       }
     })
     .catch(error => {
-      console.log(error)
+      console.log("Error POST", error)
     })
   };
   submitPassword = (event) => {
@@ -217,16 +216,15 @@ class AdminNavbar extends React.Component {
         return response.text();
       }).then(data => {
         if (data == "Success") {
-          console.log("DATA", data);
           window.location.reload()
         }else {
-          console.log("DATA", data);
+          console.log("Unsucces POST", data);
         }
       })
       .catch(error => {
-        console.log(error)
+        console.log("Error POST", error)
       })
-    }
+    };
   };
   render() {
     return (
