@@ -39,7 +39,7 @@ class PermissionPatient(permissions.BasePermission):
                 return False
             return False
 class PatientViewSet(viewsets.ModelViewSet):
-    queryset = Patient.objects.all().order_by('-admission_date')
+    queryset = Patient.objects.all().order_by('name')
     serializer_class = PatientSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionPatient]
     def get_serializer_class(self):
