@@ -71,12 +71,12 @@ class AdminView extends React.Component {
       placeholder_models: "Loading",
       error_models: "",
       redirect: 0,
-      createRole_isOpen: false,
+      create_isOpen: false,
       filter_isOpen: false,
-      filter_name: "--(All)--",
-      filter_severity: "--(All)--",
-      filter_machine: "--(All)--",
-      filter_location: "--(All)--"
+      filter_username: "--(All)--",
+      filter_first_name: "--(All)--",
+      filter_last_name: "--(All)--",
+      filter_role: "--(All)--"
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -308,45 +308,123 @@ class AdminView extends React.Component {
               <Card className="card-chart">
                 <CardHeader>
                   <Row>
-                    <Col className="px-md-1" md="2">
+                    <Col className="px-md-1" md="8">
                       <CardTitle tag="h4">Users</CardTitle>
                     </Col>
-                    { this.props.me && this.props.me.permission_role_edit && (
-                      <Col className="px-md-1" md="12">
-                        <Form>
-                          <Row>
-                            <Col className="px-md-1" md="8">
-                              <FormGroup>
-                                <Input
-                                  placeholder="Username"
-                                  name="username"
-                                  type="text"
-                                />
-                              </FormGroup>
-                            </Col>
-                            <Col className="px-md-1" md="8">
-                              <FormGroup>
-                                <Input
-                                  placeholder="Role"
-                                  name="role"
-                                  type="select"
-                                >
-                                {results_roles.map((item, ii) => {return(
-                                  <option key={ii} value={item.pk}>{item.name}</option>
-                                )})}
-                                </Input>
-                              </FormGroup>
-                            </Col>
-                            <Col className="px-md-1" md="2">
-                              <Button>
-                                Create
-                              </Button>
-                            </Col>
-                          </Row>
-                        </Form>
+                    <Col className="px-md-1" md="2">
+                      <Button
+                        color="secondary"
+                        onClick={() => this.setState({
+                          create_isOpen: false,
+                          filter_isOpen: !this.state.filter_isOpen
+                        })}
+                        >
+                        Filter users
+                      </Button>
+                    </Col>
+                    {this.props.me && this.props.me.permission_patient_edit && (
+                      <Col className="px-md-1" md="2">
+                        <Button
+                          color="secondary"
+                          onClick={() => this.setState({
+                            create_isOpen: !this.state.create_isOpen,
+                            filter_isOpen: false
+                          })}
+                          >
+                          Create user
+                        </Button>
                       </Col>
                     )}
                   </Row>
+                  <Collapse isOpen={this.state.filter_isOpen}>
+                    <Form>
+                      <Row>
+                        <Col className="px-md-1" md="2">
+                          <FormGroup>
+                            <label>
+                              Username
+                            </label>
+                            <Input
+                              name="username"
+                              type="text"
+                              onChange={(event) => {this.setState({filter_username: event.target.value})}}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md="2">
+                          <FormGroup>
+                            <label>
+                              First name
+                            </label>
+                            <Input
+                              name="first_name"
+                              type="text"
+                              onChange={(event) => {this.setState({filter_first_name: event.target.value})}}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md="2">
+                          <FormGroup>
+                            <label>
+                              Last name
+                            </label>
+                            <Input
+                              name="last_name"
+                              type="text"
+                              onChange={(event) => {this.setState({filter_last_name: event.target.value})}}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md="2">
+                          <FormGroup>
+                            <label>
+                              Role
+                            </label>
+                            <Input
+                              name="location"
+                              type="select"
+                              onChange={(event) => {this.setState({filter_role: event.target.value})}}
+                            >
+                              <option key={0} value="--(All)--">--(All)--</option>
+                              {results_roles.map((val, i) => {return (
+                                <option key={i+1} value={val.id}>{val.name}</option>
+                              )})}
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Collapse>
+                  <Collapse isOpen={this.state.create_isOpen}>
+                    <Form onSubmit={this.handleSubmit}>
+                      {this.renderRedirect()}
+                      <Row>
+                        <Col className="px-md-1" md={{ span: 3, offset: 1 }}>
+                          <FormGroup>
+                            <Input
+                              placeholder="Username"
+                              name="username"
+                              type="text"
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md="1">
+                          <FormGroup>
+                            <Input type="select" name="role">
+                              {results_roles.map((val, i) => {return (
+                                <option key={i} value={val.id}>{val.name}</option>
+                              )})}
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
+                          <Button>
+                            Create
+                          </Button>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Collapse>
                 </CardHeader>
                 <CardBody>
                   <Table className="tablesorter" responsive>
@@ -359,7 +437,10 @@ class AdminView extends React.Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {results_users.map((item, ii) => {return(
+                      {results_users.filter(item => (
+                        (this.state.filter_role == "--(All)--" || this.state.filter_role == item.role) &&
+                        (this.state.filter_username == "--(All)--" || this.state.filter_username.length <= item.username.length && this.state.filter_username.toLowerCase() == item.username.substring(0, this.state.filter_username.length).toLowerCase())
+                      )).map((item, ii) => {return(
                         <tr>
                           <td><Link to={'/user/' + item.pk}>{item.username}</Link></td>
                           <td>{item.first_name}</td>
