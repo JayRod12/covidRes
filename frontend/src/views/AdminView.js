@@ -64,8 +64,12 @@ class AdminView extends React.Component {
     this.state = {
       data_roles: [],
       loaded_roles: false,
-      placeholder: "Loading",
+      placeholder_roles: "Loading",
       error_roles: "",
+      data_models: [],
+      loaded_models: false,
+      placeholder_models: "Loading",
+      error_models: "",
       redirect: 0,
       createRole_isOpen: false,
       filter_isOpen: false,
@@ -115,7 +119,7 @@ class AdminView extends React.Component {
         console.log(data);
         this.setState(() => {
           return {
-            data,
+            data_roles: data,
             loaded_roles: true
           };
         });
@@ -129,9 +133,59 @@ class AdminView extends React.Component {
           };
         });
       });
+    fetch("rest/machinetypes/")
+      .then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        this.setState(() => {
+          return {
+            data_models: data,
+            loaded_models: true
+          };
+        });
+      })
+      .catch(error => {
+        this.setState(() => {
+          return {
+            loaded_models: true,
+            placeholder_models: "Failed to load",
+            error_models: "You don't have permission to view these models.",
+          };
+        });
+      });
+    fetch("rest/users/")
+      .then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        this.setState(() => {
+          return {
+            data_users: data,
+            loaded_users: true
+          };
+        });
+      })
+      .catch(error => {
+        this.setState(() => {
+          return {
+            loaded_users: true,
+            placeholder_users: "Failed to load",
+            error_users: "You don't have permission to view these models.",
+          };
+        });
+      });
   };
   render() {
-    if (!this.state.loaded_roles) {
+    if (!(this.state.loaded_roles && this.state.loaded_models && this.state.loaded_users)) {
       return (
         <CardHeader>
           <CardTitle tag="h4">Loading roles...</CardTitle>
@@ -139,8 +193,12 @@ class AdminView extends React.Component {
       );
     }
     const results_roles = IS_DEV ? this.state.data_roles.results : this.state.data_roles;
+    const results_models = IS_DEV ? this.state.data_models.results : this.state.data_models;
+    const results_users = IS_DEV ? this.state.data_users.results : this.state.data_users;
 
-    var roles = [(<tr><td>Test 1</td></tr>), (<tr><td>Test 2</td></tr>)]
+    console.log("Roles: ", results_roles)
+    console.log("Models: ", results_models)
+    console.log("Users: ", results_users)
 
     return (
       <>
@@ -185,7 +243,11 @@ class AdminView extends React.Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {roles}
+                      {results_roles.map((item, ii) => {return(
+                        <tr>
+                          <td><Link to={'/role/' + item.pk}>{item.name}</Link></td>
+                        </tr>
+                      )})}
                     </tbody>
                   </Table>
                 </CardBody>
@@ -230,7 +292,11 @@ class AdminView extends React.Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {roles}
+                      {results_models.map((item, ii) => {return(
+                        <tr>
+                          <td><Link to={'/model/' + item.pk}>{item.name}</Link></td>
+                        </tr>
+                      )})}
                     </tbody>
                   </Table>
                 </CardBody>
@@ -285,11 +351,15 @@ class AdminView extends React.Component {
                   <Table className="tablesorter" responsive>
                     <thead className="text-primary">
                       <tr>
-                        <th>Role name</th>
+                        <th>Username</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {roles}
+                      {results_users.map((item, ii) => {return(
+                        <tr>
+                          <td><Link to={'/user/' + item.pk}>{item.first_name} {item.last_name}</Link></td>
+                        </tr>
+                      )})}
                     </tbody>
                   </Table>
                 </CardBody>
