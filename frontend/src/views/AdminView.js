@@ -311,8 +311,8 @@ class AdminView extends React.Component {
                     <Col className="px-md-1" md="2">
                       <CardTitle tag="h4">Users</CardTitle>
                     </Col>
-                    { true && (//this.props.me && this.props.me.permission_role_edit && (
-                      <Col className="px-md-1" md="5">
+                    { this.props.me && this.props.me.permission_role_edit && (
+                      <Col className="px-md-1" md="12">
                         <Form>
                           <Row>
                             <Col className="px-md-1" md="8">
@@ -331,8 +331,9 @@ class AdminView extends React.Component {
                                   name="role"
                                   type="select"
                                 >
-                                <option key={1} value={1}>Test 1</option>
-                                <option key={2} value={2}>Test 2</option>
+                                {results_roles.map((item, ii) => {return(
+                                  <option key={ii} value={item.pk}>{item.name}</option>
+                                )})}
                                 </Input>
                               </FormGroup>
                             </Col>
@@ -352,12 +353,18 @@ class AdminView extends React.Component {
                     <thead className="text-primary">
                       <tr>
                         <th>Username</th>
+                        <th>First name</th>
+                        <th>Last name</th>
+                        <th>Role</th>
                       </tr>
                     </thead>
                     <tbody>
                       {results_users.map((item, ii) => {return(
                         <tr>
-                          <td><Link to={'/user/' + item.pk}>{item.first_name} {item.last_name}</Link></td>
+                          <td><Link to={'/user/' + item.pk}>{item.username}</Link></td>
+                          <td>{item.first_name}</td>
+                          <td>{item.last_name}</td>
+                          <td>{item.role_name}</td>
                         </tr>
                       )})}
                     </tbody>
