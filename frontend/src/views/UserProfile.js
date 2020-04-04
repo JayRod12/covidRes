@@ -67,6 +67,7 @@ class UserProfile extends React.Component {
       data: [],
       data_roles: [],
       loaded: false,
+      loaded_roles: false,
       placeholder: "Loading",
       error_message: "",
     };
@@ -127,7 +128,7 @@ class UserProfile extends React.Component {
             .then(data => {
                 const data_roles = IS_DEV ? data.results : data
                 console.log("HERE ROLES:", data_roles);
-                this.setState({data_roles: data_roles, data: this.state.data});
+                this.setState({data_roles: data_roles, loaded_roles: true});
                 console.log("HERE ROLES:", this.state.data_roles);
             })
             .catch(error => {
@@ -135,7 +136,7 @@ class UserProfile extends React.Component {
             });
   };
   render() {
-    if (!this.state.loaded) {
+    if (!(this.state.loaded && this.state.loaded_roles)) {
       return (
         <CardHeader>
           <CardTitle tag="h4">Loading user...</CardTitle>
