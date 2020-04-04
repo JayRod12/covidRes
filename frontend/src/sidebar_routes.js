@@ -37,6 +37,7 @@ var routes = [
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-chart-pie-36",
     component: Ventilators,
+    permission: (me) => {return(me.permission_task_see)},
     layout: "/"
   },
   {
@@ -44,6 +45,7 @@ var routes = [
     name: "Family messages",
     icon: "tim-icons icon-chat-33",
     component: FamilyMessages,
+    permission: (me) => {return(me.permission_message_see)},
     layout: "/"
   },
   {
@@ -51,6 +53,7 @@ var routes = [
     name: "Patients",
     icon: "tim-icons icon-badge",
     component: PatientList,
+    permission: (me) => {return(me.permission_patient_see)},
     layout: "/"
   },
   {
@@ -58,6 +61,7 @@ var routes = [
     name: "Machines",
     icon: "tim-icons icon-badge",
     component: MachineList,
+    permission: (me) => {return(me.permission_machine_see)},
     layout: "/"
   },
   {
@@ -65,6 +69,7 @@ var routes = [
     name: "Tasks",
     icon: "tim-icons icon-bullet-list-67",
     component: TaskList,
+    permission: (me) => {return(me.permission_task_see)},
     layout: "/"
   },
   {
@@ -73,6 +78,7 @@ var routes = [
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-chart-bar-32",
     component: Dashboard,
+    permission: (me) => {return(me.permission_machine_see)},
     layout: "/"
   }
 ];

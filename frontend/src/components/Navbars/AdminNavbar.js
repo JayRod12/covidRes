@@ -164,7 +164,6 @@ class AdminNavbar extends React.Component {
       return response.text();
     }).then(data => {
       if (data == "Success") {
-        console.log("DATA", data);
         window.location.reload()
       }else {
         console.log("DATA", data);
@@ -188,7 +187,7 @@ class AdminNavbar extends React.Component {
       return response.text();
     }).then(data => {
       if (data == "Success") {
-        console.log("DATA", data);
+        this.props.set_me(null)
         window.location.reload()
       }else {
         console.log("DATA", data);

@@ -116,7 +116,9 @@ class Sidebar extends React.Component {
           ) : null}
           <Nav>
             {routes.map((prop, key) => {
-              if (prop.redirect) return null;
+              console.log("ME", this.props.me)
+              console.log("PERMISSION NAME", prop.permission)
+              if (prop.redirect || prop.permission && !(this.props.me && prop.permission(this.props.me))) return null;
               return (
                 <li
                   className={

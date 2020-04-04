@@ -87,7 +87,7 @@ class Admin extends React.Component {
       return (
         <Route
           path={prop.path}
-          component={prop.component}
+          render={(props) => <prop.component {...props} me={this.state.me} />}
           key={key}
         />
       );
@@ -121,6 +121,7 @@ class Admin extends React.Component {
               imgSrc: logo
             }}
             toggleSidebar={this.toggleSidebar}
+            me = {this.state.me}
           />
           <div
             className="main-panel"
