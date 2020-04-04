@@ -51,7 +51,7 @@ class PermissionMachineType(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role.permission_machinetype_edit or (request.user.role.permission_machinetype_see and request.method in permissions.SAFE_METHODS)
 class MachineTypeViewSet(viewsets.ModelViewSet):
-    queryset = MachineType.objects.all()
+    queryset = MachineType.objects.all().order_by('name')
     serializer_class = MachineTypeSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachineType]
 
@@ -59,11 +59,11 @@ class PermissionMachine(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role.permission_machine_edit or (request.user.role.permission_machine_see and request.method in permissions.SAFE_METHODS)
 class MachineViewSet(viewsets.ModelViewSet):
-    queryset = Machine.objects.all().order_by('model')
+    queryset = Machine.objects.all().order_by('model__name')
     serializer_class = MachineSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachine]
 class MachineQueryViewSet(viewsets.ModelViewSet):
-    queryset = Machine.objects.all()
+    queryset = Machine.objects.all().order_by('model__name')
     serializer_class = MachineSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachine]
     def get_queryset(self):
@@ -199,7 +199,7 @@ class PermissionUser(permissions.BasePermission):
                 return False
             return False
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('username')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionUser]
 """
@@ -246,6 +246,6 @@ class PermissionRole(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role.permission_role_edit or (request.user.role.permission_role_see and request.method in permissions.SAFE_METHODS)
 class RoleViewSet(viewsets.ModelViewSet):
-    queryset = Role.objects.all()
+    queryset = Role.objects.all().order_by('name')
     serializer_class = RoleSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionRole]
