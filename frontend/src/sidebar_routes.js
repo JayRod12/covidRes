@@ -28,6 +28,7 @@ import FamilyMessages from "views/FamilyMessages.js";
 import PatientList from "views/PatientList.js";
 import MachineList from "views/MachineList.js";
 import TaskList from "views/TaskList.js";
+import AdminView from "views/AdminView.js";
 
 
 var routes = [
@@ -75,10 +76,17 @@ var routes = [
   {
     path: "/dashboard",
     name: "Dashboard",
-    rtlName: "لوحة القيادة",
     icon: "tim-icons icon-chart-bar-32",
     component: Dashboard,
     permission: (me) => {return(me.permission_machine_see)},
+    layout: "/"
+  },
+  {
+    path: "/adm",
+    name: "Admin",
+    icon: "tim-icons icon-chart-bar-32",
+    component: AdminView,
+    permission: (me) => {return(true)},
     layout: "/"
   }
 ];

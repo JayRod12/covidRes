@@ -30,6 +30,7 @@ import MachineList from "views/MachineList.js";
 import PatientProfile from "views/PatientProfile.js";
 import MachineProfile from "views/MachineProfile.js";
 import TaskList from "views/TaskList.js";
+import AdminView from "views/AdminView.js";
 
 
 var routes = [
@@ -103,6 +104,14 @@ var routes = [
     rtlName: "إخطارات",
     icon: "tim-icons icon-bell-55",
     component: Notifications,
+    layout: "/"
+  },
+  {
+    path: "/adm",
+    name: "Admin",
+    icon: "tim-icons icon-chart-bar-32",
+    component: AdminView,
+    permission: (me) => {return(true)},
     layout: "/"
   },
 ];
