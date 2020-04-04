@@ -71,7 +71,6 @@ class AdminNavbar extends React.Component {
       modalLogin: false,
       modalPassword: false,
       logged_in: false,
-      me: {},
       color: "navbar-transparent"
     };
     this.submitLogin = this.submitLogin.bind(this);
@@ -90,9 +89,9 @@ class AdminNavbar extends React.Component {
       .then(data => {
         console.log(data);
         if (data != "Not logged in") {
+          this.props.set_me(data)
           this.setState(() => {
             return {
-              me: data,
               modalLogin: false,
               logged_in: true
             };

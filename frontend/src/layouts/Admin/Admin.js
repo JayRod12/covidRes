@@ -38,9 +38,13 @@ class Admin extends React.Component {
     super(props);
     this.state = {
       backgroundColor: "blue",
+      me: null,
       sidebarOpened:
         document.documentElement.className.indexOf("nav-open") !== -1
     };
+  }
+  set_me = (data) => {
+    this.setState({me: data})
   }
   componentDidMount() {
     if (navigator.platform.indexOf("Win") > -1) {
@@ -128,6 +132,8 @@ class Admin extends React.Component {
               brandText={this.getBrandText(this.props.location.pathname)}
               toggleSidebar={this.toggleSidebar}
               sidebarOpened={this.state.sidebarOpened}
+              me = {this.state.me}
+              set_me = {this.set_me}
             />
             <Switch>
               {this.getRoutes(routes)}
