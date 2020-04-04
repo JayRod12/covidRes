@@ -439,7 +439,9 @@ class AdminView extends React.Component {
                     <tbody>
                       {results_users.filter(item => (
                         (this.state.filter_role == "--(All)--" || this.state.filter_role == item.role) &&
-                        (this.state.filter_username == "--(All)--" || this.state.filter_username.length <= item.username.length && this.state.filter_username.toLowerCase() == item.username.substring(0, this.state.filter_username.length).toLowerCase())
+                        (this.state.filter_username == "--(All)--" || this.state.filter_username.length <= item.username.length && this.state.filter_username.toLowerCase() == item.username.substring(0, this.state.filter_username.length).toLowerCase()) &&
+                        (this.state.filter_first_name == "--(All)--" || this.state.filter_first_name.length <= item.first_name.length && this.state.filter_first_name.toLowerCase() == item.first_name.substring(0, this.state.filter_first_name.length).toLowerCase()) &&
+                        (this.state.filter_last_name == "--(All)--" || this.state.filter_last_name.length <= item.last_name.length && this.state.filter_last_name.toLowerCase() == item.last_name.substring(0, this.state.filter_last_name.length).toLowerCase())
                       )).map((item, ii) => {return(
                         <tr>
                           <td><Link to={'/user/' + item.pk}>{item.username}</Link></td>
