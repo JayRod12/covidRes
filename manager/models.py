@@ -18,6 +18,7 @@ class Role(models.Model):
     permission_task_edit = models.BooleanField(default=False)
     permission_user_edit = models.BooleanField(default=False)
     permission_message_edit = models.BooleanField(default=False)
+    permission_role_edit = models.BooleanField(default=False)
     # See
     permission_patient_see = models.BooleanField(default=False)
     permission_user_see = models.BooleanField(default=False)
@@ -26,6 +27,7 @@ class Role(models.Model):
     permission_task_see = models.BooleanField(default=False)
     permission_user_see = models.BooleanField(default=False)
     permission_message_see = models.BooleanField(default=False)
+    permission_role_see = models.BooleanField(default=False)
     def __str__(self):
     	return self.name
 

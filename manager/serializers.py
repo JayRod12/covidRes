@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Patient, MachineType, Machine, AssignmentTask
-from .models import User, Message
+from .models import User, Message, Role
 
 # Manage
 class PatientSerializer(serializers.ModelSerializer):
@@ -68,3 +68,8 @@ class MessageSerializer(serializers.ModelSerializer):
 			'patient',
 			'patient_lastname'
 		)
+
+class RoleSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Role
+		fields = '__all__'

@@ -7,7 +7,7 @@ import io
 from rest_framework.parsers import JSONParser
 
 from .models import Patient, MachineType, Machine, AssignmentTask
-from .models import User, Message
+from .models import User, Message, Role
 from .serializers import (
     PatientSerializer,
     PatientDetailedSerializer,
@@ -15,7 +15,7 @@ from .serializers import (
     MachineSerializer,
     AssignmentTaskSerializer
 )
-from .serializers import UserSerializer, MessageSerializer
+from .serializers import UserSerializer, MessageSerializer, RoleSerializer
 from .serializers import User, Message
 from . import functions
 
@@ -241,3 +241,11 @@ class MessagePatientViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated & PermissionPatientMessage]
     def get_queryset(self):
         return super().get_queryset().filter(patient__pk=self.kwargs['patient_pk'])
+
+class PermissionRole(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.role.permission_role_edit or (request.user.role.permission_role_see and request.method in permissions.SAFE_METHODS)
+class RoleViewSet(viewsets.ModelViewSet):
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer
+    permission_classes = [permissions.IsAuthenticated & PermissionRole]
