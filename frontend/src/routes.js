@@ -20,10 +20,6 @@ import Dashboard from "views/Dashboard.js";
 import Icons from "views/Icons.js";
 import Map from "views/Map.js";
 import Notifications from "views/Notifications.js";
-import Rtl from "views/Rtl.js";
-import TableList from "views/TableList.js";
-import Typography from "views/Typography.js";
-import UserProfile from "views/UserProfile.js";
 import FamilyMessages from "views/FamilyMessages.js";
 import PatientList from "views/PatientList.js";
 import MachineList from "views/MachineList.js";
@@ -31,6 +27,7 @@ import PatientProfile from "views/PatientProfile.js";
 import MachineProfile from "views/MachineProfile.js";
 import TaskList from "views/TaskList.js";
 import AdminView from "views/AdminView.js";
+import UserProfile from "views/UserProfile.js";
 
 
 var routes = [
@@ -111,7 +108,12 @@ var routes = [
     name: "Admin",
     icon: "tim-icons icon-chart-bar-32",
     component: AdminView,
-    permission: (me) => {return(true)},
+    layout: "/"
+  },
+  {
+    path: "/user/:pk",
+    name: "User-details",
+    component: UserProfile,
     layout: "/"
   },
 ];

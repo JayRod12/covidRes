@@ -15,197 +15,248 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
+// react plugin for creating notifications over the dashboard
+import NotificationAlert from "react-notification-alert";
 
 // reactstrap components
 import {
+  Alert,
+  UncontrolledAlert,
   Button,
   Card,
   CardHeader,
   CardBody,
   CardFooter,
   CardText,
+  CardTitle,
   FormGroup,
   Form,
+  Label,
   Input,
   Row,
   Col
 } from "reactstrap";
 
+import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
+
+import $ from 'jquery';
+
+const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = $.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 class UserProfile extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+      data_roles: [],
+      loaded: false,
+      placeholder: "Loading",
+      error_message: "",
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+
+    fetch('/rest/users/'+this.state.data.pk+"/", {
+      method: 'PATCH',
+      body: JSON.stringify({
+          username: data.get('username'),
+          role: data.get('role'),
+          email: data.get('email'),
+          first_name: data.get('first_name'),
+          last_name: data.get('last_name')
+      }),
+      headers: {
+          "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+      }
+    }).then(response => {console.log(response)});
+  }
+  componentDidMount() {
+    const { pk } = this.props.match.params
+    fetch('/rest/users/'+pk+'/')
+            .then(response => {
+                if (response.status > 400) {
+                  throw new Error(response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                this.setState(() => {
+                    return {
+                        data: data,
+                        loaded: true
+                    };
+                });
+            })
+            .catch(error => {
+              this.setState(() => {
+                return {
+                  loaded: true,
+                  placeholder: "Failed to load",
+                  error_message: error,
+                };
+              });
+            });
+    fetch('/rest/roles/')
+            .then(response => {
+                if (response.status > 400) {
+                  throw new Error(response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const data_roles = IS_DEV ? data.results : data
+                console.log("HERE ROLES:", data_roles);
+                this.setState({data_roles: data_roles});
+                console.log("HERE ROLES:", this.state.data_roles);
+            })
+            .catch(error => {
+              console.log(error)
+            });
+  };
   render() {
+    if (!this.state.loaded) {
+      return (
+        <CardHeader>
+          <CardTitle tag="h4">Loading user...</CardTitle>
+        </CardHeader>
+      );
+    }
+    let user;
+    if (this.state.error_message.length > 0) {
+      user = (
+        <Alert color="danger">
+          {this.state.error_message} Are you <a href="/admin" className="alert-link"> logged in?</a>
+        </Alert>
+      );
+    } else if (this.state.data.pk) {
+      user = (
+        <Col md="8">
+          <Card>
+            <CardHeader>
+              <h5 className="title">Machine Profile</h5>
+            </CardHeader>
+            <CardBody>
+              <Form onSubmit={this.handleSubmit}>
+                <Row>
+                  <Col className="pr-md-1" md="2">
+                    <FormGroup>
+                      <label>ID</label>
+                      <Input
+                        defaultValue={this.state.data.pk}
+                        disabled
+                        placeholder="ID"
+                        name="pk"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col className="px-md-1" md="3">
+                    <FormGroup>
+                      <label>Username</label>
+                      <Input
+                        defaultValue={this.state.data.username}
+                        placeholder="Username"
+                        name="username"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col className="px-md-1" md="2">
+                    <FormGroup>
+                      <label>Role</label>
+                      <Input
+                        defaultValue={this.state.data.role}
+                        name="role"
+                        type="select"
+                      >
+                      <option key={0} value={null}></option>
+                      {this.state.data_roles.length > 0 && this.state.data_roles.map((item, ii) => {return(
+                        <option key={ii+1} value={item.id}>{item.name}</option>
+                      )})}
+                      </Input>
+                    </FormGroup>
+                  </Col>
+                  <Col className="pl-md-1" md="5">
+                    <FormGroup>
+                      <label>Email</label>
+                      <Input
+                        defaultValue={this.state.data.email}
+                        placeholder="Email"
+                        name="email"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="pl-md-1" md="6">
+                    <FormGroup>
+                      <label>First name</label>
+                      <Input
+                        defaultValue={this.state.data.first_name}
+                        placeholder="First name"
+                        name="first_name"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col className="pl-md-1" md="6">
+                    <FormGroup>
+                      <label>Last name</label>
+                      <Input
+                        defaultValue={this.state.data.last_name}
+                        placeholder="Last name"
+                        name="last_name"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Button className="btn-fill" color="primary" type="submit" value="Submit">
+                  Save
+                </Button>
+              </Form>
+            </CardBody>
+          </Card>
+        </Col>
+      );
+    } else {
+      user = (
+        <CardText>No user</CardText>
+      );
+    }
     return (
-      <>
+      <div className="content">
+        <div className="react-notification-alert-container">
+          <NotificationAlert ref="notificationAlert" />
+        </div>
         <div className="content">
           <Row>
-            <Col md="8">
-              <Card>
-                <CardHeader>
-                  <h5 className="title">Edit Profile</h5>
-                </CardHeader>
-                <CardBody>
-                  <Form>
-                    <Row>
-                      <Col className="pr-md-1" md="5">
-                        <FormGroup>
-                          <label>Company (disabled)</label>
-                          <Input
-                            defaultValue="Creative Code Inc."
-                            disabled
-                            placeholder="Company"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col className="px-md-1" md="3">
-                        <FormGroup>
-                          <label>Username</label>
-                          <Input
-                            defaultValue="michael23"
-                            placeholder="Username"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col className="pl-md-1" md="4">
-                        <FormGroup>
-                          <label htmlFor="exampleInputEmail1">
-                            Email address
-                          </label>
-                          <Input placeholder="mike@email.com" type="email" />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col className="pr-md-1" md="6">
-                        <FormGroup>
-                          <label>First Name</label>
-                          <Input
-                            defaultValue="Mike"
-                            placeholder="Company"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col className="pl-md-1" md="6">
-                        <FormGroup>
-                          <label>Last Name</label>
-                          <Input
-                            defaultValue="Andrew"
-                            placeholder="Last Name"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col md="12">
-                        <FormGroup>
-                          <label>Address</label>
-                          <Input
-                            defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                            placeholder="Home Address"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col className="pr-md-1" md="4">
-                        <FormGroup>
-                          <label>City</label>
-                          <Input
-                            defaultValue="Mike"
-                            placeholder="City"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col className="px-md-1" md="4">
-                        <FormGroup>
-                          <label>Country</label>
-                          <Input
-                            defaultValue="Andrew"
-                            placeholder="Country"
-                            type="text"
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col className="pl-md-1" md="4">
-                        <FormGroup>
-                          <label>Postal Code</label>
-                          <Input placeholder="ZIP Code" type="number" />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col md="8">
-                        <FormGroup>
-                          <label>About Me</label>
-                          <Input
-                            cols="80"
-                            defaultValue="Lamborghini Mercy, Your chick she so thirsty, I'm in
-                            that two seat Lambo."
-                            placeholder="Here can be your description"
-                            rows="4"
-                            type="textarea"
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  </Form>
-                </CardBody>
-                <CardFooter>
-                  <Button className="btn-fill" color="primary" type="submit">
-                    Save
-                  </Button>
-                </CardFooter>
-              </Card>
-            </Col>
-            <Col md="4">
-              <Card className="card-user">
-                <CardBody>
-                  <CardText />
-                  <div className="author">
-                    <div className="block block-one" />
-                    <div className="block block-two" />
-                    <div className="block block-three" />
-                    <div className="block block-four" />
-                    <a href="#pablo" onClick={e => e.preventDefault()}>
-                      <img
-                        alt="..."
-                        className="avatar"
-                        src={require("assets/img/emilyz.jpg")}
-                      />
-                      <h5 className="title">Mike Andrew</h5>
-                    </a>
-                    <p className="description">Ceo/Co-Founder</p>
-                  </div>
-                  <div className="card-description">
-                    Do not be scared of the truth because we need to restart the
-                    human foundation in truth And I love you like Kanye loves
-                    Kanye I love Rick Owens’ bed design but the back is...
-                  </div>
-                </CardBody>
-                <CardFooter>
-                  <div className="button-container">
-                    <Button className="btn-icon btn-round" color="facebook">
-                      <i className="fab fa-facebook" />
-                    </Button>
-                    <Button className="btn-icon btn-round" color="twitter">
-                      <i className="fab fa-twitter" />
-                    </Button>
-                    <Button className="btn-icon btn-round" color="google">
-                      <i className="fab fa-google-plus" />
-                    </Button>
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
+            {user}
           </Row>
         </div>
-      </>
+      </div>
     );
   }
 }
