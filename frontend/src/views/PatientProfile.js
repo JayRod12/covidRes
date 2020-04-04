@@ -81,6 +81,7 @@ class PatientProfile extends React.Component {
       graph_xy: [],
     };
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
   }
   handleSubmit(event) {
     event.preventDefault();
@@ -120,6 +121,28 @@ class PatientProfile extends React.Component {
         }
       })
     }
+  }
+  sendMessage(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+
+    console.log("patient_info", {
+        message: data.get('message'),
+        patient: this.props.match.params.pk
+    })
+
+    fetch('/rest/messages/', {
+      method: 'POST',
+      body: JSON.stringify({
+          message: data.get('message'),
+          patient: this.props.match.params.pk
+      }),
+      headers: {
+          "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+      }
+    }).then(response => response.json()).then(data => {
+      this.setState({data_messages: [...this.state.data_messages, data]})
+    })
   }
   componentDidMount() {
     const { pk } = this.props.match.params
@@ -541,10 +564,10 @@ class PatientProfile extends React.Component {
       messages = this.state.data_messages.map((props, index) => (
         <React.Fragment>
           <Row>
-            <Col md="3">
-              <CardText style={{ 'font-size': '11px' }}>{props.sender_role} {props.last_name}</CardText>
-            </Col>
             <Col md="6">
+              <CardText style={{ 'font-size': '11px' }}>{props.sender_role} {props.sender_lastname}</CardText>
+            </Col>
+            <Col md="5">
               <span className="pull-right">
                 <CardText style={{ 'font-size': '11px' }}>{moment(props.date).format("HH:mm (D-MMM-YYYY)")}</CardText>
               </span>
@@ -586,6 +609,23 @@ class PatientProfile extends React.Component {
                 <CardBody>
                   {messages}
                 </CardBody>
+                <CardFooter>
+                  <Form onSubmit={this.sendMessage}>
+                    <FormGroup>
+                      <label>Message</label>
+                      <Input
+                        cols="80"
+                        placeholder="Message"
+                        name="message"
+                        rows="3"
+                        type="textarea"
+                      />
+                    </FormGroup>
+                    <Button>
+                      Send
+                    </Button>
+                  </Form>
+                </CardFooter>
               </Card>
             </Col>
           </Row>
