@@ -42,28 +42,28 @@ var routes = [
   {
     path: "/family-messages",
     name: "Family messages",
-    icon: "tim-icons icon-single-02",
+    icon: "tim-icons icon-chat-33",
     component: FamilyMessages,
     layout: "/"
   },
   {
     path: "/patients",
     name: "Patients",
-    icon: "tim-icons icon-single-02",
+    icon: "tim-icons icon-badge",
     component: PatientList,
     layout: "/"
   },
   {
     path: "/machines",
     name: "Machines",
-    icon: "tim-icons icon-single-02",
+    icon: "tim-icons icon-badge",
     component: MachineList,
     layout: "/"
   },
   {
     path: "/tasks",
     name: "Tasks",
-    icon: "tim-icons icon-bell-55",
+    icon: "tim-icons icon-bullet-list-67",
     component: TaskList,
     layout: "/"
   },
@@ -71,7 +71,7 @@ var routes = [
     path: "/dashboard",
     name: "Dashboard",
     rtlName: "لوحة القيادة",
-    icon: "tim-icons icon-chart-pie-36",
+    icon: "tim-icons icon-chart-bar-32",
     component: Dashboard,
     layout: "/"
   }
