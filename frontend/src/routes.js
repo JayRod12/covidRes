@@ -28,6 +28,7 @@ import MachineProfile from "views/MachineProfile.js";
 import TaskList from "views/TaskList.js";
 import AdminView from "views/AdminView.js";
 import UserProfile from "views/UserProfile.js";
+import RoleProfile from "views/RoleProfile.js";
 
 
 var routes = [
@@ -114,6 +115,12 @@ var routes = [
     path: "/user/:pk",
     name: "User-details",
     component: UserProfile,
+    layout: "/"
+  },
+  {
+    path: "/role/:pk",
+    name: "Role-details",
+    component: RoleProfile,
     layout: "/"
   },
 ];

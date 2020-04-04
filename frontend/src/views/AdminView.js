@@ -285,7 +285,7 @@ class AdminView extends React.Component {
                     <tbody>
                       {results_roles.map((item, ii) => {return(
                         <tr>
-                          <td><Link to={'/role/' + item.pk}>{item.name}</Link></td>
+                          <td><Link to={'/role/' + item.id}>{item.name}</Link></td>
                         </tr>
                       )})}
                     </tbody>
