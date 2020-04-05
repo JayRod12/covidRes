@@ -238,7 +238,7 @@ class MachineList extends React.Component {
               <Card>
                 <CardHeader>
                   <Row>
-                    <Col className="px-md-1" md="8">
+                    <Col className="text-left" md="8">
                       <CardTitle tag="h4">Machines</CardTitle>
                     </Col>
                     <Col className="px-md-1" md="2">
@@ -269,7 +269,7 @@ class MachineList extends React.Component {
                   <Collapse isOpen={this.state.filter_isOpen}>
                     <Form>
                       <Row>
-                        <Col className="px-md-1" md="2">
+                        <Col className="text-left" md="2">
                           <FormGroup>
                             <label>
                               Model
