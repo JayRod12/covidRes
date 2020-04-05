@@ -65,9 +65,7 @@ class RoleProfile extends React.Component {
     super(props);
     this.state = {
       data: [],
-      data_roles: [],
       loaded: false,
-      loaded_roles: false,
       placeholder: "Loading",
       error_message: "",
     };
@@ -77,14 +75,24 @@ class RoleProfile extends React.Component {
     event.preventDefault();
     const data = new FormData(event.target);
 
-    fetch('/rest/users/'+this.state.data.pk+"/", {
+    fetch('/rest/roles/'+this.state.data.id+"/", {
       method: 'PATCH',
       body: JSON.stringify({
-          username: data.get('username'),
-          role: data.get('role'),
-          email: data.get('email'),
-          first_name: data.get('first_name'),
-          last_name: data.get('last_name')
+          name: data.get('name'),
+          permission_patient_see: 0 < data.get('permission_patient'),
+          permission_patient_edit: 1 < data.get('permission_patient'),
+          permission_machine_see: 0 < data.get('permission_machine'),
+          permission_machine_edit: 1 < data.get('permission_machine'),
+          permission_task_see: 0 < data.get('permission_task'),
+          permission_task_edit: 1 < data.get('permission_task'),
+          permission_message_see: 0 < data.get('permission_message'),
+          permission_message_edit: 1 < data.get('permission_message'),
+          permission_user_see: 0 < data.get('permission_user'),
+          permission_user_edit: 1 < data.get('permission_user'),
+          permission_model_see: 0 < data.get('permission_model'),
+          permission_model_edit: 1 < data.get('permission_model'),
+          permission_role_see: 0 < data.get('permission_role'),
+          permission_role_edit: 1 < data.get('permission_role'),
       }),
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
@@ -93,7 +101,7 @@ class RoleProfile extends React.Component {
   }
   componentDidMount() {
     const { pk } = this.props.match.params
-    fetch('/rest/users/'+pk+'/')
+    fetch('/rest/roles/'+pk+'/')
             .then(response => {
                 if (response.status > 400) {
                   throw new Error(response.status);
@@ -118,40 +126,24 @@ class RoleProfile extends React.Component {
                 };
               });
             });
-    fetch('/rest/roles/')
-            .then(response => {
-                if (response.status > 400) {
-                  throw new Error(response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                const data_roles = IS_DEV ? data.results : data
-                console.log("HERE ROLES:", data_roles);
-                this.setState({data_roles: data_roles, loaded_roles: true});
-                console.log("HERE ROLES:", this.state.data_roles);
-            })
-            .catch(error => {
-              console.log(error)
-            });
   };
   render() {
-    if (!(this.state.loaded && this.state.loaded_roles)) {
+    if (!this.state.loaded) {
       return (
         <CardHeader>
-          <CardTitle tag="h4">Loading user...</CardTitle>
+          <CardTitle tag="h4">Loading role...</CardTitle>
         </CardHeader>
       );
     }
-    let user;
+    let role;
     if (this.state.error_message.length > 0) {
-      user = (
+      role = (
         <Alert color="danger">
           {this.state.error_message} Are you <a href="/admin" className="alert-link"> logged in?</a>
         </Alert>
       );
-    } else if (this.state.data.pk) {
-      user = (
+    } else if (this.state.data.id) {
+      role = (
         <Col md="8">
           <Card>
             <CardHeader>
@@ -164,73 +156,125 @@ class RoleProfile extends React.Component {
                     <FormGroup>
                       <label>ID</label>
                       <Input
-                        defaultValue={this.state.data.pk}
+                        defaultValue={this.state.data.id}
                         disabled
                         placeholder="ID"
-                        name="pk"
+                        name="id"
                         type="text"
                       />
                     </FormGroup>
                   </Col>
                   <Col className="px-md-1" md="3">
                     <FormGroup>
-                      <label>Username</label>
+                      <label>Name</label>
                       <Input
-                        defaultValue={this.state.data.username}
-                        placeholder="Username"
-                        name="username"
-                        type="text"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col className="px-md-1" md="2">
-                    <FormGroup>
-                      <label>Role</label>
-                      <Input
-                        defaultValue={this.state.data.role}
-                        name="role"
-                        type="select"
-                      >
-                      <option key={0} value={null}></option>
-                      {this.state.data_roles.length > 0 && this.state.data_roles.map((item, ii) => {return(
-                        <option key={ii+1} value={item.id}>{item.name}</option>
-                      )})}
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                  <Col className="pl-md-1" md="5">
-                    <FormGroup>
-                      <label>Email</label>
-                      <Input
-                        defaultValue={this.state.data.email}
-                        placeholder="Email"
-                        name="email"
+                        defaultValue={this.state.data.name}
+                        placeholder="Name"
+                        name="name"
                         type="text"
                       />
                     </FormGroup>
                   </Col>
                 </Row>
                 <Row>
-                  <Col className="pl-md-1" md="6">
+                  <Col className="px-md-1" md="2">
                     <FormGroup>
-                      <label>First name</label>
+                      <label>Patients</label>
                       <Input
-                        defaultValue={this.state.data.first_name}
-                        placeholder="First name"
-                        name="first_name"
-                        type="text"
-                      />
+                        defaultValue={this.state.data.permission_patient_see+this.state.data.permission_patient_edit}
+                        name="permission_patient"
+                        type="select"
+                      >
+                        <option key={0} value={0}>None</option>
+                        <option key={0} value={1}>See</option>
+                        <option key={0} value={2}>Edit</option>
+                      </Input>
                     </FormGroup>
                   </Col>
-                  <Col className="pl-md-1" md="6">
+                  <Col className="px-md-1" md="2">
                     <FormGroup>
-                      <label>Last name</label>
+                      <label>Machines</label>
                       <Input
-                        defaultValue={this.state.data.last_name}
-                        placeholder="Last name"
-                        name="last_name"
-                        type="text"
-                      />
+                        defaultValue={this.state.data.permission_machine_see+this.state.data.permission_machine_edit}
+                        name="permission_machine"
+                        type="select"
+                      >
+                        <option key={0} value={0}>None</option>
+                        <option key={0} value={1}>See</option>
+                        <option key={0} value={2}>Edit</option>
+                      </Input>
+                    </FormGroup>
+                  </Col>
+                  <Col className="px-md-1" md="2">
+                    <FormGroup>
+                      <label>Tasks</label>
+                      <Input
+                        defaultValue={this.state.data.permission_task_see+this.state.data.permission_task_edit}
+                        name="permission_task"
+                        type="select"
+                      >
+                        <option key={0} value={0}>None</option>
+                        <option key={0} value={1}>See</option>
+                        <option key={0} value={2}>Edit</option>
+                      </Input>
+                    </FormGroup>
+                  </Col>
+                  <Col className="px-md-1" md="2">
+                    <FormGroup>
+                      <label>Messages</label>
+                      <Input
+                        defaultValue={this.state.data.permission_message_see+this.state.data.permission_message_edit}
+                        name="permission_message"
+                        type="select"
+                      >
+                        <option key={0} value={0}>None</option>
+                        <option key={0} value={1}>See</option>
+                        <option key={0} value={2}>Edit</option>
+                      </Input>
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="px-md-1" md="2">
+                    <FormGroup>
+                      <label>Users</label>
+                      <Input
+                        defaultValue={this.state.data.permission_user_see+this.state.data.permission_user_edit}
+                        name="permission_user"
+                        type="select"
+                      >
+                        <option key={0} value={0}>None</option>
+                        <option key={0} value={1}>See</option>
+                        <option key={0} value={2}>Edit</option>
+                      </Input>
+                    </FormGroup>
+                  </Col>
+                  <Col className="px-md-1" md="2">
+                    <FormGroup>
+                      <label>Models</label>
+                      <Input
+                        defaultValue={this.state.data.permission_machinetype_see+this.state.data.permission_machinetype_edit}
+                        name="permission_model"
+                        type="select"
+                      >
+                        <option key={0} value={0}>None</option>
+                        <option key={0} value={1}>See</option>
+                        <option key={0} value={2}>Edit</option>
+                      </Input>
+                    </FormGroup>
+                  </Col>
+                  <Col className="px-md-1" md="2">
+                    <FormGroup>
+                      <label>Roles</label>
+                      <Input
+                        defaultValue={this.state.data.permission_role_see+this.state.data.permission_role_edit}
+                        name="permission_role"
+                        type="select"
+                      >
+                        <option key={0} value={0}>None</option>
+                        <option key={0} value={1}>See</option>
+                        <option key={0} value={2}>Edit</option>
+                      </Input>
                     </FormGroup>
                   </Col>
                 </Row>
@@ -243,7 +287,7 @@ class RoleProfile extends React.Component {
         </Col>
       );
     } else {
-      user = (
+      role = (
         <CardText>No user</CardText>
       );
     }
@@ -254,7 +298,7 @@ class RoleProfile extends React.Component {
         </div>
         <div className="content">
           <Row>
-            {user}
+            {role}
           </Row>
         </div>
       </div>
