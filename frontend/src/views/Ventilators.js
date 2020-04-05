@@ -419,6 +419,23 @@ class Ventilators extends React.Component {
         console.log("STATE", this.state)
     }
 
+    _bufferNewAssignment = (patient) = {
+      console.log("CREATE CALL PATIENT", patient)
+      const newItem = {
+          id: 0,
+          group: 0,
+          title: patient.name,
+          start_time: new Date().valueOf(),
+          end_time: new Date().valueOf()+1,
+          canChangeGroup: true,
+          patient_id: patient.id,
+          machine_location: null,
+          machine_model: null,
+          canMove: this.props.me && this.props.me.permission_task_edit,
+          canResize: this.props.me && this.props.me.permission_task_edit ? "both" : false,
+      };
+    }
+
     _commitNewAssignment = () => {
         // OK, now let's see if this is actually a valid assignment
         const startDate = moment(this.state.selectedStartDate).valueOf();
