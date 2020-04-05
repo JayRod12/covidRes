@@ -39,6 +39,7 @@ class PermissionPatient(permissions.BasePermission):
                 return False
             return False
 class PatientViewSet(viewsets.ModelViewSet):
+    pagination_class = None
     queryset = Patient.objects.all().order_by('name')
     serializer_class = PatientSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionPatient]
@@ -51,6 +52,7 @@ class PermissionMachineType(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role.permission_machinetype_edit or (request.user.role.permission_machinetype_see and request.method in permissions.SAFE_METHODS)
 class MachineTypeViewSet(viewsets.ModelViewSet):
+    pagination_class = None
     queryset = MachineType.objects.all().order_by('name')
     serializer_class = MachineTypeSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachineType]
@@ -59,11 +61,13 @@ class PermissionMachine(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role.permission_machine_edit or (request.user.role.permission_machine_see and request.method in permissions.SAFE_METHODS)
 class MachineViewSet(viewsets.ModelViewSet):
-    queryset = Machine.objects.all().order_by('model__name')
+    pagination_class = None
+    queryset = Machine.objects.all().order_by('location')
     serializer_class = MachineSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachine]
 class MachineQueryViewSet(viewsets.ModelViewSet):
-    queryset = Machine.objects.all().order_by('model__name')
+    pagination_class = None
+    queryset = Machine.objects.all().order_by('location')
     serializer_class = MachineSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachine]
     def get_queryset(self):
@@ -84,6 +88,7 @@ class PermissionTask(permissions.BasePermission):
         if request.user.role.permission_task_edit or (request.user.role.permission_task_see and request.method in permissions.SAFE_METHODS):
             return True
 class AssignmentTaskViewSet(viewsets.ModelViewSet):
+    pagination_class = None
     queryset = AssignmentTask.objects.all().order_by('date')
     serializer_class = AssignmentTaskSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionTask]
@@ -177,6 +182,7 @@ class AssignmentTaskViewSet(viewsets.ModelViewSet):
                 task.save()
         return super(AssignmentTaskViewSet, self).partial_update(request, *args, **kwargs)
 class AssignmentTaskQueryViewSet(viewsets.ModelViewSet):
+    pagination_class = None
     queryset = AssignmentTask.objects.all().order_by('date')
     serializer_class = AssignmentTaskSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionTask]
@@ -199,6 +205,7 @@ class PermissionUser(permissions.BasePermission):
                 return False
             return False
 class UserViewSet(viewsets.ModelViewSet):
+    pagination_class = None
     queryset = User.objects.all().order_by('username')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionUser]
@@ -216,6 +223,7 @@ class PermissionMessage(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role.permission_message_edit or (request.user.role.permission_message_see and request.method in permissions.SAFE_METHODS)
 class MessageViewSet(viewsets.ModelViewSet):
+    pagination_class = None
     queryset = Message.objects.all().order_by('-date')
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMessage]
@@ -236,6 +244,7 @@ class PermissionPatientMessage(permissions.BasePermission):
                 return False
             return False
 class MessagePatientViewSet(viewsets.ModelViewSet):
+    pagination_class = None
     queryset = Message.objects.all().order_by('-date')
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionPatientMessage]
@@ -246,6 +255,7 @@ class PermissionRole(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.role.permission_role_edit or (request.user.role.permission_role_see and request.method in permissions.SAFE_METHODS)
 class RoleViewSet(viewsets.ModelViewSet):
+    pagination_class = None
     queryset = Role.objects.all().order_by('name')
     serializer_class = RoleSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionRole]
