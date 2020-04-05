@@ -508,7 +508,7 @@ class Ventilators extends React.Component {
                             <Timeline
                                 groups={this.state.groups.filter(the_filter).filter(item => (!this.state.filter_follow || bool_machine_followed_dict[item.id]))}
                                 items={this.state.items.filter(the_filter).filter(item => (!this.state.filter_follow || this.state.selectedItem == null || this.state.selectedItem.patient_id == item.patient_id))}
-                                traditionalZoom
+                                //traditionalZoom
                                 itemTouchSendsClick={true}
                                 //canMove={true}
                                 //canResize={"both"}
@@ -519,6 +519,8 @@ class Ventilators extends React.Component {
                                 onItemSelect={this._handleItemSelect}
                                 onItemDeselect={this._handleItemDeselect}
                                 selected={this.state.selected}
+                                minZoom={2 * 60 * 60 * 1000}
+                                maxZoom={0.25 * 365.24 * 86400 * 1000}
                             >
                                 <TimelineHeaders className="sticky">
                                     <SidebarHeader>
