@@ -123,10 +123,13 @@ class MachineList extends React.Component {
         return response.json();
       })
       .then(data => {
-        console.log(data);
+        var results = IS_DEV ? data.results : data;
+        console.log("RESULTS", results);
+        results = results.sort((a, b) => a.location.localeCompare(b.location))
+        console.log("RESULTS", results);
         this.setState(() => {
           return {
-            data: data,
+            data: results,
             loaded: true
           };
         });
@@ -182,7 +185,6 @@ class MachineList extends React.Component {
       );
     }
     let machines;
-    const results = IS_DEV ? this.state.data.results : this.state.data;
 
     var models = []
     var locations = []
@@ -193,10 +195,10 @@ class MachineList extends React.Component {
           {this.state.error_message} Are you <a href="/admin" className="alert-link"> logged in?</a>
         </Alert>
       );
-    } else if (results.length > 0) {
-      models = [...new Set(results.map(machine => machine.model_name))]
-      locations = [...new Set(results.map(machine => machine.location))]
-      machines = results.map((entry, index) => {
+    } else if (this.state.data.length > 0) {
+      models = [...new Set(this.state.data.map(machine => machine.model_name))]
+      locations = [...new Set(this.state.data.map(machine => machine.location))]
+      machines = this.state.data.map((entry, index) => {
         if (
           (this.state.filter_availability == "--(All)--" || this.state.filter_availability == (entry.patient_assigned != null)) &&
           (this.state.filter_machine == "--(All)--" || this.state.filter_machine == entry.model_name) &&
