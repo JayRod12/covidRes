@@ -336,20 +336,22 @@ class PatientList extends React.Component {
                   </Collapse>
                 </CardHeader>
                 <CardBody>
-                  <Table className="tablesorter" responsive>
-                    <thead className="text-primary">
-                      <tr>
-                        <th>Name</th>
-                        <th className="text-center">Severity</th>
-                        <th>Location</th>
-                        <th>Machine</th>
-                        <th>Admission date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {patients}
-                    </tbody>
-                  </Table>
+                  <div style={{maxHeight: "400px", overflow: "auto"}}>
+                    <Table className="tablesorter" responsive>
+                      <thead className="text-primary">
+                        <tr>
+                          <th>Name</th>
+                          <th className="text-center">Severity</th>
+                          <th>Location</th>
+                          <th>Machine</th>
+                          <th>Admission date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {patients}
+                      </tbody>
+                    </Table>
+                  </div>
                 </CardBody>
               </Card>
             </Col>

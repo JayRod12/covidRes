@@ -343,18 +343,20 @@ class MachineList extends React.Component {
                   </Collapse>
                 </CardHeader>
                 <CardBody>
-                  <Table className="tablesorter" responsive>
-                    <thead className="text-primary">
-                      <tr>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th>Patient</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {machines}
-                    </tbody>
-                  </Table>
+                  <div style={{maxHeight: "400px", overflow: "auto"}}>
+                    <Table className="tablesorter" responsive>
+                      <thead className="text-primary">
+                        <tr>
+                          <th>Name</th>
+                          <th>Location</th>
+                          <th>Patient</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {machines}
+                      </tbody>
+                    </Table>
+                  </div>
                 </CardBody>
               </Card>
             </Col>
