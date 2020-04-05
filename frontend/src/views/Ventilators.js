@@ -177,22 +177,27 @@ class Ventilators extends React.Component {
         const newEndTime = dragTime + (selectedItem.end_time - selectedItem.start_time);
         const newMachine = this.state.groups[newGroupOrder];
 
-        const isValidOperation = this._isValidOperation(itemId, newStartTime, newEndTime, selectedItem.patient_id, newMachine.id);
-        if (!isValidOperation) {
-            this._showMachineOrPatientAssignedDialog();
-            return;
-        }
+        if (selectedItem.group > 0 || newGroupOrder > 0) {
+          const isValidOperation = this._isValidOperation(itemId, newStartTime, newEndTime, selectedItem.patient_id, newMachine.id);
+          if (!isValidOperation && newGroupOrder > 0) {
+              this._showMachineOrPatientAssignedDialog();
+              return;
+          }
 
-        this.setState(prevState => ({
-            ...prevState,
-            dialogState: {
-                showDialog: true,
-                dialogTitle: "Move ventilator?",
-                dialogText: "You are about to change the assignment of this ventilator. Please confirm.",
-                showCancelButton: true,
-            },
-            pendingItemMove: { itemId: itemId, dragTime: dragTime, newGroupOrder: newGroupOrder }
-        }));
+          this.setState(prevState => ({
+              ...prevState,
+              dialogState: {
+                  showDialog: true,
+                  dialogTitle: "Move ventilator?",
+                  dialogText: "You are about to change the assignment of this ventilator. Please confirm.",
+                  showCancelButton: true,
+              },
+              pendingItemMove: { itemId: itemId, dragTime: dragTime, newGroupOrder: newGroupOrder }
+          }));
+        } else {
+          this.setState({pendingItemMove: { itemId: itemId, dragTime: dragTime, newGroupOrder: newGroupOrder }})
+          this._applyPendingChanges()
+        }
     }
 
     _handleItemResize = (itemId, time, edge) => {
@@ -201,25 +206,31 @@ class Ventilators extends React.Component {
         const newStartTime = edge === "left" ? time : selectedItem.start_time;
         const newEndTime = edge === "left" ? selectedItem.end_time : time;
 
-        const isValidOperation = this._isValidOperation(itemId, newStartTime, newEndTime, selectedItem.patient_id, selectedItem.group);
-        if (!isValidOperation) {
-            this._showMachineOrPatientAssignedDialog();
-            return;
-        }
+        if (selectedItem.group > 0) {
+          const isValidOperation = this._isValidOperation(itemId, newStartTime, newEndTime, selectedItem.patient_id, selectedItem.group);
+          if (!isValidOperation) {
+              this._showMachineOrPatientAssignedDialog();
+              return;
+          }
 
-        this.setState(prevState => ({
-            ...prevState,
-            dialogState: {
-                showDialog: true,
-                dialogTitle: "Edit ventilator assignment?",
-                dialogText: "You are about to change the assignment of this ventilator. Please confirm.",
-                showCancelButton: true,
-            },
-            pendingItemResize: { itemId: itemId, time: time, edge: edge }
-        }));
+          this.setState(prevState => ({
+              ...prevState,
+              dialogState: {
+                  showDialog: true,
+                  dialogTitle: "Edit ventilator assignment?",
+                  dialogText: "You are about to change the assignment of this ventilator. Please confirm.",
+                  showCancelButton: true,
+              },
+              pendingItemResize: { itemId: itemId, time: time, edge: edge }
+          }));
+        } else {
+          this.setState({pendingItemResize: { itemId: itemId, time: time, edge: edge}})
+          this._applyPendingChanges()
+        }
     }
 
     _applyPendingChanges = () => {
+      console.log("selectedItem", this.state.items.find(item => item.id === this.state.pendingItemMove.itemId));
         if (this.state.pendingItemMove !== null) {
             const { items, groups } = this.state;
             const { itemId, dragTime, newGroupOrder } = this.state.pendingItemMove;
@@ -249,6 +260,8 @@ class Ventilators extends React.Component {
     }
 
     _actuallyCommitPendingChange = (assignmentID, patient, machine, start_date, end_date) => {
+      console.log("MACHINE COMMIT", machine)
+      if (machine > 0) {
         fetch('rest/assignment_tasks/' + assignmentID + "/", {
             method: 'PATCH',
             body: JSON.stringify({
@@ -282,6 +295,34 @@ class Ventilators extends React.Component {
         }).catch(error => {
             console.log("Something bad happened while trying to edit the current machine assignment." + error);
         });
+      } else {
+        fetch('rest/assignment_tasks/' + assignmentID + "/", {
+            method: 'DELETE',
+            headers: {
+                "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+            }
+        }).then(response => {
+          if (response.status == 204) {
+            this.setState(prevState => {
+                return {
+                    ...prevState,
+                    items: prevState.items.map(item =>
+                        item.id === assignmentID
+                            ? Object.assign({}, item, {
+                                start_time: start_date,
+                                end_time: end_date,
+                                group: machine
+                            })
+                            : item
+                    ),
+                    pendingItemMove: null,
+                };
+            })
+          } else {
+            console("FAILED TO DELETE")
+          }
+        })
+      }
     }
 
     _closeDialog = (isConfirm) => {
@@ -507,7 +548,7 @@ class Ventilators extends React.Component {
                     <Card className="card-chart" style={{ zIndex: 1 }}>
                         {!isLoaded ? <div>Loading...</div> :
                             <Timeline
-                                groups={this.state.groups.filter(the_filter).filter(item => (!this.state.filter_follow || bool_machine_followed_dict[item.id]))}
+                                groups={[...this.state.groups.filter(the_filter).filter(item => (!this.state.filter_follow || bool_machine_followed_dict[item.id])), { id: 0, title: "Buffer row"}]}
                                 items={this.state.items.filter(the_filter).filter(item => (!this.state.filter_follow || this.state.selectedItem == null || this.state.selectedItem.patient_id == item.patient_id))}
                                 //traditionalZoom
                                 itemTouchSendsClick={true}
