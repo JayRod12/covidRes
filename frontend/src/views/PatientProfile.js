@@ -186,7 +186,7 @@ class PatientProfile extends React.Component {
             })
             .then(data_tasks => {
                 console.log(data_tasks);
-                const results = IS_DEV ? data_tasks.results : data_tasks;
+                const results = data_tasks;
                 this.setState(() => {
                     return {
                         data_tasks: results,
@@ -212,7 +212,7 @@ class PatientProfile extends React.Component {
             })
             .then(data_messages => {
                 console.log(data_messages);
-                const results = IS_DEV ? data_messages.results : data_messages;
+                const results = data_messages;
                 this.setState(() => {
                     return {
                         data_messages: results,

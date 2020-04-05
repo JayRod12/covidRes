@@ -133,7 +133,7 @@ class TaskList extends React.Component {
       );
     }
     let tasks;
-    const results = IS_DEV ? this.state.data.results : this.state.data;
+    const results = this.state.data;
 
     if (this.state.error_message.length > 0) {
       tasks = (

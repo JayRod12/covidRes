@@ -115,15 +115,9 @@ class AdminView extends React.Component {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
       }
     }).then(response => {return response.json()}).then(data => {
-      if (IS_DEV) {
-        var new_data_models = this.state.data_models
-        new_data_models.results = [...new_data_models.results, data]
-        this.setState({data_models: new_data_models})
-      } else {
-        var new_data_models = this.state.data_models
-        new_data_models = [...new_data_models, data]
-        this.setState({data_models: new_data_models})
-      }
+      var new_data_models = this.state.data_models
+      new_data_models = [...new_data_models, data]
+      this.setState({data_models: new_data_models})
     })
   }
   handleUserSubmit(event) {
@@ -232,9 +226,9 @@ class AdminView extends React.Component {
         </CardHeader>
       );
     }
-    const results_roles = IS_DEV ? this.state.data_roles.results : this.state.data_roles;
-    const results_models = IS_DEV ? this.state.data_models.results : this.state.data_models;
-    const results_users = IS_DEV ? this.state.data_users.results : this.state.data_users;
+    const results_roles = this.state.data_roles;
+    const results_models = this.state.data_models;
+    const results_users = this.state.data_users;
 
     console.log("Roles: ", results_roles)
     console.log("Models: ", results_models)
@@ -248,11 +242,11 @@ class AdminView extends React.Component {
               <Card className="card-chart">
                 <CardHeader>
                   <Row>
-                    <Col className="text-left" md="5">
-                      <CardTitle tag="h3">Roles</CardTitle>
+                    <Col className="text-left" md="2">
+                      <CardTitle tag="h4">Roles</CardTitle>
                     </Col>
                     { true && (//this.props.me && this.props.me.permission_role_edit && (
-                      <Col className="text-left" md="5">
+                      <Col className="px-md-1" md="5">
                         <Form onSubmit={this.handleRoleSubmit}>
                           <Row>
                             <Col className="px-md-1" md="8">
@@ -297,8 +291,8 @@ class AdminView extends React.Component {
               <Card className="card-chart">
                 <CardHeader>
                   <Row>
-                    <Col className="px-md-12" md="5">
-                      <CardTitle tag="h3">Models</CardTitle>
+                    <Col className="text-left" md="2">
+                      <CardTitle tag="h4">Models</CardTitle>
                     </Col>
                     { true && (//this.props.me && this.props.me.permission_role_edit && (
                       <Col className="px-md-1" md="5">
@@ -348,8 +342,8 @@ class AdminView extends React.Component {
               <Card className="card-chart">
                 <CardHeader>
                   <Row>
-                    <Col className="px-md-12" md="8">
-                      <CardTitle tag="h3">Users</CardTitle>
+                    <Col className="text-left" md="8">
+                      <CardTitle tag="h4">Users</CardTitle>
                     </Col>
                     <Col className="px-md-1" md="2">
                       <Button

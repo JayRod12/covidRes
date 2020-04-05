@@ -100,7 +100,7 @@ class Ventilators extends React.Component {
                 return response.json();
             })
             .then(data => {
-                const results = IS_DEV ? data.results : data;
+                const results = data;
                 const allPatients = results.map(patient => { return { id: patient.pk, name: patient.name } });
                 this.setState(prevState => ({
                     ...prevState, allPatients: allPatients
@@ -119,7 +119,7 @@ class Ventilators extends React.Component {
                 return response.json();
             })
             .then(data => {
-                const results = IS_DEV ? data.results : data;
+                const results = data;
                 const groups = []; const allMachines = [];
                 results.forEach(ventilator => {
                     //const ventilatorName = ventilator.model_name + " #" + ventilator.pk + " (" + ventilator.location + ")";
@@ -144,7 +144,7 @@ class Ventilators extends React.Component {
                     return response.json();
                 })
                 .then(data => {
-                    const results = IS_DEV ? data.results : data;
+                    const results = data;
                     const items = [];
                     results.forEach(assignment => {
                         items.push({

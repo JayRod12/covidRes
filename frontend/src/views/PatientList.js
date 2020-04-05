@@ -156,7 +156,7 @@ class PatientList extends React.Component {
       );
     }
     let patients;
-    const results = IS_DEV ? this.state.data.results : this.state.data;
+    const results = this.state.data;
 
     var models = []
     var locations = []

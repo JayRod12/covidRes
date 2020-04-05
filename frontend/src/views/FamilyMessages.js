@@ -258,7 +258,7 @@ class FamilyNotifications extends React.Component {
       })
       .then(data => {
         this.setState({
-          patient_data: IS_DEV ? data.results : data,
+          patient_data: data,
         });
       })
       .catch(error => {
@@ -316,7 +316,7 @@ class FamilyNotifications extends React.Component {
     console.log(this.state.data);
     console.log(this.state.data.length);
     let messages;
-    const results = IS_DEV ? this.state.data.results : this.state.data;
+    const results = this.state.data;
 
     if (this.state.error_message.length > 0) {
       messages = (

@@ -287,8 +287,8 @@ class Dashboard extends React.Component {
     //const hamilton = this.state.machine_data.results.filter(item => item.model_name === 'Hamilton');
     //const hamiltonCount = hamilton.length;
 
-    const results = IS_DEV ? this.state.machine_data.results : this.state.machine_data;
-    const assignmentResults = IS_DEV ? this.state.assignement_data.results : this.state.assignement_data;
+    const results = this.state.machine_data;
+    const assignmentResults = this.state.assignement_data;
 
     const machTypes = results
       .map(dataItem => dataItem.model_name) // get all media types

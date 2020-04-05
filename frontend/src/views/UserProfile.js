@@ -126,10 +126,8 @@ class UserProfile extends React.Component {
                 return response.json();
             })
             .then(data => {
-                const data_roles = IS_DEV ? data.results : data
-                console.log("HERE ROLES:", data_roles);
+                const data_roles = data
                 this.setState({data_roles: data_roles, loaded_roles: true});
-                console.log("HERE ROLES:", this.state.data_roles);
             })
             .catch(error => {
               console.log(error)

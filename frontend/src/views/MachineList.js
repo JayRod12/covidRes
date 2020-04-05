@@ -123,7 +123,7 @@ class MachineList extends React.Component {
         return response.json();
       })
       .then(data => {
-        var results = IS_DEV ? data.results : data;
+        var results = data;
         results = results.sort((a, b) => a.location.localeCompare(b.location))
         this.setState(() => {
           return {
@@ -217,7 +217,7 @@ class MachineList extends React.Component {
       );
     }
     let machinetypes;
-    const results_machinetype = IS_DEV ? this.state.data_machinetype.results : this.state.data_machinetype;
+    const results_machinetype = this.state.data_machinetype;
     if (this.state.error_message.length > 0) {
       machinetypes = (
         <div></div>
