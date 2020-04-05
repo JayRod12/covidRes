@@ -207,8 +207,8 @@ class PatientList extends React.Component {
               <Card>
                 <CardHeader>
                   <Row>
-                    <Col className="px-md-1" md="8">
-                      <CardTitle tag="h4">Patients</CardTitle>
+                    <Col className="px-md-12" md="8">
+                      <CardTitle tag="h3">Patients</CardTitle>
                     </Col>
                     <Col className="px-md-1" md="2">
                       <Button
