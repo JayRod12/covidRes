@@ -86,7 +86,7 @@ class PatientList extends React.Component {
       redirect: 0,
       create_isOpen: false,
       filter_isOpen: false,
-      filter_name: "--(All)--",
+      filter_name: "",
       filter_severity: "--(All)--",
       filter_machine: "--(All)--",
       filter_location: "--(All)--"

@@ -23,6 +23,7 @@ import {
     Form,
     Input,
     Row,
+    Table,
     Col,
     DropdownList
 } from "reactstrap";
@@ -62,6 +63,22 @@ function getCookie(name) {
     return cookieValue;
 }
 
+class PatientRow extends React.Component {
+  render() {
+    return (
+      <React.Fragment>
+        <tr>
+          <td><Link onClick={this.props.onClick}>{this.props.name}</Link></td>
+          <td className="text-center">{this.props.severity}</td>
+          <td>{this.props.location}</td>
+          <td>{this.props.machine_assigned_model}</td>
+          <td>{moment(this.props.admission_date).format("HH:mm (DD-MMM-YYYY)")}</td>
+        </tr>
+      </React.Fragment>
+    );
+  }
+}
+
 
 class Ventilators extends React.Component {
     constructor(props) {
@@ -74,6 +91,7 @@ class Ventilators extends React.Component {
             pendingItemMove: null,
             pendingItemResize: null,
             selected: [],
+            data_patients: [],
             allPatients: null,
             allMachines: null,
             selectedPatient: -1,
@@ -81,11 +99,16 @@ class Ventilators extends React.Component {
             selectedStartDate: null,
             selectedEndDate: null,
             selectedItem: null,
+            severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"],
             create_isOpen: false,
             filter_isOpen: false,
             filter_machine: "--(All)--",
             filter_location: "--(All)--",
             filter_follow: false,
+            filterc_name: "",
+            filterc_severity: "--(All)--",
+            filterc_machine: "--(All)--",
+            filterc_location: "--(All)--"
         };
     }
     groups_filtered = [];
@@ -104,7 +127,7 @@ class Ventilators extends React.Component {
                 const results = data;
                 const allPatients = results.map(patient => { return { id: patient.pk, name: patient.name } });
                 this.setState(prevState => ({
-                    ...prevState, allPatients: allPatients
+                    ...prevState, allPatients: allPatients, data_patients: data
                 }));
             })
             .catch(error => {
@@ -261,7 +284,7 @@ class Ventilators extends React.Component {
     }
 
     _actuallyCommitPendingChange = (assignmentID, patient, machine, start_date, end_date) => {
-      const old_machine = this.items_filtered.find(item => item.id === assignmentID).group
+      const old_machine = this.state.items.find(item => item.id === assignmentID).group
       if (machine > 0) {
         const method = old_machine > 0 ? 'PATCH' : 'POST';
         const url = old_machine > 0 ? 'rest/assignment_tasks/' + assignmentID + "/" : 'rest/assignment_tasks/';
@@ -421,19 +444,23 @@ class Ventilators extends React.Component {
 
     _bufferNewAssignment = (patient) => {
       console.log("CREATE CALL PATIENT", patient)
+      console.log("ARRAY", this.state.items.map(item => item.id))
+      console.log("ARRAY MAX", Math.max(...this.state.items.map(item => item.id)))
       const newItem = {
-          id: 0,
+          id: Math.max(...this.state.items.map(item => item.id))+1,
           group: 0,
           title: patient.name,
           start_time: new Date().valueOf(),
-          end_time: new Date().valueOf()+1,
+          end_time: new Date().valueOf() + 24*60*60*1000,
           canChangeGroup: true,
-          patient_id: patient.id,
+          patient_id: patient.pk,
           machine_location: null,
           machine_model: null,
           canMove: this.props.me && this.props.me.permission_task_edit,
           canResize: this.props.me && this.props.me.permission_task_edit ? "both" : false,
       };
+      this.setState({items: [...this.state.items, newItem]});
+      console.log("NEW STATE ITEMS", this.state.items);
     }
 
     _commitNewAssignment = () => {
@@ -556,6 +583,8 @@ class Ventilators extends React.Component {
         var locations = []
         var machinetypes = []
         var bool_machine_followed_dict = {}
+        var models = []
+        var locations = []
         var the_filter = (item) => {
           return (
             (this.state.filter_machine == "--(All)--" || this.state.filter_machine == item.machine_model) &&
@@ -580,7 +609,8 @@ class Ventilators extends React.Component {
               bool_machine_followed_dict[item.group] = true
             });
             this.groups_filtered = [{id: 0, title: "Buffer row"}, ...this.state.groups.filter(the_filter).filter(item => (!this.state.filter_follow || bool_machine_followed_dict[item.id]))]
-            this.items_filtered = this.state.items.filter(the_filter).filter(item => (!this.state.filter_follow || this.state.selectedItem == null || this.state.selectedItem.patient_id == item.patient_id))
+            models = [...new Set(this.state.data_patients.map(patient => patient.machine_assigned_model))]
+            locations = [...new Set(this.state.data_patients.map(patient => patient.location))]
         }
         console.log("Machines", this.state.allMachines);
         console.log("Items", this.state.items);
@@ -616,7 +646,7 @@ class Ventilators extends React.Component {
                         {!isLoaded ? <div>Loading...</div> :
                             <Timeline
                                 groups={this.groups_filtered}
-                                items={this.items_filtered}
+                                items={this.state.items}
                                 //traditionalZoom
                                 itemTouchSendsClick={true}
                                 //canMove={true}
@@ -740,70 +770,104 @@ class Ventilators extends React.Component {
                           </Form>
                         </Collapse>
                         <Collapse isOpen={this.state.create_isOpen}>
-                            <Form>
-                                <Row>
-                                    <Col className="pr-md-1" md="3">
-                                        <FormGroup>
-                                            <label>Select Patient</label>
-                                            <Input type="select" id="patientSelect" onChange={this._onPatientSelected}>
-                                                <option disabled selected value> -- Select a patient -- </option>
-                                                {patient_list}
-                                            </Input>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col className="pl-md-1" md="3">
-                                        <FormGroup>
-                                            <label>Machine</label>
-                                            <Input type="select" id="machineSelect" onChange={this._onMachineSelected}>
-                                                <option disabled selected value> -- Select a machine -- </option>
-                                                {machine_list}
-                                            </Input>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col className="pl-md-1" md="2">
-                                        <FormGroup>
-                                            <label>Start Date</label>
-                                            <DatePicker
-                                                selected={this.state.selectedStartDate}
-                                                showPopperArrow={false}
-                                                onChange={date => {
-                                                    this.setState(prevState => ({
-                                                        ...prevState, selectedStartDate: date
-                                                    }));
-                                                }}
-                                            />
-                                        </FormGroup>
-                                    </Col>
-                                    <Col className="pl-md-1" md="2">
-                                        <FormGroup>
-                                            <label>End Date</label>
-                                            <DatePicker
-                                                selected={this.state.selectedEndDate}
-                                                showPopperArrow={false}
-                                                onChange={date => {
-                                                    this.setState(prevState => ({
-                                                        ...prevState, selectedEndDate: date
-                                                    }));
-                                                }}
-                                            />
-                                        </FormGroup>
-                                    </Col>
-                                    <Col className="pl-md-1" md="1">
-                                    <Button
-                                        variant="outlined"
-                                        type="submit"
-                                        disabled={
-                                            this.state.selectedPatient === -1
-                                            || this.state.selectedMachine === -1
-                                            || this.state.selectedStartDate === null
-                                            || this.state.selectedEndDate === null}
-                                        onClick={this._commitNewAssignment}
-                                    >
-                                        Save
-                                    </Button>
-                                    </Col>
-                                </Row>
-                            </Form>
+                          <Form>
+                            <Row>
+                              <Col className="text-left" md="2">
+                                <FormGroup>
+                                  <label>
+                                    Nickname
+                                  </label>
+                                  <Input
+                                    name="namec"
+                                    type="text"
+                                    onChange={(event) => {this.setState({filterc_name: event.target.value})}}
+                                  />
+                                </FormGroup>
+                              </Col>
+                              <Col className="px-md-1" md="2">
+                                <FormGroup>
+                                  <label>
+                                    Model
+                                  </label>
+                                  <Input
+                                    name="modelc"
+                                    type="select"
+                                    onChange={(event) => {this.setState({filterc_machine: event.target.value})}}
+                                  >
+                                    <option key={0} value="--(All)--">--(All)--</option>
+                                    {models.map((val, i) => {return (
+                                      <option key={i+1} value={val}>{val}</option>
+                                    )})}
+                                  </Input>
+                                </FormGroup>
+                              </Col>
+                              <Col className="px-md-1" md="2">
+                                <FormGroup>
+                                  <label>
+                                    Location
+                                  </label>
+                                  <Input
+                                    name="locationc"
+                                    type="select"
+                                    onChange={(event) => {this.setState({filterc_location: event.target.value})}}
+                                  >
+                                    <option key={0} value="--(All)--">--(All)--</option>
+                                    {locations.map((val, i) => {return (
+                                      <option key={i+1} value={val}>{val}</option>
+                                    )})}
+                                  </Input>
+                                </FormGroup>
+                              </Col>
+                              <Col className="px-md-1" md="1">
+                                <FormGroup>
+                                  <label>
+                                    Severity
+                                  </label>
+                                  <Input
+                                    name="severityc"
+                                    type="select"
+                                    onChange={(event) => {this.setState({filterc_severity: event.target.value})}}
+                                  >
+                                    <option key={0} value="--(All)--">--(All)--</option>
+                                    {this.state.severity_list.map((val, i) => {return (
+                                      <option key={i+1} value={i}>{val}</option>
+                                    )})}
+                                  </Input>
+                                </FormGroup>
+                              </Col>
+                            </Row>
+                          </Form>
+                          <div style={{maxHeight: "400px", overflow: "auto"}}>
+                            <Table className="tablesorter" responsive>
+                              <thead className="text-primary">
+                                <tr>
+                                  <th>Name</th>
+                                  <th className="text-center">Severity</th>
+                                  <th>Location</th>
+                                  <th>Machine</th>
+                                  <th>Admission date</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {this.state.data_patients.map(patient => {return(
+                                  (this.state.filterc_severity == "--(All)--" || this.state.filterc_severity == patient.severity) &&
+                                  (this.state.filterc_machine == "--(All)--" || this.state.filterc_machine == patient.machine_assigned_model || this.state.filterc_machine == "" && patient.machine_assigned_model == null) &&
+                                  (this.state.filterc_location == "--(All)--" || this.state.filterc_location == patient.location) &&
+                                  (this.state.filterc_name.length > 0 || this.state.filterc_name.length <= patient.name.length && this.state.filterc_name.toLowerCase() == patient.name.substring(0, this.state.filterc_name.length).toLowerCase()) &&
+                                  <PatientRow
+                                    key={patient.pk}
+                                    pk={patient.pk}
+                                    name={patient.name}
+                                    admission_date={patient.admission_date}
+                                    severity={patient.severity}
+                                    location={patient.location}
+                                    machine_assigned_model={patient.machine_assigned_model}
+                                    onClick={this._bufferNewAssignment.bind(this, patient)}
+                                  />
+                                )})}
+                              </tbody>
+                            </Table>
+                          </div>
                         </Collapse>
                         </CardBody>
                     </Card>
