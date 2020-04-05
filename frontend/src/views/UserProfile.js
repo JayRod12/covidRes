@@ -155,7 +155,7 @@ class UserProfile extends React.Component {
         <Col md="8">
           <Card>
             <CardHeader>
-              <h5 className="title">Machine Profile</h5>
+              <h5 className="title">User Profile</h5>
             </CardHeader>
             <CardBody>
               <Form onSubmit={this.handleSubmit}>
