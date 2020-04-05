@@ -124,9 +124,7 @@ class MachineList extends React.Component {
       })
       .then(data => {
         var results = IS_DEV ? data.results : data;
-        console.log("RESULTS", results);
         results = results.sort((a, b) => a.location.localeCompare(b.location))
-        console.log("RESULTS", results);
         this.setState(() => {
           return {
             data: results,
