@@ -34,7 +34,7 @@ import AdminView from "views/AdminView.js";
 var routes = [
   {
     path: "/ventilators",
-    name: "Vue Synthétique",
+    name: "Synthetic View",
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-chart-pie-36",
     component: Ventilators,
@@ -43,7 +43,7 @@ var routes = [
   },
   {
     path: "/family-messages",
-    name: "Message Famille",
+    name: "Family Messages",
     icon: "tim-icons icon-chat-33",
     component: FamilyMessages,
     permission: (me) => {return(me.permission_message_see)},
@@ -51,7 +51,7 @@ var routes = [
   },
   {
     path: "/patients",
-    name: "Details Patient",
+    name: "Patient View",
     icon: "tim-icons icon-badge",
     component: PatientList,
     permission: (me) => {return(me.permission_patient_see)},
@@ -59,7 +59,7 @@ var routes = [
   },
   {
     path: "/machines",
-    name: "Gestion Moyens",
+    name: "Resource View",
     icon: "tim-icons icon-app",
     component: MachineList,
     permission: (me) => {return(me.permission_machine_see)},
@@ -67,7 +67,7 @@ var routes = [
   },
   {
     path: "/tasks",
-    name: "Taches Collaborateur",
+    name: "Collaborators Tasks",
     icon: "tim-icons icon-bullet-list-67",
     component: TaskList,
     permission: (me) => {return(me.permission_task_see)},
