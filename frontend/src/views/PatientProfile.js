@@ -141,7 +141,7 @@ class PatientProfile extends React.Component {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
       }
     }).then(response => response.json()).then(data => {
-      this.setState({data_messages: [...this.state.data_messages, data]})
+      this.setState({data_messages: [data, ...this.state.data_messages]})
     })
   }
   componentDidMount() {
@@ -599,7 +599,9 @@ class PatientProfile extends React.Component {
                   <h6>Associated Tasks</h6>
                 </CardHeader>
                 <CardBody>
-                  {tasks}
+                  <div style={{maxHeight: "400px", overflow: "auto"}}>
+                    {tasks}
+                  </div>
                 </CardBody>
               </Card>
               <Card className="card-user">
@@ -607,7 +609,9 @@ class PatientProfile extends React.Component {
                   <h6>Messages</h6>
                 </CardHeader>
                 <CardBody>
-                  {messages}
+                  <div style={{maxHeight: "200px", overflow: "auto"}}>
+                    {messages}
+                  </div>
                 </CardBody>
                 <CardFooter>
                   <Form onSubmit={this.sendMessage}>
