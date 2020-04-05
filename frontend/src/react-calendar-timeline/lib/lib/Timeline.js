@@ -894,7 +894,7 @@ _defineProperty(ReactCalendarTimeline, "propTypes", {
 });
 
 _defineProperty(ReactCalendarTimeline, "defaultProps", {
-  sidebarWidth: 200,
+  sidebarWidth: 150,
   rightSidebarWidth: 0,
   dragSnap: 1000 * 60 * 15,
   // 15min
