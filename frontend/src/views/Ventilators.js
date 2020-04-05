@@ -451,12 +451,12 @@ class Ventilators extends React.Component {
         if (isLoaded) {
             var patient_list = this.state.allPatients.map(patient => {
                 return (
-                    <option value={patient.id}>{patient.name}</option>
+                    <option value={patient.pk}>{patient.name}</option>
                 );
             });
             var machine_list = this.state.allMachines.map(machine => {
                 return (
-                    <option value={machine.id}>{machine.name}</option>
+                    <option value={machine.id}>{machine.machine_model}</option>
                 );
             });
             locations = [...new Set(this.state.allMachines.map(machine => machine.machine_location))]
@@ -503,6 +503,7 @@ class Ventilators extends React.Component {
                     </Dialog>
 
 
+                    <div style={{maxHeight: "400px", overflow: "auto"}}>
                     <Card className="card-chart" style={{ zIndex: 1 }}>
                         {!isLoaded ? <div>Loading...</div> :
                             <Timeline
@@ -540,6 +541,7 @@ class Ventilators extends React.Component {
                                 </TimelineMarkers>
                             </Timeline>}
                     </Card>
+                    </div>
                 </Row>
 
                 <Row>
@@ -678,20 +680,22 @@ class Ventilators extends React.Component {
                                             />
                                         </FormGroup>
                                     </Col>
+                                    <Col className="pl-md-1" md="1">
+                                    <Button
+                                        variant="outlined"
+                                        type="submit"
+                                        disabled={
+                                            this.state.selectedPatient === -1
+                                            || this.state.selectedMachine === -1
+                                            || this.state.selectedStartDate === null
+                                            || this.state.selectedEndDate === null}
+                                        onClick={this._commitNewAssignment}
+                                    >
+                                        Save
+                                    </Button>
+                                    </Col>
                                 </Row>
                             </Form>
-                            <Button
-                                variant="outlined"
-                                type="submit"
-                                disabled={
-                                    this.state.selectedPatient === -1
-                                    || this.state.selectedMachine === -1
-                                    || this.state.selectedStartDate === null
-                                    || this.state.selectedEndDate === null}
-                                onClick={this._commitNewAssignment}
-                            >
-                                Save
-                            </Button>
                         </Collapse>
                         </CardBody>
                     </Card>
