@@ -88,7 +88,8 @@ class Ventilators extends React.Component {
             filter_follow: false,
         };
     }
-
+    groups_filtered = [];
+    items_filtered = [];
     componentDidMount() {
         // we need to fetch patients, machines and assignemnts
 
@@ -175,7 +176,7 @@ class Ventilators extends React.Component {
         const selectedItem = this.state.items.find(item => item.id === itemId);
         const newStartTime = dragTime;
         const newEndTime = dragTime + (selectedItem.end_time - selectedItem.start_time);
-        const newMachine = this.state.groups[newGroupOrder];
+        const newMachine = this.groups_filtered[newGroupOrder];
 
         if (selectedItem.group > 0 || newGroupOrder > 0) {
           const isValidOperation = this._isValidOperation(itemId, newStartTime, newEndTime, selectedItem.patient_id, newMachine.id);
@@ -230,12 +231,12 @@ class Ventilators extends React.Component {
     }
 
     _applyPendingChanges = () => {
-      console.log("selectedItem", this.state.items.find(item => item.id === this.state.pendingItemMove.itemId));
+      console.log("pendingItemMove", this.state.pendingItemMove);
         if (this.state.pendingItemMove !== null) {
-            const { items, groups } = this.state;
+            const { items_filtered, groups_filtered } = this;
             const { itemId, dragTime, newGroupOrder } = this.state.pendingItemMove;
-            const group = groups[newGroupOrder];
-            const selectedItem = items.find(item => item.id === itemId);
+            const group = groups_filtered[newGroupOrder];
+            const selectedItem = items_filtered.find(item => item.id === itemId);
 
             this._actuallyCommitPendingChange(
                 itemId,
@@ -246,9 +247,9 @@ class Ventilators extends React.Component {
         }
 
         if (this.state.pendingItemResize !== null) {
-            const { items } = this.state;
+            const { items_filtered } = this;
             const { itemId, time, edge } = this.state.pendingItemResize;
-            const selectedItem = items.find(item => item.id === itemId);
+            const selectedItem = items_filtered.find(item => item.id === itemId);
 
             this._actuallyCommitPendingChange(
                 itemId,
@@ -260,10 +261,12 @@ class Ventilators extends React.Component {
     }
 
     _actuallyCommitPendingChange = (assignmentID, patient, machine, start_date, end_date) => {
-      console.log("MACHINE COMMIT", machine)
+      const old_machine = this.items_filtered.find(item => item.id === assignmentID).group
       if (machine > 0) {
-        fetch('rest/assignment_tasks/' + assignmentID + "/", {
-            method: 'PATCH',
+        const method = old_machine > 0 ? 'PATCH' : 'POST';
+        const url = old_machine > 0 ? 'rest/assignment_tasks/' + assignmentID + "/" : 'rest/assignment_tasks/';
+        fetch(url, {
+            method: method,
             body: JSON.stringify({
                 patient: patient,
                 machine: machine,
@@ -274,15 +277,38 @@ class Ventilators extends React.Component {
                 "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
             }
         }).then(response => {
+          console.log("RESPONSE", response)
             return response.json();
         }).then(json => {
-            // optimistically update the state with the new item
+          console.log("JSON", json)
+          console.log("ITEMS", this.state.items)
+          console.log("assignmentID", assignmentID)
+          // optimistically update the state with the new item
+          if (old_machine > 0) {
+            this.setState(prevState => {
+              return {
+                ...prevState,
+                items: prevState.items.map(item =>
+                  (item.id === json.pk
+                    ? Object.assign({}, item, {
+                        start_time: moment(json.start_date).valueOf(),
+                        end_time: moment(json.end_date).valueOf(),
+                        group: json.machine
+                    })
+                    : item)
+                  ),
+                pendingItemMove: null,
+                pendingItemResize: null,
+              };
+            })
+          } else {
             this.setState(prevState => {
                 return {
                     ...prevState,
                     items: prevState.items.map(item =>
-                        item.id === json.pk
+                        item.id === assignmentID
                             ? Object.assign({}, item, {
+                                id: json.pk,
                                 start_time: moment(json.start_date).valueOf(),
                                 end_time: moment(json.end_date).valueOf(),
                                 group: json.machine
@@ -290,38 +316,61 @@ class Ventilators extends React.Component {
                             : item
                     ),
                     pendingItemMove: null,
+                    pendingItemResize: null,
+                    selected: prevState.selected.map(item => item == assignmentID ? json.pk : item)
                 };
             })
+          }
         }).catch(error => {
             console.log("Something bad happened while trying to edit the current machine assignment." + error);
         });
       } else {
-        fetch('rest/assignment_tasks/' + assignmentID + "/", {
-            method: 'DELETE',
-            headers: {
-                "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+        if (old_machine > 0) {
+          fetch('rest/assignment_tasks/' + assignmentID + "/", {
+              method: 'DELETE',
+              headers: {
+                  "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+              }
+          }).then(response => {
+            if (response.status == 204) {
+              this.setState(prevState => {
+                  return {
+                      ...prevState,
+                      items: prevState.items.map(item =>
+                          item.id === assignmentID
+                              ? Object.assign({}, item, {
+                                  start_time: start_date,
+                                  end_time: end_date,
+                                  group: machine
+                              })
+                              : item
+                      ),
+                      pendingItemMove: null,
+                      pendingItemResize: null,
+                  };
+              })
+            } else {
+              console.log("FAILED TO DELETE")
             }
-        }).then(response => {
-          if (response.status == 204) {
-            this.setState(prevState => {
-                return {
-                    ...prevState,
-                    items: prevState.items.map(item =>
-                        item.id === assignmentID
-                            ? Object.assign({}, item, {
-                                start_time: start_date,
-                                end_time: end_date,
-                                group: machine
-                            })
-                            : item
-                    ),
-                    pendingItemMove: null,
-                };
-            })
-          } else {
-            console("FAILED TO DELETE")
-          }
-        })
+          })
+        } else {
+          this.setState(prevState => {
+              return {
+                  ...prevState,
+                  items: prevState.items.map(item =>
+                      item.id === assignmentID
+                          ? Object.assign({}, item, {
+                              start_time: start_date,
+                              end_time: end_date,
+                              group: machine
+                          })
+                          : item
+                  ),
+                  pendingItemMove: null,
+                  pendingItemResize: null,
+              };
+          })
+        }
       }
     }
 
@@ -367,6 +416,7 @@ class Ventilators extends React.Component {
         this.setState(prevState => ({
             ...prevState, selectedMachine: value
         }));
+        console.log("STATE", this.state)
     }
 
     _commitNewAssignment = () => {
@@ -489,10 +539,16 @@ class Ventilators extends React.Component {
         var locations = []
         var machinetypes = []
         var bool_machine_followed_dict = {}
+        var the_filter = (item) => {
+          return (
+            (this.state.filter_machine == "--(All)--" || this.state.filter_machine == item.machine_model) &&
+            (this.state.filter_location == "--(All)--" || this.state.filter_location == item.machine_location)
+          );
+        }
         if (isLoaded) {
             var patient_list = this.state.allPatients.map(patient => {
                 return (
-                    <option value={patient.pk}>{patient.name}</option>
+                    <option value={patient.id}>{patient.name}</option>
                 );
             });
             var machine_list = this.state.allMachines.map(machine => {
@@ -506,17 +562,11 @@ class Ventilators extends React.Component {
             this.state.items.filter(task => (this.state.selectedItem == null || task.patient_id == this.state.selectedItem.patient_id)).forEach((item, i) => {
               bool_machine_followed_dict[item.group] = true
             });
-        }
-        var the_filter = (item) => {
-          return (
-            (this.state.filter_machine == "--(All)--" || this.state.filter_machine == item.machine_model) &&
-            (this.state.filter_location == "--(All)--" || this.state.filter_location == item.machine_location)
-          );
+            this.groups_filtered = [{id: 0, title: "Buffer row"}, ...this.state.groups.filter(the_filter).filter(item => (!this.state.filter_follow || bool_machine_followed_dict[item.id]))]
+            this.items_filtered = this.state.items.filter(the_filter).filter(item => (!this.state.filter_follow || this.state.selectedItem == null || this.state.selectedItem.patient_id == item.patient_id))
         }
         console.log("Machines", this.state.allMachines);
         console.log("Items", this.state.items);
-        console.log("Follow", bool_machine_followed_dict);
-        console.log("filter_follow", this.state.filter_follow)
         return (
             <div className="content">
                 <Row>
@@ -548,8 +598,8 @@ class Ventilators extends React.Component {
                     <Card className="card-chart" style={{ zIndex: 1 }}>
                         {!isLoaded ? <div>Loading...</div> :
                             <Timeline
-                                groups={[...this.state.groups.filter(the_filter).filter(item => (!this.state.filter_follow || bool_machine_followed_dict[item.id])), { id: 0, title: "Buffer row"}]}
-                                items={this.state.items.filter(the_filter).filter(item => (!this.state.filter_follow || this.state.selectedItem == null || this.state.selectedItem.patient_id == item.patient_id))}
+                                groups={this.groups_filtered}
+                                items={this.items_filtered}
                                 //traditionalZoom
                                 itemTouchSendsClick={true}
                                 //canMove={true}
