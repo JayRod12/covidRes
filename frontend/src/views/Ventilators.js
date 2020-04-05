@@ -419,7 +419,7 @@ class Ventilators extends React.Component {
         console.log("STATE", this.state)
     }
 
-    _bufferNewAssignment = (patient) = {
+    _bufferNewAssignment = (patient) => {
       console.log("CREATE CALL PATIENT", patient)
       const newItem = {
           id: 0,
