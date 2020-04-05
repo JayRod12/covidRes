@@ -169,7 +169,7 @@ class TaskList extends React.Component {
           <Col md="12">
             <Card>
               <CardHeader>
-                <CardTitle tag="h4">Tasks</CardTitle>
+                <CardTitle tag="h3">Tasks</CardTitle>
               </CardHeader>
               <CardBody>
                 {tasks}

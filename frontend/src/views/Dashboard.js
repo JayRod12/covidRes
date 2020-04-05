@@ -1058,7 +1058,7 @@ class Dashboard extends React.Component {
               <Card className="card-chart">
                 <CardHeader>
                   <Row>
-                    <Col className="text-left" sm="6">
+                    <Col className="text-left" sm="8">
                       <h5 className="card-category">{"Today " + "(Total: " + total_machines + " Ventilators)"}</h5>
                       <CardTitle tag="h3"><i className="tim-icons icon-square-pin text-primary" />{" Machine per Location"}</CardTitle>
                     </Col>
@@ -1091,7 +1091,7 @@ class Dashboard extends React.Component {
               <Card className="card-chart">
                 <CardHeader>
                   <Row>
-                    <Col className="text-left" sm="6">
+                    <Col className="text-left" sm="8">
                       <h5 className="card-category">{"Today " + "(Total: " + total_machines + " Ventilators)"}</h5>
                       <CardTitle tag="h3"><i className="tim-icons icon-support-17 text-primary" />{" Machine per Type"}</CardTitle>
                     </Col>
