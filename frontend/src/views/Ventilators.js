@@ -523,7 +523,7 @@ class Ventilators extends React.Component {
                                 <TimelineHeaders className="sticky">
                                     <SidebarHeader>
                                         {({ _ }) => {
-                                            return <div style={{ alignSelf: "center", color: "white", textAlign: "center", width: "150px" }}>Machine</div>;
+                                            return <div style={{ alignSelf: "center", color: "white", textAlign: "center", width: "200px" }}>Machine</div>;
                                         }}
                                     </SidebarHeader>
                                     <DateHeader unit="primaryHeader" />
