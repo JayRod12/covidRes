@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import classNames from "classnames";
 import Select from '@material-ui/core/Select';
 
@@ -121,7 +122,8 @@ class Ventilators extends React.Component {
                 const results = IS_DEV ? data.results : data;
                 const groups = []; const allMachines = [];
                 results.forEach(ventilator => {
-                    const ventilatorName = ventilator.model_name + " #" + ventilator.pk;
+                    //const ventilatorName = ventilator.model_name + " #" + ventilator.pk + " (" + ventilator.location + ")";
+                    const ventilatorName = (<><Link to={'/machine/' + ventilator.pk}>{ventilator.model_name}</Link> - {ventilator.location}</>)
                     groups.push({ id: ventilator.pk, title: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location});
                     allMachines.push({ id: ventilator.pk, name: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location})
                 });
@@ -575,7 +577,7 @@ class Ventilators extends React.Component {
                         <Collapse isOpen={this.state.filter_isOpen}>
                           <Form>
                             <Row>
-                              <Col className="px-md-1" md="2">
+                              <Col className="text-left" md="2">
                                 <FormGroup>
                                   <label>
                                     Model

@@ -379,7 +379,7 @@ class AdminView extends React.Component {
                   <Collapse isOpen={this.state.filter_isOpen}>
                     <Form>
                       <Row>
-                        <Col className="px-md-1" md="2">
+                        <Col className="text-left" md="2">
                           <FormGroup>
                             <label>
                               Username
