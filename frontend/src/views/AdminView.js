@@ -248,11 +248,11 @@ class AdminView extends React.Component {
               <Card className="card-chart">
                 <CardHeader>
                   <Row>
-                    <Col className="px-md-1" md="2">
-                      <CardTitle tag="h4">Roles</CardTitle>
+                    <Col className="text-left" md="5">
+                      <CardTitle tag="h3">Roles</CardTitle>
                     </Col>
                     { true && (//this.props.me && this.props.me.permission_role_edit && (
-                      <Col className="px-md-1" md="5">
+                      <Col className="text-left" md="5">
                         <Form onSubmit={this.handleRoleSubmit}>
                           <Row>
                             <Col className="px-md-1" md="8">
@@ -297,8 +297,8 @@ class AdminView extends React.Component {
               <Card className="card-chart">
                 <CardHeader>
                   <Row>
-                    <Col className="px-md-1" md="2">
-                      <CardTitle tag="h4">Models</CardTitle>
+                    <Col className="px-md-12" md="5">
+                      <CardTitle tag="h3">Models</CardTitle>
                     </Col>
                     { true && (//this.props.me && this.props.me.permission_role_edit && (
                       <Col className="px-md-1" md="5">
@@ -348,8 +348,8 @@ class AdminView extends React.Component {
               <Card className="card-chart">
                 <CardHeader>
                   <Row>
-                    <Col className="px-md-1" md="8">
-                      <CardTitle tag="h4">Users</CardTitle>
+                    <Col className="px-md-12" md="8">
+                      <CardTitle tag="h3">Users</CardTitle>
                     </Col>
                     <Col className="px-md-1" md="2">
                       <Button
