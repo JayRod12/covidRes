@@ -62,12 +62,12 @@ class PermissionMachine(permissions.BasePermission):
         return request.user.role.permission_machine_edit or (request.user.role.permission_machine_see and request.method in permissions.SAFE_METHODS)
 class MachineViewSet(viewsets.ModelViewSet):
     pagination_class = None
-    queryset = Machine.objects.all().order_by('location')
+    queryset = Machine.objects.all().order_by('location', 'model__name')
     serializer_class = MachineSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachine]
 class MachineQueryViewSet(viewsets.ModelViewSet):
     pagination_class = None
-    queryset = Machine.objects.all().order_by('location')
+    queryset = Machine.objects.all().order_by('location', 'model__name')
     serializer_class = MachineSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachine]
     def get_queryset(self):
