@@ -1,9 +1,9 @@
 {
-  "Log in": "Log in",
-  "Login": "Login",
-  "Reset password": "Reset password",
-  "Log out": "Log out",
-  "Old password": "Old password",
-  "Password (repeat)": "Password (repeat)",
-  "Change password": "Change password"
+  "Ventilators": "Synthetic View",
+  "Family Messages": "Family Messages",
+  "Patient View": "Patient View",
+  "Resource View": "Resource View",
+  "Tasks": "Collaborators Tasks",
+  "Dashboard": "Dashboard",
+  "Admin": "Admin"
 }

@@ -34,7 +34,7 @@ import AdminView from "views/AdminView.js";
 var routes = [
   {
     path: "/ventilators",
-    name: "Synthetic View",
+    name: "Ventilators",
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-chart-pie-36",
     component: Ventilators,
@@ -67,7 +67,7 @@ var routes = [
   },
   {
     path: "/tasks",
-    name: "Collaborators Tasks",
+    name: "Tasks",
     icon: "tim-icons icon-bullet-list-67",
     component: TaskList,
     permission: (me) => {return(me.permission_task_see)},

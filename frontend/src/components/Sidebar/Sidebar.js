@@ -27,12 +27,35 @@ import PerfectScrollbar from "perfect-scrollbar";
 // reactstrap components
 import { Nav, NavLink as ReactstrapNavLink } from "reactstrap";
 
+import {
+  withLocalize,
+  Translate,
+  LocalizeContext,
+  LocalizeProvider
+} from 'react-localize-redux';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import common_en from "src/translations/en/common.json"
+import sidebar_en from "src/translations/en/sidebar.json"
+const en = Object.assign({}, common_en, sidebar_en)
+
 var ps;
 
 class Sidebar extends React.Component {
   constructor(props) {
     super(props);
     this.activeRoute.bind(this);
+
+    props.initialize({
+      languages: [
+        { name: 'English', code: 'en' }
+      ],
+      options: {
+        defaultLanguage: 'en',
+        renderToStaticMarkup
+      }
+    });
+    props.addTranslationForLanguage(en, 'en');
   }
   // verifies if routeName is the one active (in browser input)
   activeRoute(routeName) {
@@ -55,6 +78,7 @@ class Sidebar extends React.Component {
     document.documentElement.classList.remove("nav-open");
   };
   render() {
+    const t = this.props.translate
     const { bgColor, routes, rtlActive, logo } = this.props;
     let logoImg = null;
     let logoText = null;
@@ -132,7 +156,7 @@ class Sidebar extends React.Component {
                     onClick={this.props.toggleSidebar}
                   >
                     <i className={prop.icon} />
-                    <p>{rtlActive ? prop.rtlName : prop.name}</p>
+                    <p>{t(prop.name)}</p>
                   </NavLink>
                 </li>
               );
@@ -170,4 +194,4 @@ Sidebar.propTypes = {
   })
 };
 
-export default Sidebar;
+export default withLocalize(Sidebar);
