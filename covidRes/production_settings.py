@@ -21,7 +21,7 @@ from django.core.exceptions import ImproperlyConfigured
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['covidmanager.ch', '178.62.120.24', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['nyon.covidmanager.ch', 'covidmanager.ch', '178.62.120.24', '127.0.0.1', 'localhost']
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
