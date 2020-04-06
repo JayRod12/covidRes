@@ -447,9 +447,6 @@ class Ventilators extends React.Component {
     }
 
     _bufferNewAssignment = (patient) => {
-      console.log("CREATE CALL PATIENT", patient)
-      console.log("ARRAY", this.state.items.map(item => item.id))
-      console.log("ARRAY MAX", Math.max(...this.state.items.map(item => item.id)))
       const newItem = {
           id: Math.max(...this.state.items.map(item => item.id))+1,
           group: 0,
@@ -463,8 +460,8 @@ class Ventilators extends React.Component {
           canMove: this.props.me && this.props.me.permission_task_edit,
           canResize: this.props.me && this.props.me.permission_task_edit ? "both" : false,
       };
-      this.setState({items: [...this.state.items, newItem]});
-      console.log("NEW STATE ITEMS", this.state.items);
+      this.setState({items: [...this.state.items, newItem], create_isOpen: false});
+      //window.scrollTo(0, 0)
     }
 
     _commitNewAssignment = () => {
