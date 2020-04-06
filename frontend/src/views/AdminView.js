@@ -97,7 +97,7 @@ class AdminView extends React.Component {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
       }
     }).then(response => {return response.json()}).then(data => {
-      this.setState({redirect: '/role/'+data.pk})
+      this.setState({redirect: '/role/'+data.id})
     })
   }
   handleModelSubmit(event) {
