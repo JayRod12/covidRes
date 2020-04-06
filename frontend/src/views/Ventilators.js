@@ -126,7 +126,6 @@ class Ventilators extends React.Component {
           languages: [
             { name: 'English', code: 'en' }
           ],
-          // translation: globalTranslations,
           options: {
             defaultLanguage: 'en',
             renderToStaticMarkup

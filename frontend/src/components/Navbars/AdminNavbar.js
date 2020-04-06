@@ -47,6 +47,18 @@ import {
   Row
 } from "reactstrap";
 
+import {
+  withLocalize,
+  Translate,
+  LocalizeContext,
+  LocalizeProvider
+} from 'react-localize-redux';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import common_en from "src/translations/en/common.json"
+import adminnavbar_en from "src/translations/en/adminnavbar.json"
+const en = Object.assign({}, common_en, adminnavbar_en)
+
 import $ from 'jquery';
 function getCookie(name) {
     var cookieValue = null;
@@ -73,6 +85,18 @@ class AdminNavbar extends React.Component {
       logged_in: false,
       color: "navbar-transparent"
     };
+
+    props.initialize({
+      languages: [
+        { name: 'English', code: 'en' }
+      ],
+      options: {
+        defaultLanguage: 'en',
+        renderToStaticMarkup
+      }
+    });
+    props.addTranslationForLanguage(en, 'en');
+
     this.submitLogin = this.submitLogin.bind(this);
     this.submitLogout = this.submitLogout.bind(this);
     this.submitPassword = this.submitPassword.bind(this);
@@ -227,6 +251,7 @@ class AdminNavbar extends React.Component {
     };
   };
   render() {
+    const t = this.props.translate
     return (
       <>
         <Navbar
@@ -317,7 +342,7 @@ class AdminNavbar extends React.Component {
                     <div>
                       <i className="tim-icons icon-single-02" />...
                     </div>
-                    <p className="d-lg-none">Log out</p>
+                    <p className="d-lg-none">{t("Log out")}</p>
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-navbar" right tag="ul">
                     {!this.state.logged_in && (<NavLink tag="li">
@@ -348,7 +373,7 @@ class AdminNavbar extends React.Component {
                 <Row>
                   <FormGroup>
                     <label>
-                      Username
+                      {t("Username")}
                     </label>
                     <Input
                       name="username"
@@ -359,7 +384,7 @@ class AdminNavbar extends React.Component {
                 <Row>
                   <FormGroup>
                     <label>
-                      Password
+                      {t("Password")}
                     </label>
                     <Input
                       name="password"
@@ -369,7 +394,7 @@ class AdminNavbar extends React.Component {
                 </Row>
                 <Row>
                   <Button>
-                    Login
+                    {t("Login")}
                   </Button>
                 </Row>
               </Form>
@@ -387,7 +412,7 @@ class AdminNavbar extends React.Component {
                 <Row className="justify-content-md-center">
                   <FormGroup>
                     <label>
-                      Old password
+                      {t("Old password")}
                     </label>
                     <Input
                       name="old_password"
@@ -398,7 +423,7 @@ class AdminNavbar extends React.Component {
                 <Row className="justify-content-md-center">
                   <FormGroup>
                     <label>
-                      Password
+                      {t("Password")}
                     </label>
                     <Input
                       name="password"
@@ -409,7 +434,7 @@ class AdminNavbar extends React.Component {
                 <Row className="justify-content-md-center">
                   <FormGroup>
                     <label>
-                      Password (repeat)
+                      {t("Password (repeat)")}
                     </label>
                     <Input
                       name="password2"
@@ -419,7 +444,7 @@ class AdminNavbar extends React.Component {
                 </Row>
                 <Row className="justify-content-md-center">
                   <Button>
-                    Change password
+                    {t("Change password")}
                   </Button>
                 </Row>
               </Form>
@@ -431,4 +456,4 @@ class AdminNavbar extends React.Component {
   }
 }
 
-export default AdminNavbar;
+export default withLocalize(AdminNavbar);
