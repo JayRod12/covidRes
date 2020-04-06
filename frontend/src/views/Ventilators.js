@@ -586,12 +586,6 @@ class Ventilators extends React.Component {
         var bool_machine_followed_dict = {}
         var models = []
         var locations = []
-        var the_filter = (item) => {
-          return (
-            (this.state.filter_machine == "--(All)--" || this.state.filter_machine == item.machine_model) &&
-            (this.state.filter_location == "--(All)--" || this.state.filter_location == item.machine_location)
-          );
-        }
         if (isLoaded) {
             var patient_list = this.state.allPatients.map(patient => {
                 return (
@@ -605,11 +599,19 @@ class Ventilators extends React.Component {
             });
             locations = [...new Set(this.state.allMachines.map(machine => machine.machine_location))]
             machinetypes = [...new Set(this.state.allMachines.map(machine => machine.machine_model))]
-            this.state.allMachines.forEach((item, i) => { bool_machine_followed_dict[item.id] = this.state.selectedItem == null });
-            this.state.items.filter(task => (this.state.selectedItem == null || task.patient_id == this.state.selectedItem.patient_id)).forEach((item, i) => {
+            this.state.allMachines.forEach((item, i) => { bool_machine_followed_dict[item.id] = false });
+            this.state.items.filter(task => (this.state.selectedItem != null && task.patient_id == this.state.selectedItem.patient_id)).forEach((item, i) => {
               bool_machine_followed_dict[item.group] = true
             });
-            this.groups_filtered = [{id: 0, title: "Buffer row"}, ...this.state.groups.filter(the_filter).filter(item => (!this.state.filter_follow || bool_machine_followed_dict[item.id]))]
+            var the_filter = (item) => {
+              return (
+                (bool_machine_followed_dict[item.id]) ||
+                (this.state.filter_machine == "--(All)--" || this.state.filter_machine == item.machine_model) &&
+                (this.state.filter_location == "--(All)--" || this.state.filter_location == item.machine_location)
+              );
+            }
+
+            this.groups_filtered = [{id: 0, title: "Buffer row"}, ...this.state.groups.filter(the_filter).filter(item => (!this.state.filter_follow || this.state.selectedItem == null || bool_machine_followed_dict[item.id]))]
             models = [...new Set(this.state.data_patients.map(patient => patient.machine_assigned_model))]
             locations = [...new Set(this.state.data_patients.map(patient => patient.location))]
         }
