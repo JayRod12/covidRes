@@ -1,4 +1,13 @@
 {
   "Location": "Location",
-  "Model": "Model"
+  "Model": "Model",
+  "Cancel": "Cancel",
+  "Error": "Error",
+  "Loading": "Loading",
+  "Assignments": "Assignments",
+  "Nickname": "Nickname",
+  "Name": "Name",
+  "Admission date": "Admission date",
+  "Ok": "Ok",
+  "Severity": "Severity"
 }

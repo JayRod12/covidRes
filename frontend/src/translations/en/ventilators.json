@@ -1,0 +1,11 @@
+{
+  "Filter assignments": "Filter assignments",
+  "Create assignment": "Create assignment",
+  "Follow": "Follow",
+  "Move ventilator?": "Move ventilator?",
+  "You are about to change the assignment of this ventilator. Please confirm.": "You are about to change the assignment of this ventilator. Please confirm.",
+  "Edit ventilator assignment?": "Edit ventilator assignment?",
+  "The start date needs to be before the end date.": "The start date needs to be before the end date.",
+  "Machine or patient already assigned during this time interval!": "Machine or patient already assigned during this time interval!",
+  "Buffer row": "Buffer row"
+}

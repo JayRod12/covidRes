@@ -37,7 +37,9 @@ import {
 import { renderToStaticMarkup } from 'react-dom/server';
 
 import common_en from "src/translations/en/common.json"
-import ventilators_en from "src/translations/en/common.json"
+import ventilators_en from "src/translations/en/ventilators.json"
+const en = Object.assign({}, common_en, ventilators_en)
+
 // make sure you include the timeline stylesheet or the timeline will not be styled
 import 'src/react-calendar-timeline/src/lib/Timeline.scss'
 import "react-datepicker/dist/react-datepicker.css";
@@ -130,7 +132,7 @@ class Ventilators extends React.Component {
             renderToStaticMarkup
           }
         });
-        props.addTranslationForLanguage(Object.assign(common_en, ventilators_en), 'en');
+        props.addTranslationForLanguage(en, 'en');
     }
     groups_filtered = [];
     componentDidMount() {
@@ -232,8 +234,8 @@ class Ventilators extends React.Component {
               ...prevState,
               dialogState: {
                   showDialog: true,
-                  dialogTitle: "Move ventilator?",
-                  dialogText: "You are about to change the assignment of this ventilator. Please confirm.",
+                  dialogTitle: this.props.translate("Move ventilator?"),
+                  dialogText: this.props.translate("You are about to change the assignment of this ventilator. Please confirm."),
                   showCancelButton: true,
               },
               pendingItemMove: { itemId: itemId, dragTime: dragTime, newGroupOrder: newGroupOrder }
@@ -261,8 +263,8 @@ class Ventilators extends React.Component {
               ...prevState,
               dialogState: {
                   showDialog: true,
-                  dialogTitle: "Edit ventilator assignment?",
-                  dialogText: "You are about to change the assignment of this ventilator. Please confirm.",
+                  dialogTitle: this.props.translate("Edit ventilator assignment?"),
+                  dialogText: this.props.translate("You are about to change the assignment of this ventilator. Please confirm."),
                   showCancelButton: true,
               },
               pendingItemResize: { itemId: itemId, time: time, edge: edge }
@@ -274,8 +276,6 @@ class Ventilators extends React.Component {
     }
 
     _applyPendingChanges = () => {
-      console.log("pendingItemMove", this.state.pendingItemMove);
-      console.log("pendingItemResize", this.state.pendingItemResize);
         if (this.state.pendingItemMove !== null) {
             const { items } = this.state;
             const { itemId, dragTime, newGroupOrder } = this.state.pendingItemMove;
@@ -322,12 +322,8 @@ class Ventilators extends React.Component {
                 "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
             }
         }).then(response => {
-          console.log("RESPONSE", response)
             return response.json();
         }).then(json => {
-          console.log("JSON", json)
-          console.log("ITEMS", this.state.items)
-          console.log("assignmentID", assignmentID)
           // optimistically update the state with the new item
           if (old_machine > 0) {
             this.setState(prevState => {
@@ -428,9 +424,6 @@ class Ventilators extends React.Component {
     }
 
     _handleItemSelect = (itemId, e, time) => {
-      console.log(itemId)
-      console.log(e)
-      console.log(time)
         const selectedItem = this.state.items.find(item => item.id === itemId);
 
         var selected = this.state.items.filter(item => item.patient_id === selectedItem.patient_id);
@@ -464,7 +457,6 @@ class Ventilators extends React.Component {
         this.setState(prevState => ({
             ...prevState, selectedMachine: value
         }));
-        console.log("STATE", this.state)
     }
 
     _bufferNewAssignment = (patient) => {
@@ -495,8 +487,8 @@ class Ventilators extends React.Component {
                 ...prevState,
                 dialogState: {
                     showDialog: true,
-                    dialogTitle: "Error",
-                    dialogText: "The start date needs to be before the end date.",
+                    dialogTitle: this.props.translate("Error"),
+                    dialogText: this.props.translate("The start date needs to be before the end date."),
                     showCancelButton: false,
                 },
             }));
@@ -563,8 +555,8 @@ class Ventilators extends React.Component {
             ...prevState,
             dialogState: {
                 showDialog: true,
-                dialogTitle: "Error",
-                dialogText: "Machine or patient already assigned during this time interval!",
+                dialogTitle: this.props.translate("Error"),
+                dialogText: this.props.translate("Machine or patient already assigned during this time interval!"),
                 showCancelButton: false,
             },
         }));
@@ -634,12 +626,10 @@ class Ventilators extends React.Component {
               );
             }
 
-            this.groups_filtered = [{id: 0, title: "Buffer row"}, ...this.state.groups.filter(the_filter).filter(item => (!this.state.filter_follow || this.state.selectedItem == null || bool_machine_followed_dict[item.id]))]
+            this.groups_filtered = [{id: 0, title: t("Buffer row")}, ...this.state.groups.filter(the_filter).filter(item => (!this.state.filter_follow || this.state.selectedItem == null || bool_machine_followed_dict[item.id]))]
             models = [...new Set(this.state.data_patients.map(patient => patient.machine_assigned_model))]
             locations = [...new Set(this.state.data_patients.map(patient => patient.location))]
         }
-        console.log("Machines", this.state.allMachines);
-        console.log("Items", this.state.items);
         return (
             <div className="content">
                 <Row>
@@ -658,10 +648,10 @@ class Ventilators extends React.Component {
                         <DialogActions>
                             {this.state.dialogState.showCancelButton &&
                                 <Button onClick={() => this._closeDialog(false)} color="primary">
-                                    Cancel
+                                    {t("Cancel")}
                         </Button>}
                             <Button onClick={() => this._closeDialog(true)} color="primary" autoFocus>
-                                Ok
+                                {t("Ok")}
                         </Button>
                         </DialogActions>
                     </Dialog>
@@ -669,7 +659,7 @@ class Ventilators extends React.Component {
 
                     <div style={{maxHeight: "400px", overflow: "auto"}}>
                     <Card className="card-chart" style={{ zIndex: 1 }}>
-                        {!isLoaded ? <div>Loading...</div> :
+                        {!isLoaded ? <div>{t("Loading")}...</div> :
                             <Timeline
                                 groups={this.groups_filtered}
                                 items={this.state.items}
@@ -690,7 +680,7 @@ class Ventilators extends React.Component {
                                 <TimelineHeaders className="sticky">
                                     <SidebarHeader>
                                         {({ _ }) => {
-                                            return <div style={{ alignSelf: "center", color: "white", textAlign: "center", width: "200px" }}>Machine</div>;
+                                            return <div style={{ alignSelf: "center", color: "white", textAlign: "center", width: "200px" }}>{t("Model")}-{t("Location")}</div>;
                                         }}
                                     </SidebarHeader>
                                     <DateHeader unit="primaryHeader" />
@@ -713,7 +703,7 @@ class Ventilators extends React.Component {
                         <CardHeader>
                           <Row>
                             <Col className="px-md-1" md="8">
-                              <CardTitle tag="h4">Assignments</CardTitle>
+                              <CardTitle tag="h4">{t("Assignments")}</CardTitle>
                             </Col>
                             <Col className="px-md-1" md="2">
                               <Button
@@ -723,7 +713,7 @@ class Ventilators extends React.Component {
                                   filter_isOpen: !this.state.filter_isOpen
                                 })}
                                 >
-                                Filter assignments
+                                {t("Filter assignments")}
                               </Button>
                             </Col>
                             {this.props.me && this.props.me.permission_task_edit && (
@@ -735,7 +725,7 @@ class Ventilators extends React.Component {
                                     filter_isOpen: false
                                   })}
                                   >
-                                  Create assignemnt
+                                  {t("Create assignment")}
                                 </Button>
                               </Col>
                             )}
@@ -782,7 +772,7 @@ class Ventilators extends React.Component {
                               <Col className="px-md-1" md="2">
                                 <FormGroup>
                                   <label>
-                                    Follow
+                                    {t("Follow")}
                                   </label>
                                   <Input
                                     name="name"
@@ -801,7 +791,7 @@ class Ventilators extends React.Component {
                               <Col className="text-left" md="2">
                                 <FormGroup>
                                   <label>
-                                    Nickname
+                                    {t("Nickname")}
                                   </label>
                                   <Input
                                     name="namec"
@@ -813,7 +803,7 @@ class Ventilators extends React.Component {
                               <Col className="px-md-1" md="2">
                                 <FormGroup>
                                   <label>
-                                    Model
+                                    {t("Model")}
                                   </label>
                                   <Input
                                     name="modelc"
@@ -830,7 +820,7 @@ class Ventilators extends React.Component {
                               <Col className="px-md-1" md="2">
                                 <FormGroup>
                                   <label>
-                                    Location
+                                    {t("Location")}
                                   </label>
                                   <Input
                                     name="locationc"
@@ -847,7 +837,7 @@ class Ventilators extends React.Component {
                               <Col className="px-md-1" md="1">
                                 <FormGroup>
                                   <label>
-                                    Severity
+                                    {t("Severity")}
                                   </label>
                                   <Input
                                     name="severityc"
@@ -867,11 +857,11 @@ class Ventilators extends React.Component {
                             <Table className="tablesorter" responsive>
                               <thead className="text-primary">
                                 <tr>
-                                  <th>Name</th>
-                                  <th className="text-center">Severity</th>
-                                  <th>Location</th>
-                                  <th>Machine</th>
-                                  <th>Admission date</th>
+                                  <th>{t("Name")}</th>
+                                  <th className="text-center">{t("Severity")}</th>
+                                  <th>{t("Location")}</th>
+                                  <th>{t("Machine")}</th>
+                                  <th>{t("Admission date")}</th>
                                 </tr>
                               </thead>
                               <tbody>
