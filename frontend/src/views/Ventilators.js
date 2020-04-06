@@ -112,7 +112,6 @@ class Ventilators extends React.Component {
         };
     }
     groups_filtered = [];
-    items_filtered = [];
     componentDidMount() {
         // we need to fetch patients, machines and assignemnts
 
@@ -255,11 +254,12 @@ class Ventilators extends React.Component {
 
     _applyPendingChanges = () => {
       console.log("pendingItemMove", this.state.pendingItemMove);
+      console.log("pendingItemResize", this.state.pendingItemResize);
         if (this.state.pendingItemMove !== null) {
-            const { items_filtered, groups_filtered } = this;
+            const { items } = this.state;
             const { itemId, dragTime, newGroupOrder } = this.state.pendingItemMove;
-            const group = groups_filtered[newGroupOrder];
-            const selectedItem = items_filtered.find(item => item.id === itemId);
+            const group = this.groups_filtered[newGroupOrder];
+            const selectedItem = items.find(item => item.id === itemId);
 
             this._actuallyCommitPendingChange(
                 itemId,
@@ -267,12 +267,13 @@ class Ventilators extends React.Component {
                 group.id,
                 dragTime,
                 dragTime + (selectedItem.end_time - selectedItem.start_time));
+            return
         }
 
         if (this.state.pendingItemResize !== null) {
-            const { items_filtered } = this;
+            const { items } = this.state;
             const { itemId, time, edge } = this.state.pendingItemResize;
-            const selectedItem = items_filtered.find(item => item.id === itemId);
+            const selectedItem = items.find(item => item.id === itemId);
 
             this._actuallyCommitPendingChange(
                 itemId,
@@ -406,6 +407,9 @@ class Ventilators extends React.Component {
     }
 
     _handleItemSelect = (itemId, e, time) => {
+      console.log(itemId)
+      console.log(e)
+      console.log(time)
         const selectedItem = this.state.items.find(item => item.id === itemId);
 
         var selected = this.state.items.filter(item => item.patient_id === selectedItem.patient_id);
