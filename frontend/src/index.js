@@ -27,17 +27,21 @@ import "assets/scss/black-dashboard-react.scss";
 import "assets/demo/demo.css";
 import "assets/css/nucleo-icons.css";
 
+import { LocalizeProvider } from "react-localize-redux";
+
 const hist = createBrowserHistory();
 
 // force the light team, we can always disable this
 document.body.classList.add("white-content");
 
 ReactDOM.render(
+  <LocalizeProvider>
     <Router history={hist}>
         <Switch>
             <Route path="/" render={props => <AdminLayout {...props} />} />
             <Redirect from="/" to="/ventilators" />
         </Switch>
-    </Router>,
+    </Router>
+  </LocalizeProvider>,
     document.getElementById("app")
 );

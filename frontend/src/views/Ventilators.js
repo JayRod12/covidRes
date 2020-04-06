@@ -28,6 +28,16 @@ import {
     DropdownList
 } from "reactstrap";
 
+import {
+  withLocalize,
+  Translate,
+  LocalizeContext,
+  LocalizeProvider
+} from 'react-localize-redux';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import common_en from "src/translations/en/common.json"
+import ventilators_en from "src/translations/en/common.json"
 // make sure you include the timeline stylesheet or the timeline will not be styled
 import 'src/react-calendar-timeline/src/lib/Timeline.scss'
 import "react-datepicker/dist/react-datepicker.css";
@@ -110,6 +120,17 @@ class Ventilators extends React.Component {
             filterc_machine: "--(All)--",
             filterc_location: "--(All)--"
         };
+        props.initialize({
+          languages: [
+            { name: 'English', code: 'en' }
+          ],
+          // translation: globalTranslations,
+          options: {
+            defaultLanguage: 'en',
+            renderToStaticMarkup
+          }
+        });
+        props.addTranslationForLanguage(Object.assign(common_en, ventilators_en), 'en');
     }
     groups_filtered = [];
     componentDidMount() {
@@ -577,6 +598,8 @@ class Ventilators extends React.Component {
     }
 
     render() {
+      const t = this.props.translate
+
         const isLoaded = this.state.allPatients !== null &&
             this.state.allMachines !== null &&
             this.state.items !== null;
@@ -725,7 +748,7 @@ class Ventilators extends React.Component {
                               <Col className="text-left" md="2">
                                 <FormGroup>
                                   <label>
-                                    Model
+                                    {t("Model")}
                                   </label>
                                   <Input
                                     name="model"
@@ -742,7 +765,7 @@ class Ventilators extends React.Component {
                               <Col className="px-md-1" md="2">
                                 <FormGroup>
                                   <label>
-                                    Location
+                                    {t("Location")}
                                   </label>
                                   <Input
                                     name="location"
@@ -880,4 +903,4 @@ class Ventilators extends React.Component {
     }
 }
 
-export default Ventilators;
+export default withLocalize(Ventilators);
