@@ -581,7 +581,7 @@ class Ventilators extends React.Component {
             this.state.allMachines !== null &&
             this.state.items !== null;
 
-        var locations = []
+        var machinelocations = []
         var machinetypes = []
         var bool_machine_followed_dict = {}
         var models = []
@@ -597,7 +597,7 @@ class Ventilators extends React.Component {
                     <option value={machine.id}>{machine.machine_model}</option>
                 );
             });
-            locations = [...new Set(this.state.allMachines.map(machine => machine.machine_location))]
+            machinelocations = [...new Set(this.state.allMachines.map(machine => machine.machine_location))]
             machinetypes = [...new Set(this.state.allMachines.map(machine => machine.machine_model))]
             this.state.allMachines.forEach((item, i) => { bool_machine_followed_dict[item.id] = false });
             this.state.items.filter(task => (this.state.selectedItem != null && task.patient_id == this.state.selectedItem.patient_id)).forEach((item, i) => {
@@ -750,7 +750,7 @@ class Ventilators extends React.Component {
                                     onChange={(event) => {this.setState({filter_location: event.target.value})}}
                                   >
                                     <option key={0} value="--(All)--">--(All)--</option>
-                                    {locations.map((val, i) => {return (
+                                    {machinelocations.map((val, i) => {return (
                                       <option key={i+1} value={val}>{val}</option>
                                     )})}
                                   </Input>
