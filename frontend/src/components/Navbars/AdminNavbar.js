@@ -54,7 +54,6 @@ import {
   LocalizeProvider
 } from 'react-localize-redux';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { setActiveLanguage } from 'react-localize-redux';
 
 import languages from "src/translations/languages.json"
 var lang = {}
@@ -79,6 +78,8 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+import LanguageToggle from "src/views/LanguageToggle.js"
 
 class AdminNavbar extends React.Component {
   constructor(props) {
@@ -309,27 +310,7 @@ class AdminNavbar extends React.Component {
                   <a class="nav-link" href="#"> {this.state.data.username}</a>
                   </li>
                   </NavLink>)}
-                <UncontrolledDropdown nav>
-                  <DropdownToggle
-                    caret
-                    color="default"
-                    data-toggle="dropdown"
-                    nav
-                  >
-                    <div className="notification d-none d-lg-block d-xl-block" />
-                    <i className="tim-icons icon-world" />
-                    <p className="d-lg-none">{t("Language")}</p>
-                  </DropdownToggle>
-                  <DropdownMenu className="dropdown-navbar" right tag="ul">
-                    {this.props.languages.map((language, ii) => {return(
-                      <NavLink tag="li">
-                        <DropdownItem className="nav-item" onClick={setActiveLanguage.bind(language.code)}>
-                          {language.name}
-                        </DropdownItem>
-                      </NavLink>
-                    )})}
-                  </DropdownMenu>
-                </UncontrolledDropdown>
+                <LanguageToggle/>
                 <UncontrolledDropdown nav>
                   <DropdownToggle
                     caret
