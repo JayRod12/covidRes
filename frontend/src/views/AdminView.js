@@ -251,9 +251,9 @@ class AdminView extends React.Component {
         </CardHeader>
       );
     }
-    const results_roles = this.state.data_roles;
-    const results_models = this.state.data_models;
-    const results_users = this.state.data_users;
+    const results_roles = this.state.data_roles ? this.state.data_roles : [];
+    const results_models = this.state.data_models ? this.state.data_models : [];
+    const results_users = this.state.data_users ? this.state.data_users : [];
 
     return (
       <>
