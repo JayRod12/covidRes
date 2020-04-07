@@ -1,9 +1,9 @@
 {
     "Associated tasks": "Associated tasks",
-    "No tasks": "No tasks",
-    "Loading tasks": "Loading tasks",
-    "No machine": "No machine",
-    "Machine description": "Machine description",
     "Loading machine": "Loading machine",
-    "Machine Profile": "Machine Profile"
+    "Loading tasks": "Loading tasks",
+    "Machine description": "Machine description",
+    "Machine Profile": "Machine Profile",
+    "No machine": "No machine",
+    "No tasks": "No tasks"
 }

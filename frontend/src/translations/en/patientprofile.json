@@ -1,12 +1,12 @@
 {
+    "Assigned machine": "Assigned machine",
     "Associated tasks": "Associated tasks",
-    "No tasks": "No tasks",
-    "Loading tasks": "Loading tasks",
-    "No patient": "No patient",
-    "No messages": "No messages",
-    "Patient description": "Patient description",
     "Loading patient": "Loading patient",
+    "Loading tasks": "Loading tasks",
+    "No messages": "No messages",
+    "No patient": "No patient",
+    "No tasks": "No tasks",
+    "Patient description": "Patient description",
     "Patient profile": "Patient profile",
-    "Severity evolution": "Severity evolution",
-    "Assigned machine": "Assigned machine"
+    "Severity evolution": "Severity evolution"
 }
