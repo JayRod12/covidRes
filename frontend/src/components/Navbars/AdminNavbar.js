@@ -84,7 +84,8 @@ class AdminNavbar extends React.Component {
       modalLogin: false,
       modalPassword: false,
       logged_in: false,
-      color: "navbar-transparent"
+      color: "navbar-transparent",
+      data: []
     };
 
     props.initialize({
@@ -116,6 +117,7 @@ class AdminNavbar extends React.Component {
           this.props.set_me(data)
           this.setState(() => {
             return {
+              data,
               modalLogin: false,
               logged_in: true
             };
@@ -293,6 +295,14 @@ class AdminNavbar extends React.Component {
             </button>
             <Collapse navbar isOpen={this.state.collapseOpen}>
               <Nav className="ml-auto" navbar>
+                 {!this.state.logged_in && (<NavLink tag="li">
+                  <h4>Not logged in</h4></NavLink>)}
+
+                {this.state.logged_in && (<NavLink tag="li">
+                  <li class="nav-item">
+                  <a class="nav-link" href="#"> {this.state.data.username}</a>
+                  </li>
+                  </NavLink>)}
                 <UncontrolledDropdown nav>
                   <DropdownToggle
                     caret
