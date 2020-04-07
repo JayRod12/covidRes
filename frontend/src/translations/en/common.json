@@ -1,8 +1,10 @@
 {
     "Admission date": "Admission date",
     "Assignments": "Assignments",
+    "Available": "Available",
     "Cancel": "Cancel",
     "Create": "Create",
+    "Date": "Date",
     "Error": "Error",
     "First name": "First name",
     "Last name": "Last name",
@@ -17,6 +19,9 @@
     "Role": "Role",
     "Roles": "Roles",
     "Severity": "Severity",
+    "Today": "Today",
+    "Total": "Total",
     "Username": "Username",
-    "Users": "Users"
+    "Users": "Users",
+    "Ventilators": "Ventilators"
 }

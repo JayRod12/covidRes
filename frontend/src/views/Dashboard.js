@@ -47,6 +47,18 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 
+import {
+  withLocalize,
+  Translate,
+  LocalizeContext,
+  LocalizeProvider
+} from 'react-localize-redux';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import common_en from "src/translations/en/common.json"
+import dashboard_en from "src/translations/en/dashboard.json"
+const en = Object.assign({}, common_en, dashboard_en)
+
 // core components
 import {
   chartExample1,
@@ -85,6 +97,18 @@ class Dashboard extends React.Component {
       filter_per_location: "--(All)--",
       filter_per_model: "--(All)--"
     }
+
+    props.initialize({
+      languages: [
+        { name: 'English', code: 'en' }
+      ],
+      options: {
+        defaultLanguage: 'en',
+        renderToStaticMarkup
+      }
+    });
+    props.addTranslationForLanguage(en, 'en');
+
     this.updateData = this.updateData.bind(this);
   }
   on_location_change = (event) => {
@@ -194,6 +218,7 @@ class Dashboard extends React.Component {
 
 
   render() {
+    const t = this.props.translate
     const ourChartData = {
       data: canvas => {
         let ctx = canvas.getContext("2d");
@@ -208,7 +233,7 @@ class Dashboard extends React.Component {
           labels: this.state.data.labels,
           datasets: [
             {
-              label: "Number of patients",
+              label: t("Number of patients"),
               fill: true,
               backgroundColor: gradientStroke,
               borderColor: "#00d6b4",
@@ -311,15 +336,7 @@ class Dashboard extends React.Component {
     // GETTING DATA FOR  MACHINES PER LOCATION AVAILABLE PLOT
     ///////////////////////////////////////////////////////////////////////////////////////////
 
-    if (this.state.machine_data.length == 0) return (<div>Loading</div>);
-
-    console.log(this.state.machine_data);
-
-    const FloorLoc = results.filter(item => item.location === 'First floor');
-    const Floorcount = FloorLoc.length;
-
-    console.log(FloorLoc)
-    console.log(Floorcount)
+    if (this.state.machine_data.length == 0) return (<div>{t("Loading")}</div>);
 
     const machLocations = results
       .map(dataItem => dataItem.location) // get all media types
@@ -443,7 +460,7 @@ class Dashboard extends React.Component {
       console.log(M_used_week)
 
       console.log(this.state.assigement_data)
-      const days_from_today = ["today", "1", "2", "3", "4", "5", "6", "7"]
+      const days_from_today = [t("Today"), "1", "2", "3", "4", "5", "6", "7"]
 
       /// JOAN TIME
       const install_tasks = assignmentResults.map(item => { return ({
@@ -533,11 +550,11 @@ class Dashboard extends React.Component {
           position: "nearest",
           callbacks: {
               title: function (tooltipItem, data) {
-                return "Date: " + moment(tooltipItem[0].xLabel).format("HH:mm (D-MMM-YYYY)");
+                return t("Date") + ": " + moment(tooltipItem[0].xLabel).format("HH:mm (D-MMM-YYYY)");
               },
               label: function(tooltipItems, data) {
                 return (
-                      "Used: " + tooltipItems.yLabel
+                      t("In use") + ": " + tooltipItems.yLabel
                   );
               },
               footer: function (tooltipItem, data) { return "..."; }
@@ -620,11 +637,6 @@ class Dashboard extends React.Component {
           machines_taken_per_model[machine.location][machine.model_name]++
         }
       });
-      console.log(results)
-      console.log("mtplt", machines_taken_per_location_total)
-      console.log("mtpl", machines_taken_per_location)
-      console.log("mtpmt", machines_taken_per_model_total)
-      console.log("mtpm", machines_taken_per_model)
       // Turn into arrays
       machines_available_per_location_total = locations.map(location => machines_available_per_location_total[location])
       machines_available_per_model_total = machinetypes.map(model => machines_available_per_model_total[model])
@@ -679,7 +691,7 @@ class Dashboard extends React.Component {
             },
             {
               stack: arbitraryStackkey2,
-              label: "Available",
+              label: t("Available"),
               fill: true,
               backgroundColor: gradientStroke,
               borderColor: "#d048b6",
@@ -770,7 +782,7 @@ class Dashboard extends React.Component {
           datasets: [
             {
               stack: arbitraryStackkey,
-              label: "In use",
+              label: t("In use"),
               fill: true,
               backgroundColor: "#1f8ef1",
               borderColor: "#1f8ef1",
@@ -789,7 +801,7 @@ class Dashboard extends React.Component {
             },
             {
               stack: arbitraryStackkey,
-              label: "Available",
+              label: t("Available"),
               fill: true,
               backgroundColor: gradientStroke,
               borderColor: "#1f8ef1",
@@ -876,7 +888,7 @@ class Dashboard extends React.Component {
           labels: days_from_today,
           datasets: [
             {
-              label: "Number of Ventilators",
+              label: t("Number of ventilators"),
               fill: true,
               backgroundColor: gradientStroke,
               borderColor: "#00d6b4",
@@ -1059,7 +1071,7 @@ class Dashboard extends React.Component {
                 <CardHeader>
                   <Row>
                     <Col className="text-left" sm="8">
-                      <h5 className="card-category">{"Today " + "(Total: " + total_machines + " Ventilators)"}</h5>
+                      <h5 className="card-category">{t("Today") + " (" + t("Total") + ": " + total_machines + " " + t("Ventilators") + ")"}</h5>
                       <CardTitle tag="h3"><i className="tim-icons icon-square-pin text-primary" />{" Machine per Location"}</CardTitle>
                     </Col>
                     <Col sm="4">
@@ -1130,7 +1142,7 @@ class Dashboard extends React.Component {
             <Col lg="6">
               <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">Evolution</h5>
+                  <h5 className="card-category">{t("Evolution")}</h5>
                   <CardTitle tag="h3">
                     <i className="tim-icons icon-single-02 text-success" /> {" Ventilators in use"}
                   </CardTitle>
@@ -1168,7 +1180,7 @@ class Dashboard extends React.Component {
             <Col lg="12">
               <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">Evolution (NEW)</h5>
+                  <h5 className="card-category">{t("Evolution (NEW)")}</h5>
                   <CardTitle tag="h3">
                     <i className="tim-icons icon-single-02 text-success" /> {" Ventilators in use per model"}
                   </CardTitle>
@@ -1524,4 +1536,4 @@ class Dashboard extends React.Component {
   }
 }
 
-export default Dashboard;
+export default withLocalize(Dashboard);
