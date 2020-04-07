@@ -86,7 +86,7 @@ var routes = [
     name: "Admin",
     icon: "tim-icons icon-settings",
     component: AdminView,
-    permission: (me) => {return(true)},
+    permission: (me) => {return(me.permission_user_see)},
     layout: "/"
   }
 ];
