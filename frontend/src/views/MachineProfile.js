@@ -39,6 +39,18 @@ import {
   Col
 } from "reactstrap";
 
+import {
+  withLocalize,
+  Translate,
+  LocalizeContext,
+  LocalizeProvider
+} from 'react-localize-redux';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import common_en from "src/translations/en/common.json"
+import machineprofile_en from "src/translations/en/machineprofile.json"
+const en = Object.assign({}, common_en, machineprofile_en)
+
 import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
 
 import $ from 'jquery';
@@ -73,6 +85,18 @@ class MachineProfile extends React.Component {
       placeholder_tasks: "Loading",
       error_message_tasks: "",
     };
+
+    props.initialize({
+      languages: [
+        { name: 'English', code: 'en' }
+      ],
+      options: {
+        defaultLanguage: 'en',
+        renderToStaticMarkup
+      }
+    });
+    props.addTranslationForLanguage(en, 'en');
+
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleSubmit(event) {
@@ -190,10 +214,11 @@ class MachineProfile extends React.Component {
     this.refs.notificationAlert.notificationAlert(options);
   };
   render() {
+    const t = this.props.translate
     if (!this.state.loaded) {
       return (
         <CardHeader>
-          <CardTitle tag="h4">Loading machine...</CardTitle>
+          <CardTitle tag="h4">{t("Loading machine")}...</CardTitle>
         </CardHeader>
       );
     }
@@ -209,7 +234,7 @@ class MachineProfile extends React.Component {
         <Col md="8">
           <Card>
             <CardHeader>
-              <h5 className="title">Machine Profile</h5>
+              <h5 className="title">{t("Machine Profile")}</h5>
             </CardHeader>
             <CardBody>
               <Form onSubmit={this.handleSubmit}>
@@ -228,11 +253,11 @@ class MachineProfile extends React.Component {
                   </Col>
                   <Col className="px-md-1" md="4">
                     <FormGroup>
-                      <label>Model</label>
+                      <label>{t("Model")}</label>
                       <Input
                         defaultValue={this.state.data.model_name}
                         disabled
-                        placeholder="Model"
+                        placeholder={t("Model")}
                         name="model_name"
                         type="text"
                       />
@@ -240,10 +265,10 @@ class MachineProfile extends React.Component {
                   </Col>
                   <Col className="pl-md-1" md="6">
                     <FormGroup>
-                      <label>Location</label>
+                      <label>{t("Location")}</label>
                       <Input
                         defaultValue={this.state.data.location}
-                        placeholder="Location"
+                        placeholder={t("Location")}
                         name="location"
                         type="text"
                       />
@@ -257,7 +282,7 @@ class MachineProfile extends React.Component {
                       <Input
                         cols="80"
                         defaultValue={this.state.data.description}
-                        placeholder="Machine description"
+                        placeholder={t("Machine description")}
                         name="description"
                         rows="6"
                         type="textarea"
@@ -265,11 +290,11 @@ class MachineProfile extends React.Component {
                     </FormGroup>
                   </Col>
                     <Col md="4">
-                      <label>Assigned to</label>
+                      <label>{t("Assigned to")}</label>
                       <CardBody>
                         {this.state.data.patient_assigned === null
                           ?
-                          <Row><h3>None</h3></Row>
+                          <Row><h3>{t("None")}</h3></Row>
                           :
                           <div>
                             <Row>
@@ -282,7 +307,7 @@ class MachineProfile extends React.Component {
                     </Col>
                 </Row>
                 <Button className="btn-fill" color="primary" type="submit" value="Submit">
-                  Save
+                  {t("Save")}
                 </Button>
               </Form>
             </CardBody>
@@ -291,14 +316,14 @@ class MachineProfile extends React.Component {
       );
     } else {
       machine = (
-        <CardText>No machine</CardText>
+        <CardText>{t("No machine")}</CardText>
       );
     }
     console.log(machine);
     if (!this.state.loaded_tasks) {
       return (
         <CardHeader>
-          <CardTitle tag="h4">Loading tasks...</CardTitle>
+          <CardTitle tag="h4">{t("Loading tasks")}...</CardTitle>
         </CardHeader>
       );
     }
@@ -323,7 +348,7 @@ class MachineProfile extends React.Component {
       );
     } else {
       tasks = (
-        <CardText>No tasks</CardText>
+        <CardText>{t("No tasks")}</CardText>
       );
     }
     console.log(tasks);
@@ -338,7 +363,7 @@ class MachineProfile extends React.Component {
             <Col md="4">
               <Card className="card-user">
                 <CardHeader>
-                  <h5 className="title">Associated Tasks</h5>
+                  <h5 className="title">{t("Associated Tasks")}</h5>
                 </CardHeader>
                 <CardBody>
                   {tasks}
@@ -352,4 +377,4 @@ class MachineProfile extends React.Component {
   }
 }
 
-export default MachineProfile;
+export default withLocalize(MachineProfile);
