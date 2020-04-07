@@ -36,9 +36,13 @@ import {
 } from 'react-localize-redux';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import common_en from "src/translations/en/common.json"
-import ventilators_en from "src/translations/en/ventilators.json"
-const en = Object.assign({}, common_en, ventilators_en)
+import languages from "src/translations/languages.json"
+var lang = {}
+languages.forEach((language, i) => {
+  const common = require('src/translations/' + language.code + '/common.json')
+  const local = require('src/translations/' + language.code + '/ventilators.json')
+  lang[language.code] = Object.assign({}, common, local)
+});
 
 // make sure you include the timeline stylesheet or the timeline will not be styled
 import 'src/react-calendar-timeline/src/lib/Timeline.scss'
@@ -123,15 +127,15 @@ class Ventilators extends React.Component {
             filterc_location: "--(All)--"
         };
         props.initialize({
-          languages: [
-            { name: 'English', code: 'en' }
-          ],
+          languages: languages,
           options: {
             defaultLanguage: 'en',
             renderToStaticMarkup
           }
         });
-        props.addTranslationForLanguage(en, 'en');
+        languages.forEach((language, i) => {
+          props.addTranslationForLanguage(lang[language.code], language.code);
+        });
     }
     groups_filtered = [];
     componentDidMount() {

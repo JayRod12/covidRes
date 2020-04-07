@@ -46,6 +46,14 @@ import {
 } from 'react-localize-redux';
 import { renderToStaticMarkup } from 'react-dom/server';
 
+import languages from "src/translations/languages.json"
+var lang = {}
+languages.forEach((language, i) => {
+  const common = require('src/translations/' + language.code + '/common.json')
+  const local = require('src/translations/' + language.code + '/adminview.json')
+  lang[language.code] = Object.assign({}, common, local)
+});
+
 import common_en from "src/translations/en/common.json"
 import adminview_en from "src/translations/en/adminview.json"
 const en = Object.assign({}, common_en, adminview_en)
@@ -92,15 +100,16 @@ class AdminView extends React.Component {
     };
 
     props.initialize({
-      languages: [
-        { name: 'English', code: 'en' }
-      ],
+      languages: languages,
       options: {
         defaultLanguage: 'en',
         renderToStaticMarkup
       }
     });
-    props.addTranslationForLanguage(en, 'en');
+    languages.forEach((language, i) => {
+      props.addTranslationForLanguage(lang[language.code], language.code);
+    });
+
 
     this.handleRoleSubmit = this.handleRoleSubmit.bind(this);
     this.handleModelSubmit = this.handleModelSubmit.bind(this);

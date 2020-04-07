@@ -55,9 +55,13 @@ import {
 } from 'react-localize-redux';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import common_en from "src/translations/en/common.json"
-import dashboard_en from "src/translations/en/dashboard.json"
-const en = Object.assign({}, common_en, dashboard_en)
+import languages from "src/translations/languages.json"
+var lang = {}
+languages.forEach((language, i) => {
+  const common = require('src/translations/' + language.code + '/common.json')
+  const local = require('src/translations/' + language.code + '/dashboard.json')
+  lang[language.code] = Object.assign({}, common, local)
+});
 
 // core components
 import {
@@ -99,15 +103,15 @@ class Dashboard extends React.Component {
     }
 
     props.initialize({
-      languages: [
-        { name: 'English', code: 'en' }
-      ],
+      languages: languages,
       options: {
         defaultLanguage: 'en',
         renderToStaticMarkup
       }
     });
-    props.addTranslationForLanguage(en, 'en');
+    languages.forEach((language, i) => {
+      props.addTranslationForLanguage(lang[language.code], language.code);
+    });
 
     this.updateData = this.updateData.bind(this);
   }

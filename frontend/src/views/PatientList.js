@@ -46,9 +46,13 @@ import {
 } from 'react-localize-redux';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import common_en from "src/translations/en/common.json"
-import machineprofile_en from "src/translations/en/machineprofile.json"
-const en = Object.assign({}, common_en, machineprofile_en)
+import languages from "src/translations/languages.json"
+var lang = {}
+languages.forEach((language, i) => {
+  const common = require('src/translations/' + language.code + '/common.json')
+  const local = require('src/translations/' + language.code + '/patientlist.json')
+  lang[language.code] = Object.assign({}, common, local)
+});
 
 import moment from 'moment'
 import $ from 'jquery';
@@ -105,15 +109,15 @@ class PatientList extends React.Component {
     };
 
     props.initialize({
-      languages: [
-        { name: 'English', code: 'en' }
-      ],
+      languages: languages,
       options: {
         defaultLanguage: 'en',
         renderToStaticMarkup
       }
     });
-    props.addTranslationForLanguage(en, 'en');
+    languages.forEach((language, i) => {
+      props.addTranslationForLanguage(lang[language.code], language.code);
+    });
 
     this.handleSubmit = this.handleSubmit.bind(this);
   }
