@@ -296,8 +296,10 @@ class AdminNavbar extends React.Component {
             <Collapse navbar isOpen={this.state.collapseOpen}>
               <Nav className="ml-auto" navbar>
                  {!this.state.logged_in && (<NavLink tag="li">
-                  <h4>Not logged in</h4></NavLink>)}
-
+                  <li class="nav-item">
+                  <a class="nav-link" href="#"> Not logged in</a>
+                  </li>
+                  </NavLink>)}
                 {this.state.logged_in && (<NavLink tag="li">
                   <li class="nav-item">
                   <a class="nav-link" href="#"> {this.state.data.username}</a>
@@ -333,7 +335,7 @@ class AdminNavbar extends React.Component {
                     onClick={e => e.preventDefault()}
                   >
                     <div>
-                      <i className="tim-icons icon-single-02" />...
+                      <i className="tim-icons icon-single-02" />
                     </div>
                     <p className="d-lg-none">{t("Log out")}</p>
                   </DropdownToggle>
