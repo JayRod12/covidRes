@@ -266,6 +266,7 @@ class UserProfile extends React.Component {
                         placeholder={t("Password")}
                         name="pass"
                         type="password"
+                        autoComplete="new-password"
                       />
                     </FormGroup>
                   </Col>
@@ -276,6 +277,7 @@ class UserProfile extends React.Component {
                         placeholder={t("Password")}
                         name="pass_repeat"
                         type="password"
+                        autoComplete="new-password"
                       />
                     </FormGroup>
                   </Col>
