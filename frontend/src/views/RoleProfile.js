@@ -51,8 +51,6 @@ import common_en from "src/translations/en/common.json"
 import roleprofile_en from "src/translations/en/roleprofile.json"
 const en = Object.assign({}, common_en, roleprofile_en)
 
-import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
-
 import $ from 'jquery';
 
 const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';

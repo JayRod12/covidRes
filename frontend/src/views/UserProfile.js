@@ -39,6 +39,18 @@ import {
   Col
 } from "reactstrap";
 
+import {
+  withLocalize,
+  Translate,
+  LocalizeContext,
+  LocalizeProvider
+} from 'react-localize-redux';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import common_en from "src/translations/en/common.json"
+import userprofile_en from "src/translations/en/userprofile.json"
+const en = Object.assign({}, common_en, userprofile_en)
+
 import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
 
 import $ from 'jquery';
@@ -71,6 +83,18 @@ class UserProfile extends React.Component {
       placeholder: "Loading",
       error_message: "",
     };
+
+    props.initialize({
+      languages: [
+        { name: 'English', code: 'en' }
+      ],
+      options: {
+        defaultLanguage: 'en',
+        renderToStaticMarkup
+      }
+    });
+    props.addTranslationForLanguage(en, 'en');
+
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleSubmit(event) {
@@ -134,10 +158,11 @@ class UserProfile extends React.Component {
             });
   };
   render() {
+    const t = this.props.translate
     if (!(this.state.loaded && this.state.loaded_roles)) {
       return (
         <CardHeader>
-          <CardTitle tag="h4">Loading user...</CardTitle>
+          <CardTitle tag="h4">{t("Loading user")}...</CardTitle>
         </CardHeader>
       );
     }
@@ -153,7 +178,7 @@ class UserProfile extends React.Component {
         <Col md="8">
           <Card>
             <CardHeader>
-              <h5 className="title">User Profile</h5>
+              <h5 className="title">{t("User profile")}</h5>
             </CardHeader>
             <CardBody>
               <Form onSubmit={this.handleSubmit}>
@@ -172,10 +197,10 @@ class UserProfile extends React.Component {
                   </Col>
                   <Col className="px-md-1" md="3">
                     <FormGroup>
-                      <label>Username</label>
+                      <label>{t("Username")}</label>
                       <Input
                         defaultValue={this.state.data.username}
-                        placeholder="Username"
+                        placeholder={t("Username")}
                         name="username"
                         type="text"
                       />
@@ -183,7 +208,7 @@ class UserProfile extends React.Component {
                   </Col>
                   <Col className="px-md-1" md="2">
                     <FormGroup>
-                      <label>Role</label>
+                      <label>{t("Role")}</label>
                       <Input
                         defaultValue={this.state.data.role}
                         name="role"
@@ -198,10 +223,10 @@ class UserProfile extends React.Component {
                   </Col>
                   <Col className="pl-md-1" md="5">
                     <FormGroup>
-                      <label>Email</label>
+                      <label>{t("Email")}</label>
                       <Input
                         defaultValue={this.state.data.email}
-                        placeholder="Email"
+                        placeholder={t("Email")}
                         name="email"
                         type="text"
                       />
@@ -211,10 +236,10 @@ class UserProfile extends React.Component {
                 <Row>
                   <Col className="pl-md-1" md="6">
                     <FormGroup>
-                      <label>First name</label>
+                      <label>{t("First name")}</label>
                       <Input
                         defaultValue={this.state.data.first_name}
-                        placeholder="First name"
+                        placeholder={t("First name")}
                         name="first_name"
                         type="text"
                       />
@@ -222,10 +247,10 @@ class UserProfile extends React.Component {
                   </Col>
                   <Col className="pl-md-1" md="6">
                     <FormGroup>
-                      <label>Last name</label>
+                      <label>{t("Last name")}</label>
                       <Input
                         defaultValue={this.state.data.last_name}
-                        placeholder="Last name"
+                        placeholder={t("Last name")}
                         name="last_name"
                         type="text"
                       />
@@ -233,7 +258,7 @@ class UserProfile extends React.Component {
                   </Col>
                 </Row>
                 <Button className="btn-fill" color="primary" type="submit" value="Submit">
-                  Save
+                  {t("Save")}
                 </Button>
               </Form>
             </CardBody>
@@ -242,7 +267,7 @@ class UserProfile extends React.Component {
       );
     } else {
       user = (
-        <CardText>No user</CardText>
+        <CardText>{t("No user")}</CardText>
       );
     }
     return (
@@ -260,4 +285,4 @@ class UserProfile extends React.Component {
   }
 }
 
-export default UserProfile;
+export default withLocalize(UserProfile);
