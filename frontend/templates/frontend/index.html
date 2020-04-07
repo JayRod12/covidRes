@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
-
+{% csrf_token %}
+<script>
+var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+</script>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
