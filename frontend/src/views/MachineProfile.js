@@ -363,7 +363,7 @@ class MachineProfile extends React.Component {
             <Col md="4">
               <Card className="card-user">
                 <CardHeader>
-                  <h5 className="title">{t("Associated Tasks")}</h5>
+                  <h5 className="title">{t("Associated tasks")}</h5>
                 </CardHeader>
                 <CardBody>
                   {tasks}

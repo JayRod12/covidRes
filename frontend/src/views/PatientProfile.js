@@ -39,6 +39,18 @@ import {
   Col
 } from "reactstrap";
 
+import {
+  withLocalize,
+  Translate,
+  LocalizeContext,
+  LocalizeProvider
+} from 'react-localize-redux';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import common_en from "src/translations/en/common.json"
+import patientprofile_en from "src/translations/en/patientprofile.json"
+const en = Object.assign({}, common_en, patientprofile_en)
+
 import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
 
 import moment from 'moment'
@@ -80,6 +92,18 @@ class PatientProfile extends React.Component {
       severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"],
       graph_xy: [],
     };
+
+    props.initialize({
+      languages: [
+        { name: 'English', code: 'en' }
+      ],
+      options: {
+        defaultLanguage: 'en',
+        renderToStaticMarkup
+      }
+    });
+    props.addTranslationForLanguage(en, 'en');
+
     this.handleSubmit = this.handleSubmit.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
   }
@@ -276,10 +300,11 @@ class PatientProfile extends React.Component {
     this.refs.notificationAlert.notificationAlert(options);
   };
   render() {
+    const t = this.props.translate
     if (!this.state.loaded) {
       return (
         <CardHeader>
-          <CardTitle tag="h4">Loading patient...</CardTitle>
+          <CardTitle tag="h4">{t("Loading patient")}...</CardTitle>
         </CardHeader>
       );
     }
@@ -295,7 +320,7 @@ class PatientProfile extends React.Component {
         <Col md="8">
           <Card>
             <CardHeader>
-              <h5 className="title">Patient Profile</h5>
+              <h5 className="title">{t("Patient profile")}</h5>
             </CardHeader>
             <CardBody>
               <Form onSubmit={this.handleSubmit}>
@@ -314,10 +339,10 @@ class PatientProfile extends React.Component {
                   </Col>
                   <Col className="px-md-1" md="3">
                     <FormGroup>
-                      <label>Nickname</label>
+                      <label>{t("Nickname")}</label>
                       <Input
                         defaultValue={this.state.data.name}
-                        placeholder="Nickname"
+                        placeholder={t("Nickname")}
                         name="name"
                         type="text"
                       />
@@ -325,7 +350,7 @@ class PatientProfile extends React.Component {
                   </Col>
                   <Col className="px-md-1" md="2">
                     <FormGroup>
-                      <label>Severity</label>
+                      <label>{t("Severity")}</label>
                       <Input
                         defaultValue={this.state.data.severity}
                         name="severity"
@@ -339,10 +364,10 @@ class PatientProfile extends React.Component {
                   </Col>
                   <Col className="pl-md-1" md="5">
                     <FormGroup>
-                      <label>Location</label>
+                      <label>{t("Location")}</label>
                       <Input
                         defaultValue={this.state.data.location}
-                        placeholder="Location"
+                        placeholder={t("Location")}
                         name="location"
                         type="text"
                       />
@@ -352,10 +377,10 @@ class PatientProfile extends React.Component {
                 <Row>
                   <Col className="pr-md-1" md="6">
                     <FormGroup>
-                      <label>First Name</label>
+                      <label>{t("First name")}</label>
                       <Input
                         defaultValue={this.state.data.first_name}
-                        placeholder="First Name"
+                        placeholder={t("First name")}
                         name="first_name"
                         type="text"
                       />
@@ -363,10 +388,10 @@ class PatientProfile extends React.Component {
                   </Col>
                   <Col className="pl-md-1" md="6">
                     <FormGroup>
-                      <label>Last Name</label>
+                      <label>{t("Last name")}</label>
                       <Input
                         defaultValue={this.state.data.last_name}
-                        placeholder="Last Name"
+                        placeholder={t("Last Name")}
                         name="last_name"
                         type="text"
                       />
@@ -376,11 +401,11 @@ class PatientProfile extends React.Component {
                 <Row>
                   <Col md="8">
                     <FormGroup>
-                      <label>Description</label>
+                      <label>{t("Description")}</label>
                       <Input
                         cols="80"
                         defaultValue={this.state.data.description}
-                        placeholder="Patient description"
+                        placeholder={t("Patient description")}
                         name="description"
                         rows="6"
                         type="textarea"
@@ -388,11 +413,11 @@ class PatientProfile extends React.Component {
                     </FormGroup>
                   </Col>
                   <Col md="4">
-                    <label>Assigned Machine</label>
+                    <label>{t("Assigned machine")}</label>
                     <CardBody>
                       {this.state.data.machine_assigned === null
                         ?
-                        <Row><h3>None</h3></Row>
+                        <Row><h3>{t("None")}</h3></Row>
                         :
                         <div>
                           <Row>
@@ -405,14 +430,14 @@ class PatientProfile extends React.Component {
                   </Col>
                 </Row>
                 <Button className="btn-fill" color="primary" type="submit" value="Submit">
-                  Save
+                  {t("Save")}
                 </Button>
               </Form>
             </CardBody>
           </Card>
           <Card>
             <CardHeader>
-              <h5 className="title">Severity evolution</h5>
+              <h5 className="title">{t("Severity evolution")}</h5>
             </CardHeader>
             <CardBody>
               <Scatter
@@ -518,14 +543,14 @@ class PatientProfile extends React.Component {
       );
     } else {
       patient = (
-        <CardText>No patient</CardText>
+        <CardText>{t("No patient")}</CardText>
       );
     }
     console.log(patient);
     if (!this.state.loaded_tasks) {
       return (
         <CardHeader>
-          <CardTitle tag="h4">Loading tasks...</CardTitle>
+          <CardTitle tag="h4">{t("Loading tasks")}...</CardTitle>
         </CardHeader>
       );
     }
@@ -550,7 +575,7 @@ class PatientProfile extends React.Component {
       );
     } else {
       tasks = (
-        <CardText>No tasks</CardText>
+        <CardText>{t("No tasks")}</CardText>
       );
     }
     let messages;
@@ -581,7 +606,7 @@ class PatientProfile extends React.Component {
       );
     } else {
       messages = (
-        <CardText>No messages</CardText>
+        <CardText>{t("No messages")}</CardText>
       );
     }
     console.log(messages);
@@ -596,7 +621,7 @@ class PatientProfile extends React.Component {
             <Col md="4">
               <Card className="card-user">
                 <CardHeader>
-                  <h6>Associated Tasks</h6>
+                  <h6>{t("Associated tasks")}</h6>
                 </CardHeader>
                 <CardBody>
                   <div style={{maxHeight: "400px", overflow: "auto"}}>
@@ -606,7 +631,7 @@ class PatientProfile extends React.Component {
               </Card>
               <Card className="card-user">
                 <CardHeader>
-                  <h6>Messages</h6>
+                  <h6>{t("Messages")}</h6>
                 </CardHeader>
                 <CardBody>
                   <div style={{maxHeight: "200px", overflow: "auto"}}>
@@ -616,7 +641,7 @@ class PatientProfile extends React.Component {
                 <CardFooter>
                   <Form onSubmit={this.sendMessage}>
                     <FormGroup>
-                      <label>Message</label>
+                      <label>{t("Message")}</label>
                       <Input
                         cols="80"
                         placeholder="Message"
@@ -626,7 +651,7 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                     <Button>
-                      Send
+                      {t("Send")}
                     </Button>
                   </Form>
                 </CardFooter>
@@ -639,4 +664,4 @@ class PatientProfile extends React.Component {
   }
 }
 
-export default PatientProfile;
+export default withLocalize(PatientProfile);
