@@ -83,7 +83,8 @@ class AdminNavbar extends React.Component {
       modalLogin: false,
       modalPassword: false,
       logged_in: false,
-      color: "navbar-transparent"
+      color: "navbar-transparent",
+      me:[]
     };
 
     props.initialize({
@@ -109,6 +110,15 @@ class AdminNavbar extends React.Component {
           throw new Error(response.status);
         }
         return response.json();
+      })
+      .then(me => {
+        console.log(me);
+        this.setState(() => {
+          return {
+            me,
+            loaded: true
+          };
+        });
       })
       .then(data => {
         if (data != "Not logged in") {
@@ -292,6 +302,10 @@ class AdminNavbar extends React.Component {
             </button>
             <Collapse navbar isOpen={this.state.collapseOpen}>
               <Nav className="ml-auto" navbar>
+                {!this.state.logged_in && (<NavLink tag="li">
+                  <h4>Not logged in</h4></NavLink>)}
+                {this.state.logged_in && (<NavLink tag="li">
+                  <h4> {this.state.me.username} </h4></NavLink>)}
                 <UncontrolledDropdown nav>
                   <DropdownToggle
                     caret
