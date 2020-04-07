@@ -5,7 +5,7 @@
     "Filter assignments": "Filtrer Attributions",
     "Follow": "Suivre",
     "Machine or patient already assigned during this time interval!": "Machine ou patient déjà attribué",
-    "Move ventilator?": "Déplacer machine?",
+    "Move ventilator?": "Déplacer?",
     "The start date needs to be before the end date.": "Date de début doit être avant la fin",
-    "You are about to change the assignment of this ventilator. Please confirm.": "Confirmer changement d'attribution"
+    "You are about to change the assignment of this ventilator. Please confirm.": "Le patient sera placé sur une autre machine"
 }
