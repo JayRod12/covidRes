@@ -196,7 +196,7 @@ class MachineList extends React.Component {
     if (!this.state.loaded) {
       return (
         <CardHeader>
-          <CardTitle tag="h4">Loading machines...</CardTitle>
+          <CardTitle tag="h4">{t("Loading machines")}...</CardTitle>
         </CardHeader>
       );
     }
@@ -238,7 +238,7 @@ class MachineList extends React.Component {
       });
     } else {
       machines = (
-        <CardText>No machines</CardText>
+        <CardText>{t("No machines")}</CardText>
       );
     }
     let machinetypes;

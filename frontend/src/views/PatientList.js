@@ -38,6 +38,18 @@ import {
   Col
 } from "reactstrap";
 
+import {
+  withLocalize,
+  Translate,
+  LocalizeContext,
+  LocalizeProvider
+} from 'react-localize-redux';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import common_en from "src/translations/en/common.json"
+import machineprofile_en from "src/translations/en/machineprofile.json"
+const en = Object.assign({}, common_en, machineprofile_en)
+
 import moment from 'moment'
 import $ from 'jquery';
 
@@ -91,6 +103,18 @@ class PatientList extends React.Component {
       filter_machine: "--(All)--",
       filter_location: "--(All)--"
     };
+
+    props.initialize({
+      languages: [
+        { name: 'English', code: 'en' }
+      ],
+      options: {
+        defaultLanguage: 'en',
+        renderToStaticMarkup
+      }
+    });
+    props.addTranslationForLanguage(en, 'en');
+
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleSubmit(event) {
@@ -148,10 +172,11 @@ class PatientList extends React.Component {
       });
   };
   render() {
+    const t = this.props.translate
     if (!this.state.loaded) {
       return (
         <CardHeader>
-          <CardTitle tag="h4">Loading patients...</CardTitle>
+          <CardTitle tag="h4">{t("Loading patients")}...</CardTitle>
         </CardHeader>
       );
     }
@@ -190,7 +215,7 @@ class PatientList extends React.Component {
       });
     } else {
       patients = (
-        <CardText>No patients</CardText>
+        <CardText>{t("No patients")}</CardText>
       );
     }
 
@@ -208,7 +233,7 @@ class PatientList extends React.Component {
                 <CardHeader>
                   <Row>
                     <Col className="px-md-12" md="8">
-                      <CardTitle tag="h3">Patients</CardTitle>
+                      <CardTitle tag="h3">{t("Patients")}</CardTitle>
                     </Col>
                     <Col className="px-md-1" md="2">
                       <Button
@@ -218,7 +243,7 @@ class PatientList extends React.Component {
                           filter_isOpen: !this.state.filter_isOpen
                         })}
                         >
-                        Filter patients
+                        {t("Filter patients")}
                       </Button>
                     </Col>
                     {this.props.me && this.props.me.permission_patient_edit && (
@@ -230,7 +255,7 @@ class PatientList extends React.Component {
                             filter_isOpen: false
                           })}
                           >
-                          Create patient
+                          {t("Create patient")}
                         </Button>
                       </Col>
                     )}
@@ -241,7 +266,7 @@ class PatientList extends React.Component {
                         <Col className="text-left" md="2">
                           <FormGroup>
                             <label>
-                              Nickname
+                              {t("Nickname")}
                             </label>
                             <Input
                               name="name"
@@ -253,7 +278,7 @@ class PatientList extends React.Component {
                         <Col className="px-md-1" md="2">
                           <FormGroup>
                             <label>
-                              Model
+                              {t("Model")}
                             </label>
                             <Input
                               name="model"
@@ -270,7 +295,7 @@ class PatientList extends React.Component {
                         <Col className="px-md-1" md="2">
                           <FormGroup>
                             <label>
-                              Location
+                              {t("Location")}
                             </label>
                             <Input
                               name="location"
@@ -287,7 +312,7 @@ class PatientList extends React.Component {
                         <Col className="px-md-1" md="1">
                           <FormGroup>
                             <label>
-                              Severity
+                              {t("Severity")}
                             </label>
                             <Input
                               name="severity"
@@ -328,7 +353,7 @@ class PatientList extends React.Component {
                         </Col>
                         <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
                           <Button>
-                            Create
+                            {t("Create")}
                           </Button>
                         </Col>
                       </Row>
@@ -340,11 +365,11 @@ class PatientList extends React.Component {
                     <Table className="tablesorter" responsive>
                       <thead className="text-primary">
                         <tr>
-                          <th>Name</th>
-                          <th className="text-center">Severity</th>
-                          <th>Location</th>
-                          <th>Machine</th>
-                          <th>Admission date</th>
+                          <th>{t("Name")}</th>
+                          <th className="text-center">{t("Severity")}</th>
+                          <th>{t("Location")}</th>
+                          <th>{t("Machine")}</th>
+                          <th>{t("Admission date")}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -362,4 +387,4 @@ class PatientList extends React.Component {
   }
 }
 
-export default PatientList;
+export default withLocalize(PatientList);
