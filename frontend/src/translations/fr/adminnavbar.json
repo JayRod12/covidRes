@@ -1,9 +1,9 @@
 {
-    "Change password": "Change password",
-    "Log in": "Log in",
-    "Log out": "Log out",
+    "Change password": "Changer mot de passe",
+    "Log in": "Log-in",
+    "Log out": "Log-out",
     "Login": "Login",
-    "Old password": "Old password",
-    "Password (repeat)": "Password (repeat)",
-    "Reset password": "Reset password"
+    "Old password": "Ancien mot de passe",
+    "Password (repeat)": "Mot de passe (répéter)",
+    "Reset password": "Reset mot de passe"
 }

@@ -1,7 +1,7 @@
 {
-    "Loading user": "Loading user",
-    "New password": "New password",
-    "New password (repeat)": "New password (repeat)",
-    "User profile": "User profile",
-    "No user": "No user"
+    "Loading user": "Chargement utilisateur",
+    "New password": "Nouveau mot de passe",
+    "New password (repeat)": "Mot de passe (répéter)",
+    "User profile": "Profil utilisateur",
+    "No user": "Pas d'utilisateur"
 }
