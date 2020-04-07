@@ -54,6 +54,7 @@ import {
   LocalizeProvider
 } from 'react-localize-redux';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { setActiveLanguage } from 'react-localize-redux';
 
 import common_en from "src/translations/en/common.json"
 import adminnavbar_en from "src/translations/en/adminnavbar.json"
@@ -300,35 +301,17 @@ class AdminNavbar extends React.Component {
                     nav
                   >
                     <div className="notification d-none d-lg-block d-xl-block" />
-                    <i className="tim-icons icon-sound-wave" />
-                    <p className="d-lg-none">Notifications</p>
+                    <i className="tim-icons icon-world" />
+                    <p className="d-lg-none">{t("Language")}</p>
                   </DropdownToggle>
                   <DropdownMenu className="dropdown-navbar" right tag="ul">
-                    <NavLink tag="li">
-                      <DropdownItem className="nav-item">
-                        Mike John responded to your email
-                      </DropdownItem>
-                    </NavLink>
-                    <NavLink tag="li">
-                      <DropdownItem className="nav-item">
-                        You have 5 more tasks
-                      </DropdownItem>
-                    </NavLink>
-                    <NavLink tag="li">
-                      <DropdownItem className="nav-item">
-                        Your friend Michael is in town
-                      </DropdownItem>
-                    </NavLink>
-                    <NavLink tag="li">
-                      <DropdownItem className="nav-item">
-                        Another notification
-                      </DropdownItem>
-                    </NavLink>
-                    <NavLink tag="li">
-                      <DropdownItem className="nav-item">
-                        Another one
-                      </DropdownItem>
-                    </NavLink>
+                    {this.props.languages.map((language, ii) => {return(
+                      <NavLink tag="li">
+                        <DropdownItem className="nav-item" onClick={setActiveLanguage.bind(language.code)}>
+                          {language.name}
+                        </DropdownItem>
+                      </NavLink>
+                    )})}
                   </DropdownMenu>
                 </UncontrolledDropdown>
                 <UncontrolledDropdown nav>
