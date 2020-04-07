@@ -209,15 +209,12 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('username')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionUser]
-"""
-class CurrentUserViewSet(viewsets.ViewSet):
-    queryset = User.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
-    def retrieve(self, request):
-        user = get_object_or_404(queryset, pk=request.user.pk)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-"""
+    def partial_update(self, request, *args, **kwargs):
+        if 'new_pass' in request.data:
+            user = User.objects.get(pk=kwargs['pk'])
+            user.set_password(request.data['new_pass'])
+            user.save()
+        return super(UserViewSet, self).partial_update(request, *args, **kwargs)
 
 class PermissionMessage(permissions.BasePermission):
     def has_permission(self, request, view):

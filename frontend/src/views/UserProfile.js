@@ -101,15 +101,20 @@ class UserProfile extends React.Component {
     event.preventDefault();
     const data = new FormData(event.target);
 
+    var body = {
+        username: data.get('username'),
+        role: data.get('role'),
+        email: data.get('email'),
+        first_name: data.get('first_name'),
+        last_name: data.get('last_name')
+    }
+    if (data.get('pass').length > 0 && data.get('pass') == data.get('pass_repeat')) {
+      body.new_pass = data.get('pass')
+    }
+
     fetch('/rest/users/'+this.state.data.pk+"/", {
       method: 'PATCH',
-      body: JSON.stringify({
-          username: data.get('username'),
-          role: data.get('role'),
-          email: data.get('email'),
-          first_name: data.get('first_name'),
-          last_name: data.get('last_name')
-      }),
+      body: JSON.stringify(body),
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
       }
@@ -253,6 +258,28 @@ class UserProfile extends React.Component {
                         placeholder={t("Last name")}
                         name="last_name"
                         type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="pl-md-1" md="6">
+                    <FormGroup>
+                      <label>{t("New password")}</label>
+                      <Input
+                        placeholder={t("Password")}
+                        name="pass"
+                        type="password"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col className="pl-md-1" md="6">
+                    <FormGroup>
+                      <label>{t("New password (repeat)")}</label>
+                      <Input
+                        placeholder={t("Password")}
+                        name="pass_repeat"
+                        type="password"
                       />
                     </FormGroup>
                   </Col>
