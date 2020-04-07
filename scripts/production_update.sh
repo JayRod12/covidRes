@@ -3,6 +3,7 @@
 BASE_DIR=/home/covidres/
 DJANGO_DIR=$BASE_DIR/covidRes/
 
+sudo echo "Running..." # Prompt for sudo passwd at start
 cd $DJANGO_DIR
 source venv/bin/activate
 
