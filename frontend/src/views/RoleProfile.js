@@ -39,6 +39,18 @@ import {
   Col
 } from "reactstrap";
 
+import {
+  withLocalize,
+  Translate,
+  LocalizeContext,
+  LocalizeProvider
+} from 'react-localize-redux';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import common_en from "src/translations/en/common.json"
+import roleprofile_en from "src/translations/en/roleprofile.json"
+const en = Object.assign({}, common_en, roleprofile_en)
+
 import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
 
 import $ from 'jquery';
@@ -69,6 +81,18 @@ class RoleProfile extends React.Component {
       placeholder: "Loading",
       error_message: "",
     };
+
+    props.initialize({
+      languages: [
+        { name: 'English', code: 'en' }
+      ],
+      options: {
+        defaultLanguage: 'en',
+        renderToStaticMarkup
+      }
+    });
+    props.addTranslationForLanguage(en, 'en');
+
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleSubmit(event) {
@@ -128,10 +152,11 @@ class RoleProfile extends React.Component {
             });
   };
   render() {
+    const t = this.props.translate
     if (!this.state.loaded) {
       return (
         <CardHeader>
-          <CardTitle tag="h4">Loading role...</CardTitle>
+          <CardTitle tag="h4">{t("Loading role")}...</CardTitle>
         </CardHeader>
       );
     }
@@ -147,7 +172,7 @@ class RoleProfile extends React.Component {
         <Col md="8">
           <Card>
             <CardHeader>
-              <h5 className="title">Role Profile</h5>
+              <h5 className="title">{t("Role profile")}</h5>
             </CardHeader>
             <CardBody>
               <Form onSubmit={this.handleSubmit}>
@@ -166,10 +191,10 @@ class RoleProfile extends React.Component {
                   </Col>
                   <Col className="px-md-1" md="3">
                     <FormGroup>
-                      <label>Name</label>
+                      <label>{t("Name")}</label>
                       <Input
                         defaultValue={this.state.data.name}
-                        placeholder="Name"
+                        placeholder={t("Name")}
                         name="name"
                         type="text"
                       />
@@ -179,57 +204,57 @@ class RoleProfile extends React.Component {
                 <Row>
                   <Col className="px-md-1" md="2">
                     <FormGroup>
-                      <label>Patients</label>
+                      <label>{t("Patients")}</label>
                       <Input
                         defaultValue={this.state.data.permission_patient_see+this.state.data.permission_patient_edit}
                         name="permission_patient"
                         type="select"
                       >
-                        <option key={0} value={0}>None</option>
-                        <option key={0} value={1}>See</option>
-                        <option key={0} value={2}>Edit</option>
+                        <option key={0} value={0}>{t("None")}</option>
+                        <option key={0} value={1}>{t("See")}</option>
+                        <option key={0} value={2}>{t("Edit")}</option>
                       </Input>
                     </FormGroup>
                   </Col>
                   <Col className="px-md-1" md="2">
                     <FormGroup>
-                      <label>Machines</label>
+                      <label>{t("Machines")}</label>
                       <Input
                         defaultValue={this.state.data.permission_machine_see+this.state.data.permission_machine_edit}
                         name="permission_machine"
                         type="select"
                       >
-                        <option key={0} value={0}>None</option>
-                        <option key={0} value={1}>See</option>
-                        <option key={0} value={2}>Edit</option>
+                        <option key={0} value={0}>{t("None")}</option>
+                        <option key={0} value={1}>{t("See")}</option>
+                        <option key={0} value={2}>{t("Edit")}</option>
                       </Input>
                     </FormGroup>
                   </Col>
                   <Col className="px-md-1" md="2">
                     <FormGroup>
-                      <label>Tasks</label>
+                      <label>{t("Tasks")}</label>
                       <Input
                         defaultValue={this.state.data.permission_task_see+this.state.data.permission_task_edit}
                         name="permission_task"
                         type="select"
                       >
-                        <option key={0} value={0}>None</option>
-                        <option key={0} value={1}>See</option>
-                        <option key={0} value={2}>Edit</option>
+                        <option key={0} value={0}>{t("None")}</option>
+                        <option key={0} value={1}>{t("See")}</option>
+                        <option key={0} value={2}>{t("Edit")}</option>
                       </Input>
                     </FormGroup>
                   </Col>
                   <Col className="px-md-1" md="2">
                     <FormGroup>
-                      <label>Messages</label>
+                      <label>{t("Messages")}</label>
                       <Input
                         defaultValue={this.state.data.permission_message_see+this.state.data.permission_message_edit}
                         name="permission_message"
                         type="select"
                       >
-                        <option key={0} value={0}>None</option>
-                        <option key={0} value={1}>See</option>
-                        <option key={0} value={2}>Edit</option>
+                        <option key={0} value={0}>{t("None")}</option>
+                        <option key={0} value={1}>{t("See")}</option>
+                        <option key={0} value={2}>{t("Edit")}</option>
                       </Input>
                     </FormGroup>
                   </Col>
@@ -237,43 +262,43 @@ class RoleProfile extends React.Component {
                 <Row>
                   <Col className="px-md-1" md="2">
                     <FormGroup>
-                      <label>Users</label>
+                      <label>{t("Users")}</label>
                       <Input
                         defaultValue={this.state.data.permission_user_see+this.state.data.permission_user_edit}
                         name="permission_user"
                         type="select"
                       >
-                        <option key={0} value={0}>None</option>
-                        <option key={0} value={1}>See</option>
-                        <option key={0} value={2}>Edit</option>
+                        <option key={0} value={0}>{t("None")}</option>
+                        <option key={0} value={1}>{t("See")}</option>
+                        <option key={0} value={2}>{t("Edit")}</option>
                       </Input>
                     </FormGroup>
                   </Col>
                   <Col className="px-md-1" md="2">
                     <FormGroup>
-                      <label>Models</label>
+                      <label>{t("Models")}</label>
                       <Input
                         defaultValue={this.state.data.permission_machinetype_see+this.state.data.permission_machinetype_edit}
                         name="permission_model"
                         type="select"
                       >
-                        <option key={0} value={0}>None</option>
-                        <option key={0} value={1}>See</option>
-                        <option key={0} value={2}>Edit</option>
+                        <option key={0} value={0}>{t("None")}</option>
+                        <option key={0} value={1}>{t("See")}</option>
+                        <option key={0} value={2}>{t("Edit")}</option>
                       </Input>
                     </FormGroup>
                   </Col>
                   <Col className="px-md-1" md="2">
                     <FormGroup>
-                      <label>Roles</label>
+                      <label>{t("Roles")}</label>
                       <Input
                         defaultValue={this.state.data.permission_role_see+this.state.data.permission_role_edit}
                         name="permission_role"
                         type="select"
                       >
-                        <option key={0} value={0}>None</option>
-                        <option key={0} value={1}>See</option>
-                        <option key={0} value={2}>Edit</option>
+                        <option key={0} value={0}>{t("None")}</option>
+                        <option key={0} value={1}>{t("See")}</option>
+                        <option key={0} value={2}>{t("Edit")}</option>
                       </Input>
                     </FormGroup>
                   </Col>
@@ -288,7 +313,7 @@ class RoleProfile extends React.Component {
       );
     } else {
       role = (
-        <CardText>No user</CardText>
+        <CardText>{t("No role")}</CardText>
       );
     }
     return (
@@ -306,4 +331,4 @@ class RoleProfile extends React.Component {
   }
 }
 
-export default RoleProfile;
+export default withLocalize(RoleProfile);
