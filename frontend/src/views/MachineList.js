@@ -38,6 +38,18 @@ import {
   Col
 } from "reactstrap";
 
+import {
+  withLocalize,
+  Translate,
+  LocalizeContext,
+  LocalizeProvider
+} from 'react-localize-redux';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import common_en from "src/translations/en/common.json"
+import machinelist_en from "src/translations/en/machinelist.json"
+const en = Object.assign({}, common_en, machinelist_en)
+
 import $ from 'jquery';
 
 const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
@@ -91,6 +103,18 @@ class MachineList extends React.Component {
       filter_machine: "--(All)--",
       filter_location: "--(All)--"
     };
+
+    props.initialize({
+      languages: [
+        { name: 'English', code: 'en' }
+      ],
+      options: {
+        defaultLanguage: 'en',
+        renderToStaticMarkup
+      }
+    });
+    props.addTranslationForLanguage(en, 'en');
+
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleSubmit(event) {
@@ -168,6 +192,7 @@ class MachineList extends React.Component {
         });
   };
   render() {
+    const t = this.props.translate
     if (!this.state.loaded) {
       return (
         <CardHeader>
@@ -239,7 +264,7 @@ class MachineList extends React.Component {
                 <CardHeader>
                   <Row>
                     <Col className="px-md-12" md="8">
-                      <CardTitle tag="h3">Machines</CardTitle>
+                      <CardTitle tag="h3">{t("Machines")}</CardTitle>
                     </Col>
                     <Col className="px-md-1" md="2">
                       <Button
@@ -249,7 +274,7 @@ class MachineList extends React.Component {
                           filter_isOpen: !this.state.filter_isOpen
                         })}
                         >
-                        Filter machines
+                        {t("Filter machines")}
                       </Button>
                     </Col>
                     {this.props.me && this.props.me.permission_machine_edit && (
@@ -261,7 +286,7 @@ class MachineList extends React.Component {
                             filter_isOpen: false
                           })}
                           >
-                          Create machine
+                          {t("Create machine")}
                         </Button>
                       </Col>
                     )}
@@ -272,7 +297,7 @@ class MachineList extends React.Component {
                         <Col className="text-left" md="2">
                           <FormGroup>
                             <label>
-                              Model
+                              {t("Model")}
                             </label>
                             <Input
                               name="model"
@@ -289,7 +314,7 @@ class MachineList extends React.Component {
                         <Col className="px-md-1" md="2">
                           <FormGroup>
                             <label>
-                              Location
+                              {t("Location")}
                             </label>
                             <Input
                               name="location"
@@ -306,7 +331,7 @@ class MachineList extends React.Component {
                         <Col className="px-md-1" md="1">
                           <FormGroup>
                             <label>
-                              Available?
+                              {t("Available")}?
                             </label>
                             <Input
                               name="severity"
@@ -335,7 +360,7 @@ class MachineList extends React.Component {
                         </Col>
                         <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
                           <Button>
-                            Create
+                            {t("Create")}
                           </Button>
                         </Col>
                       </Row>
@@ -347,9 +372,9 @@ class MachineList extends React.Component {
                     <Table className="tablesorter" responsive>
                       <thead className="text-primary">
                         <tr>
-                          <th>Name</th>
-                          <th>Location</th>
-                          <th>Patient</th>
+                          <th>{t("Name")}</th>
+                          <th>{t("Location")}</th>
+                          <th>{t("Patient")}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -367,4 +392,4 @@ class MachineList extends React.Component {
   }
 }
 
-export default MachineList;
+export default withLocalize(MachineList);
