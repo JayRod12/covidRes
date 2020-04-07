@@ -1,12 +1,12 @@
 {
-    "Assigned machine": "Assigned machine",
-    "Associated tasks": "Associated tasks",
-    "Loading patient": "Loading patient",
-    "Loading tasks": "Loading tasks",
-    "No messages": "No messages",
-    "No patient": "No patient",
-    "No tasks": "No tasks",
-    "Patient description": "Patient description",
-    "Patient profile": "Patient profile",
-    "Severity evolution": "Severity evolution"
+    "Assigned machine": "Machine attribuée",
+    "Associated tasks": "Tâche associée",
+    "Loading patient": "Chargement patient",
+    "Loading tasks": "Chargement tasks",
+    "No messages": "Pas de messages",
+    "No patient": "Pas de patient",
+    "No tasks": "Pas de tasks",
+    "Patient description": "Description patient ",
+    "Patient profile": "Profil patient",
+    "Severity evolution": "Evolution de l'état"
 }

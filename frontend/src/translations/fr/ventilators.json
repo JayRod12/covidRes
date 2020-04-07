@@ -1,11 +1,11 @@
 {
-    "Buffer row": "Buffer row",
-    "Create assignment": "Create assignment",
-    "Edit ventilator assignment?": "Edit ventilator assignment?",
-    "Filter assignments": "Filter assignments",
-    "Follow": "Follow",
-    "Machine or patient already assigned during this time interval!": "Machine or patient already assigned during this time interval!",
-    "Move ventilator?": "Move ventilator?",
-    "The start date needs to be before the end date.": "The start date needs to be before the end date.",
-    "You are about to change the assignment of this ventilator. Please confirm.": "You are about to change the assignment of this ventilator. Please confirm."
+    "Buffer row": "Défaut",
+    "Create assignment": "Créer Attribution",
+    "Edit ventilator assignment?": "Mettre à jour?",
+    "Filter assignments": "Filtrer Attributions",
+    "Follow": "Suivre",
+    "Machine or patient already assigned during this time interval!": "Machine ou patient déjà attribué",
+    "Move ventilator?": "Déplacer machine?",
+    "The start date needs to be before the end date.": "Date de début doit être avant la fin",
+    "You are about to change the assignment of this ventilator. Please confirm.": "Confirmer changement d'attribution"
 }
