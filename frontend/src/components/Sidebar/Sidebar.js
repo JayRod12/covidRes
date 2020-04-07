@@ -35,9 +35,13 @@ import {
 } from 'react-localize-redux';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import common_en from "src/translations/en/common.json"
-import sidebar_en from "src/translations/en/sidebar.json"
-const en = Object.assign({}, common_en, sidebar_en)
+import languages from "src/translations/languages.json"
+var lang = {}
+languages.forEach((language, i) => {
+  const common = require('src/translations/' + language.code + '/common.json')
+  const local = require('src/translations/' + language.code + '/sidebar.json')
+  lang[language.code] = Object.assign({}, common, local)
+});
 
 var ps;
 
@@ -47,15 +51,15 @@ class Sidebar extends React.Component {
     this.activeRoute.bind(this);
 
     props.initialize({
-      languages: [
-        { name: 'English', code: 'en' }
-      ],
+      languages: languages,
       options: {
         defaultLanguage: 'en',
         renderToStaticMarkup
       }
     });
-    props.addTranslationForLanguage(en, 'en');
+    languages.forEach((language, i) => {
+      props.addTranslationForLanguage(lang[language.code], language.code);
+    });
   }
   // verifies if routeName is the one active (in browser input)
   activeRoute(routeName) {
