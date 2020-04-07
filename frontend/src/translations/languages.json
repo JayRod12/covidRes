@@ -2,5 +2,9 @@
   {
     "name": "English",
     "code": "en"
+  },
+  {
+    "name": "Francais",
+    "code": "fr"
   }
 ]
