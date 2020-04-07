@@ -1,7 +1,7 @@
 {
-  "Loading roles": "Loading roles",
-  "Role name": "Role name",
-  "Model name": "Model name",
-  "Filter users": "Filter users",
-  "Create user": "Create user"
+    "Create user": "Create user",
+    "Filter users": "Filter users",
+    "Loading roles": "Loading roles",
+    "Model name": "Model name",
+    "Role name": "Role name"
 }
