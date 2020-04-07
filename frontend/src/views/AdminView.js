@@ -38,6 +38,18 @@ import {
   Col
 } from "reactstrap";
 
+import {
+  withLocalize,
+  Translate,
+  LocalizeContext,
+  LocalizeProvider
+} from 'react-localize-redux';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import common_en from "src/translations/en/common.json"
+import adminview_en from "src/translations/en/adminview.json"
+const en = Object.assign({}, common_en, adminview_en)
+
 import moment from 'moment'
 import $ from 'jquery';
 
@@ -78,6 +90,18 @@ class AdminView extends React.Component {
       filter_last_name: "--(All)--",
       filter_role: "--(All)--"
     };
+
+    props.initialize({
+      languages: [
+        { name: 'English', code: 'en' }
+      ],
+      options: {
+        defaultLanguage: 'en',
+        renderToStaticMarkup
+      }
+    });
+    props.addTranslationForLanguage(en, 'en');
+
     this.handleRoleSubmit = this.handleRoleSubmit.bind(this);
     this.handleModelSubmit = this.handleModelSubmit.bind(this);
     this.handleUserSubmit = this.handleUserSubmit.bind(this);
@@ -219,20 +243,17 @@ class AdminView extends React.Component {
       });
   };
   render() {
+    const t = this.props.translate
     if (!(this.state.loaded_roles && this.state.loaded_models && this.state.loaded_users)) {
       return (
         <CardHeader>
-          <CardTitle tag="h4">Loading roles...</CardTitle>
+          <CardTitle tag="h4">{t("Loading roles")}...</CardTitle>
         </CardHeader>
       );
     }
     const results_roles = this.state.data_roles;
     const results_models = this.state.data_models;
     const results_users = this.state.data_users;
-
-    console.log("Roles: ", results_roles)
-    console.log("Models: ", results_models)
-    console.log("Users: ", results_users)
 
     return (
       <>
@@ -243,7 +264,7 @@ class AdminView extends React.Component {
                 <CardHeader>
                   <Row>
                     <Col className="text-left" md="2">
-                      <CardTitle tag="h4">Roles</CardTitle>
+                      <CardTitle tag="h4">{t("Roles")}</CardTitle>
                     </Col>
                     { true && (//this.props.me && this.props.me.permission_role_edit && (
                       <Col className="px-md-1" md="5">
@@ -252,7 +273,7 @@ class AdminView extends React.Component {
                             <Col className="px-md-1" md="8">
                               <FormGroup>
                                 <Input
-                                  placeholder="Role name"
+                                  placeholder={t("Role name")}
                                   name="name"
                                   type="text"
                                 />
@@ -260,7 +281,7 @@ class AdminView extends React.Component {
                             </Col>
                             <Col className="px-md-1" md="2">
                               <Button>
-                                Create
+                                {t("Create")}
                               </Button>
                             </Col>
                           </Row>
@@ -273,7 +294,7 @@ class AdminView extends React.Component {
                   <Table className="tablesorter" responsive>
                     <thead className="text-primary">
                       <tr>
-                        <th>Role name</th>
+                        <th>{t("Role name")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -292,7 +313,7 @@ class AdminView extends React.Component {
                 <CardHeader>
                   <Row>
                     <Col className="text-left" md="2">
-                      <CardTitle tag="h4">Models</CardTitle>
+                      <CardTitle tag="h4">{t("Models")}</CardTitle>
                     </Col>
                     { true && (//this.props.me && this.props.me.permission_role_edit && (
                       <Col className="px-md-1" md="5">
@@ -301,7 +322,7 @@ class AdminView extends React.Component {
                             <Col className="px-md-1" md="8">
                               <FormGroup>
                                 <Input
-                                  placeholder="Model name"
+                                  placeholder={t("Model name")}
                                   name="name"
                                   type="text"
                                 />
@@ -309,7 +330,7 @@ class AdminView extends React.Component {
                             </Col>
                             <Col className="px-md-1" md="2">
                               <Button>
-                                Create
+                                {t("Create")}
                               </Button>
                             </Col>
                           </Row>
@@ -322,7 +343,7 @@ class AdminView extends React.Component {
                   <Table className="tablesorter" responsive>
                     <thead className="text-primary">
                       <tr>
-                        <th>Model name</th>
+                        <th>{t("Model name")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -343,7 +364,7 @@ class AdminView extends React.Component {
                 <CardHeader>
                   <Row>
                     <Col className="text-left" md="8">
-                      <CardTitle tag="h4">Users</CardTitle>
+                      <CardTitle tag="h4">{t("Users")}</CardTitle>
                     </Col>
                     <Col className="px-md-1" md="2">
                       <Button
@@ -353,7 +374,7 @@ class AdminView extends React.Component {
                           filter_isOpen: !this.state.filter_isOpen
                         })}
                         >
-                        Filter users
+                        {t("Filter users")}
                       </Button>
                     </Col>
                     {this.props.me && this.props.me.permission_patient_edit && (
@@ -365,7 +386,7 @@ class AdminView extends React.Component {
                             filter_isOpen: false
                           })}
                           >
-                          Create user
+                          {t("Create user")}
                         </Button>
                       </Col>
                     )}
@@ -376,7 +397,7 @@ class AdminView extends React.Component {
                         <Col className="text-left" md="2">
                           <FormGroup>
                             <label>
-                              Username
+                              {t("Username")}
                             </label>
                             <Input
                               name="username"
@@ -388,7 +409,7 @@ class AdminView extends React.Component {
                         <Col className="px-md-1" md="2">
                           <FormGroup>
                             <label>
-                              First name
+                              {t("First name")}
                             </label>
                             <Input
                               name="first_name"
@@ -400,7 +421,7 @@ class AdminView extends React.Component {
                         <Col className="px-md-1" md="2">
                           <FormGroup>
                             <label>
-                              Last name
+                              {t("Last name")}
                             </label>
                             <Input
                               name="last_name"
@@ -412,7 +433,7 @@ class AdminView extends React.Component {
                         <Col className="px-md-1" md="2">
                           <FormGroup>
                             <label>
-                              Role
+                              {t("Role")}
                             </label>
                             <Input
                               name="location"
@@ -436,7 +457,7 @@ class AdminView extends React.Component {
                         <Col className="px-md-1" md={{ span: 3, offset: 1 }}>
                           <FormGroup>
                             <Input
-                              placeholder="Username"
+                              placeholder={t("Username")}
                               name="username"
                               type="text"
                             />
@@ -444,7 +465,7 @@ class AdminView extends React.Component {
                         </Col>
                         <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
                           <Button>
-                            Create
+                            {t("Create")}
                           </Button>
                         </Col>
                       </Row>
@@ -455,10 +476,10 @@ class AdminView extends React.Component {
                   <Table className="tablesorter" responsive>
                     <thead className="text-primary">
                       <tr>
-                        <th>Username</th>
-                        <th>First name</th>
-                        <th>Last name</th>
-                        <th>Role</th>
+                        <th>{t("Username")}</th>
+                        <th>{t("First name")}</th>
+                        <th>{t("Last name")}</th>
+                        <th>{t("Role")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -487,4 +508,4 @@ class AdminView extends React.Component {
   }
 }
 
-export default AdminView;
+export default withLocalize(AdminView);
