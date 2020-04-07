@@ -97,13 +97,6 @@ class PatientProfile extends React.Component {
       graph_xy: [],
     };
 
-    props.initialize({
-      languages: languages,
-      options: {
-        defaultLanguage: 'en',
-        renderToStaticMarkup
-      }
-    });
     languages.forEach((language, i) => {
       props.addTranslationForLanguage(lang[language.code], language.code);
     });

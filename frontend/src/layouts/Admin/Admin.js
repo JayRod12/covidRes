@@ -26,6 +26,16 @@ import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 
+import {
+  withLocalize,
+  Translate,
+  LocalizeContext,
+  LocalizeProvider
+} from 'react-localize-redux';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import languages from "src/translations/languages.json"
+
 import routes from "src/routes.js";
 import sidebar_routes from "src/sidebar_routes.js";
 
@@ -42,6 +52,14 @@ class Admin extends React.Component {
       sidebarOpened:
         document.documentElement.className.indexOf("nav-open") !== -1
     };
+
+    props.initialize({
+      languages: languages,
+      options: {
+        defaultLanguage: 'en',
+        renderToStaticMarkup
+      }
+    });
   }
   set_me = (data) => {
     this.setState({me: data})
@@ -147,4 +165,4 @@ class Admin extends React.Component {
   }
 }
 
-export default Admin;
+export default withLocalize(Admin);

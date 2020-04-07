@@ -92,14 +92,6 @@ class AdminNavbar extends React.Component {
       color: "navbar-transparent",
       data: []
     };
-
-    props.initialize({
-      languages: languages,
-      options: {
-        defaultLanguage: 'en',
-        renderToStaticMarkup
-      }
-    });
     languages.forEach((language, i) => {
       props.addTranslationForLanguage(lang[language.code], language.code);
     });

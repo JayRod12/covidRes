@@ -90,13 +90,6 @@ class MachineProfile extends React.Component {
       error_message_tasks: "",
     };
 
-    props.initialize({
-      languages: languages,
-      options: {
-        defaultLanguage: 'en',
-        renderToStaticMarkup
-      }
-    });
     languages.forEach((language, i) => {
       props.addTranslationForLanguage(lang[language.code], language.code);
     });

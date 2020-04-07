@@ -126,16 +126,6 @@ class Ventilators extends React.Component {
             filterc_machine: "--(All)--",
             filterc_location: "--(All)--"
         };
-        props.initialize({
-          languages: languages,
-          options: {
-            defaultLanguage: 'en',
-            renderToStaticMarkup
-          }
-        });
-        languages.forEach((language, i) => {
-          props.addTranslationForLanguage(lang[language.code], language.code);
-        });
     }
     groups_filtered = [];
     componentDidMount() {

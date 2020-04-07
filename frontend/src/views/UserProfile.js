@@ -87,14 +87,6 @@ class UserProfile extends React.Component {
       placeholder: "Loading",
       error_message: "",
     };
-
-    props.initialize({
-      languages: languages,
-      options: {
-        defaultLanguage: 'en',
-        renderToStaticMarkup
-      }
-    });
     languages.forEach((language, i) => {
       props.addTranslationForLanguage(lang[language.code], language.code);
     });

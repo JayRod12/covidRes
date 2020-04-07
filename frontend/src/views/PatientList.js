@@ -108,13 +108,6 @@ class PatientList extends React.Component {
       filter_location: "--(All)--"
     };
 
-    props.initialize({
-      languages: languages,
-      options: {
-        defaultLanguage: 'en',
-        renderToStaticMarkup
-      }
-    });
     languages.forEach((language, i) => {
       props.addTranslationForLanguage(lang[language.code], language.code);
     });

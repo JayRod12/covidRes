@@ -102,13 +102,6 @@ class Dashboard extends React.Component {
       filter_per_model: "--(All)--"
     }
 
-    props.initialize({
-      languages: languages,
-      options: {
-        defaultLanguage: 'en',
-        renderToStaticMarkup
-      }
-    });
     languages.forEach((language, i) => {
       props.addTranslationForLanguage(lang[language.code], language.code);
     });

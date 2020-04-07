@@ -99,13 +99,6 @@ class AdminView extends React.Component {
       filter_role: "--(All)--"
     };
 
-    props.initialize({
-      languages: languages,
-      options: {
-        defaultLanguage: 'en',
-        renderToStaticMarkup
-      }
-    });
     languages.forEach((language, i) => {
       props.addTranslationForLanguage(lang[language.code], language.code);
     });
