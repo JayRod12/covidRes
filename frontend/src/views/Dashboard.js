@@ -669,7 +669,7 @@ class Dashboard extends React.Component {
           datasets: [
             {
               stack: arbitraryStackkey2,
-              label: "In use",
+              label: t("In use"),
               fill: true,
               backgroundColor: "#d048b6",
               borderColor: "#d048b6",
