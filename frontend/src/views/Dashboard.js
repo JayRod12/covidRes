@@ -1069,7 +1069,7 @@ class Dashboard extends React.Component {
                   <Row>
                     <Col className="text-left" sm="8">
                       <h5 className="card-category">{t("Today") + " (" + t("Total") + ": " + total_machines + " " + t("Ventilators") + ")"}</h5>
-                      <CardTitle tag="h3"><i className="tim-icons icon-square-pin text-primary" />{" Machine per Location"}</CardTitle>
+                      <CardTitle tag="h3"><i className="tim-icons icon-square-pin text-primary" />{t("Machine per location")}</CardTitle>
                     </Col>
                     <Col sm="4">
                     <Input
@@ -1101,8 +1101,8 @@ class Dashboard extends React.Component {
                 <CardHeader>
                   <Row>
                     <Col className="text-left" sm="8">
-                      <h5 className="card-category">{"Today " + "(Total: " + total_machines + " Ventilators)"}</h5>
-                      <CardTitle tag="h3"><i className="tim-icons icon-support-17 text-primary" />{" Machine per Type"}</CardTitle>
+                      <h5 className="card-category">{t("Today") + " (" + t("Total") + ": " + total_machines + " " + t("Ventilators") + ")"}</h5>
+                      <CardTitle tag="h3"><i className="tim-icons icon-support-17 text-primary" />{t("Machine per type")}</CardTitle>
                     </Col>
                     <Col sm="4">
                     <Input
@@ -1141,7 +1141,7 @@ class Dashboard extends React.Component {
                 <CardHeader>
                   <h5 className="card-category">{t("Evolution")}</h5>
                   <CardTitle tag="h3">
-                    <i className="tim-icons icon-single-02 text-success" /> {" Ventilators in use"}
+                    <i className="tim-icons icon-single-02 text-success" /> {t("Ventilators in use")}
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
@@ -1159,7 +1159,7 @@ class Dashboard extends React.Component {
                 <CardHeader>
                   <h5 className="card-category">Future projection for Vaud (VD)</h5>
                   <CardTitle tag="h3">
-                    <i className="tim-icons icon-single-02 text-success" /> {"Daily Hospitalization"}
+                    <i className="tim-icons icon-single-02 text-success" /> {t("Daily hospitalization")}
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
@@ -1179,7 +1179,7 @@ class Dashboard extends React.Component {
                 <CardHeader>
                   <h5 className="card-category">{t("Evolution (NEW)")}</h5>
                   <CardTitle tag="h3">
-                    <i className="tim-icons icon-single-02 text-success" /> {" Ventilators in use per model"}
+                    <i className="tim-icons icon-single-02 text-success" /> {t("Ventilators in use per model")}
                   </CardTitle>
                 </CardHeader>
                 <CardBody>

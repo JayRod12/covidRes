@@ -1,7 +1,12 @@
 {
+    "Daily hospitalization": "Daily hospitalization (in French)",
     "Evolution": "Evolution",
     "Evolution (NEW)": "Evolution (NEW)",
     "In use": "En utilisation",
+    "Machine per location": "Machine per locatiooon",
+    "Machine per type": "Machine per typeee",
     "Number of patients": "Nombre de patients",
-    "Number of ventilators": "Nombre de respirateurs"
+    "Number of ventilators": "Nombre de respirateurs",
+    "Ventilators in use": "Respirateurs en utilisation",
+    "Ventilators in use per model": "Respirateurs en utilisation per modele (I don't have accents)"
 }

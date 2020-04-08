@@ -1,7 +1,12 @@
 {
+    "Daily hospitalization": "Daily hospitalization",
     "Evolution": "Evolution",
     "Evolution (NEW)": "Evolution (NEW)",
     "In use": "In use",
+    "Machine per location": "Machine per location",
+    "Machine per type": "Machine per type",
     "Number of patients": "Number of patients",
-    "Number of ventilators": "Number of ventilators"
+    "Number of ventilators": "Number of ventilators",
+    "Ventilators in use": "Ventilators in use",
+    "Ventilators in use per model": "Ventilators in use per model"
 }
