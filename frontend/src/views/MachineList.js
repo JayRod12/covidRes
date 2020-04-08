@@ -336,8 +336,8 @@ class MachineList extends React.Component {
                               onChange={(event) => {this.setState({filter_availability: event.target.value})}}
                             >
                               <option key={0} value="--(All)--">--(All)--</option>
-                              <option key={1} value={1}>No</option>
-                              <option key={2} value={0}>Yes</option>
+                              <option key={1} value={1}>{t("No")}</option>
+                              <option key={2} value={0}>{t("Yes")}</option>
                             </Input>
                           </FormGroup>
                         </Col>

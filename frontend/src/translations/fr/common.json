@@ -23,6 +23,7 @@
     "Name": "Nom",
     "Nickname": "Surnom",
     "None": "Rien",
+    "No": "Non",
     "Ok": "Ok",
     "Password": "Mot de passe",
     "Patient": "Patient",
@@ -44,5 +45,6 @@
     "Total": "Total",
     "Username": "Username",
     "Users": "Utilisateur",
-    "Ventilators": "Respirateurs"
+    "Ventilators": "Respirateurs",
+    "Yes": "Oui"
 }
