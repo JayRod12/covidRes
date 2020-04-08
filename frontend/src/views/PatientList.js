@@ -93,12 +93,17 @@ class PatientRow extends React.Component {
 class PatientList extends React.Component {
   constructor(props) {
     super(props);
+
+    languages.forEach((language, i) => {
+      props.addTranslationForLanguage(lang[language.code], language.code);
+    });
+
     this.state = {
       data: [],
       loaded: false,
       placeholder: "Loading",
       error_message: "",
-      severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"],
+      severity_list: ["SEV_0","SEV_1","SEV_2","SEV_3","SEV_4","SEV_5","SEV_6"],
       redirect: 0,
       create_isOpen: false,
       filter_isOpen: false,
@@ -107,11 +112,6 @@ class PatientList extends React.Component {
       filter_machine: "--(All)--",
       filter_location: "--(All)--"
     };
-
-    languages.forEach((language, i) => {
-      props.addTranslationForLanguage(lang[language.code], language.code);
-    });
-
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleSubmit(event) {
@@ -318,7 +318,7 @@ class PatientList extends React.Component {
                             >
                               <option key={0} value="--(All)--">--(All)--</option>
                               {this.state.severity_list.map((val, i) => {return (
-                                <option key={i+1} value={i}>{val}</option>
+                                <option key={i+1} value={i}>{t(val)}</option>
                               )})}
                             </Input>
                           </FormGroup>
@@ -333,7 +333,7 @@ class PatientList extends React.Component {
                         <Col className="px-md-1" md={{ span: 3, offset: 1 }}>
                           <FormGroup>
                             <Input
-                              placeholder="Nickname"
+                              placeholder={t("Nickname")}
                               name="name"
                               type="text"
                             />
@@ -343,7 +343,7 @@ class PatientList extends React.Component {
                           <FormGroup>
                             <Input type="select" name="severity">
                               {this.state.severity_list.map((val, i) => {return (
-                                <option key={i+1} value={i}>{val}</option>
+                                <option key={i+1} value={i}>{t(val)}</option>
                               )})}
                             </Input>
                           </FormGroup>
