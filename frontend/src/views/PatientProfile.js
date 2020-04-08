@@ -93,7 +93,7 @@ class PatientProfile extends React.Component {
       loaded_messages: false,
       placeholder_messages: "Loading",
       error_message_messages: "",
-      severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"],
+      severity_list: ["SEV_0","SEV_1","SEV_2","SEV_3","SEV_4","SEV_5","SEV_6"],
       graph_xy: [],
     };
 
@@ -354,7 +354,7 @@ class PatientProfile extends React.Component {
                         type="select"
                       >
                         {this.state.severity_list.map((val, i) => {return (
-                          <option key={i+1} value={i}>{val}</option>
+                          <option key={i+1} value={i}>{t(val)}</option>
                         )})}
                       </Input>
                     </FormGroup>
@@ -451,7 +451,7 @@ class PatientProfile extends React.Component {
                     return {
                       datasets: [
                         {
-                          label: "Data",
+                          label: t("Severity"),
                           fill: true,
                           showLine: true,
                           lineTension: 0,
@@ -489,10 +489,10 @@ class PatientProfile extends React.Component {
                     position: "nearest",
                     callbacks: {
                         title: function (tooltipItem, data) {
-                            return "Date: " + moment(data.labels[tooltipItem[0].index]).format("HH:mm (D-MMM-YYYY)");
+                            return t("Date") + ": " + moment(data.labels[tooltipItem[0].index]).format("HH:mm (D-MMM-YYYY)");
                         },
                         label: function(tooltipItems, data) {
-                            return "Severity: " + tooltipItems.yLabel;
+                            return t("Severity") + ": " + tooltipItems.yLabel;
                         },
                         footer: function (tooltipItem, data) { return "..."; }
                     }
@@ -641,7 +641,7 @@ class PatientProfile extends React.Component {
                       <label>{t("Message")}</label>
                       <Input
                         cols="80"
-                        placeholder="Message"
+                        placeholder={t("Message")}
                         name="message"
                         rows="3"
                         type="textarea"
