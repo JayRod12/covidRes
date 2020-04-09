@@ -570,7 +570,7 @@ class Ventilators extends React.Component {
             }
 
             if (this._datesIntersect(tentativeStartDate, tentativeEndDate, item.start_time, item.end_time)) {
-                if (item.patient_id == tentativePatientID) {
+                if (item.group > 0 && item.patient_id == tentativePatientID) {
                     return false;
                 }
                 if (item.group == tentativeMachineID) {
