@@ -39,6 +39,20 @@ class User(AbstractUser):
     	return str(self.username)
 
 # Manage
+class MachineType(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+    	return self.name
+
+class Location(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+
 class Patient(models.Model):
     name = models.CharField(max_length=100)
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
@@ -54,7 +68,7 @@ class Patient(models.Model):
     )
     severity = models.IntegerField(default=1, choices=SEVERITY)
     admission_date = models.DateTimeField('Admission date: ', default=timezone.now)
-    location = models.CharField(max_length=100, blank=True)
+    location = models.ForeignKey(Location, default=None, null=True, on_delete=models.SET_NULL)
     description = models.TextField(blank=True)
     machine_assigned = models.ForeignKey('Machine', null=True, blank=True, on_delete=models.SET_NULL)
     # History
@@ -108,24 +122,9 @@ class Patient(models.Model):
         yy = [int(a) for a in self.history_machine_y.split(', ')]
         return [{'x': x, 'y': y} for x, y in zip(xx, yy)]
 
-class MachineType(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-
-    def __str__(self):
-    	return self.name
-
-class Location(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-
-    def __str__(self):
-        return self.name
-
 class Machine(models.Model):
     model = models.ForeignKey(MachineType, on_delete=models.CASCADE)
-    # location = models.ForeignKey(Location, on_delete=models.CASCADE)
-    location =  models.CharField(max_length=100)
+    location = models.ForeignKey(Location, default=None, null=True, on_delete=models.SET_NULL)
     description = models.TextField(blank=True)
     patient_assigned = models.ForeignKey(Patient, null=True, blank=True, on_delete=models.SET_NULL)
     def __str__(self):
