@@ -197,7 +197,7 @@ class PatientList extends React.Component {
           (this.state.filter_severity == "--(All)--" || this.state.filter_severity == entry.severity) &&
           (this.state.filter_machine == "--(All)--" || this.state.filter_machine == entry.machine_assigned_model || this.state.filter_machine == "" && entry.machine_assigned_model == null) &&
           (this.state.filter_location == "--(All)--" || this.state.filter_location == entry.location) &&
-          (this.state.filter_name == "--(All)--" || this.state.filter_name.length <= entry.name.length && this.state.filter_name.toLowerCase() == entry.name.substring(0, this.state.filter_name.length).toLowerCase())
+          (this.state.filter_name.length == 0 || this.state.filter_name.length <= entry.name.length && this.state.filter_name.toLowerCase() == entry.name.substring(0, this.state.filter_name.length).toLowerCase())
         ) {return (
           <PatientRow
             key={entry.pk}

@@ -866,7 +866,7 @@ class Ventilators extends React.Component {
                                   (this.state.filterc_severity == "--(All)--" || this.state.filterc_severity == patient.severity) &&
                                   (this.state.filterc_machine == "--(All)--" || this.state.filterc_machine == patient.machine_assigned_model || this.state.filterc_machine == "" && patient.machine_assigned_model == null) &&
                                   (this.state.filterc_location == "--(All)--" || this.state.filterc_location == patient.location_name) &&
-                                  (this.state.filterc_name.length > 0 || this.state.filterc_name.length <= patient.name.length && this.state.filterc_name.toLowerCase() == patient.name.substring(0, this.state.filterc_name.length).toLowerCase()) &&
+                                  (this.state.filterc_name.length == 0 || this.state.filterc_name.length <= patient.name.length && this.state.filterc_name.toLowerCase() == patient.name.substring(0, this.state.filterc_name.length).toLowerCase()) &&
                                   <PatientRow
                                     key={patient.pk}
                                     pk={patient.pk}
