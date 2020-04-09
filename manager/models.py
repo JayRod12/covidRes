@@ -68,6 +68,7 @@ class Patient(models.Model):
     )
     severity = models.IntegerField(default=1, choices=SEVERITY)
     admission_date = models.DateTimeField('Admission date: ', default=timezone.now)
+    birth = models.DateTimeField(null=True, blank=True)
     location = models.ForeignKey(Location, default=None, null=True, on_delete=models.SET_NULL)
     description = models.TextField(blank=True)
     machine_assigned = models.ForeignKey('Machine', null=True, blank=True, on_delete=models.SET_NULL)
