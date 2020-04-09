@@ -86,7 +86,7 @@ class PatientRow extends React.Component {
         <tr>
           <td><Link onClick={this.props.onClick}>{this.props.name}</Link></td>
           <td className="text-center">{this.props.severity}</td>
-          <td>{this.props.location}</td>
+          <td>{this.props.location_name}</td>
           <td>{this.props.machine_assigned_model}</td>
           <td>{moment(this.props.admission_date).format("HH:mm (DD-MMM-YYYY)")}</td>
         </tr>
@@ -126,7 +126,7 @@ class Ventilators extends React.Component {
             filterc_machine: "--(All)--",
             filterc_location: "--(All)--"
         };
-        
+
         languages.forEach((language, i) => {
           props.addTranslationForLanguage(lang[language.code], language.code);
         });
@@ -166,9 +166,9 @@ class Ventilators extends React.Component {
                 const groups = []; const allMachines = [];
                 results.forEach(ventilator => {
                     //const ventilatorName = ventilator.model_name + " #" + ventilator.pk + " (" + ventilator.location + ")";
-                    const ventilatorName = (<><Link to={'/machine/' + ventilator.pk}>{ventilator.model_name}</Link> - {ventilator.location}</>)
-                    groups.push({ id: ventilator.pk, title: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location});
-                    allMachines.push({ id: ventilator.pk, name: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location})
+                    const ventilatorName = (<><Link to={'/machine/' + ventilator.pk}>{ventilator.model_name}</Link> - {ventilator.location_name}</>)
+                    groups.push({ id: ventilator.pk, title: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location_name});
+                    allMachines.push({ id: ventilator.pk, name: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location_name})
                 });
                 this.setState(prevState => ({
                     ...prevState, groups: groups, allMachines: allMachines
@@ -625,7 +625,7 @@ class Ventilators extends React.Component {
 
             this.groups_filtered = [{id: 0, title: t("Buffer row")}, ...this.state.groups.filter(the_filter).filter(item => (!this.state.filter_follow || this.state.selectedItem == null || bool_machine_followed_dict[item.id]))]
             models = [...new Set(this.state.data_patients.map(patient => patient.machine_assigned_model))]
-            locations = [...new Set(this.state.data_patients.map(patient => patient.location))]
+            locations = [...new Set(this.state.data_patients.map(patient => patient.location_name))]
         }
         return (
             <div className="content">
@@ -865,7 +865,7 @@ class Ventilators extends React.Component {
                                 {this.state.data_patients.map(patient => {return(
                                   (this.state.filterc_severity == "--(All)--" || this.state.filterc_severity == patient.severity) &&
                                   (this.state.filterc_machine == "--(All)--" || this.state.filterc_machine == patient.machine_assigned_model || this.state.filterc_machine == "" && patient.machine_assigned_model == null) &&
-                                  (this.state.filterc_location == "--(All)--" || this.state.filterc_location == patient.location) &&
+                                  (this.state.filterc_location == "--(All)--" || this.state.filterc_location == patient.location_name) &&
                                   (this.state.filterc_name.length > 0 || this.state.filterc_name.length <= patient.name.length && this.state.filterc_name.toLowerCase() == patient.name.substring(0, this.state.filterc_name.length).toLowerCase()) &&
                                   <PatientRow
                                     key={patient.pk}
@@ -873,7 +873,7 @@ class Ventilators extends React.Component {
                                     name={patient.name}
                                     admission_date={patient.admission_date}
                                     severity={patient.severity}
-                                    location={patient.location}
+                                    location_name={patient.location_name}
                                     machine_assigned_model={patient.machine_assigned_model}
                                     onClick={this._bufferNewAssignment.bind(this, patient)}
                                   />
