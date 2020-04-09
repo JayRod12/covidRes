@@ -38,8 +38,15 @@ import {
   Form,
   Input,
   Row,
+  Table,
   Col
 } from "reactstrap";
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 import {
   withLocalize,
@@ -102,6 +109,8 @@ class PatientProfile extends React.Component {
       severity_list: ["SEV_0","SEV_1","SEV_2","SEV_3","SEV_4","SEV_5","SEV_6"],
       graph_xy: [],
       redirect: false,
+      showDialog: false,
+      selectedTask: null,
     };
 
     languages.forEach((language, i) => {
@@ -110,6 +119,23 @@ class PatientProfile extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
+  }
+  _commit = () => {
+      fetch('/rest/assignment_tasks/' + this.state.selectedTask.pk + "/", {
+          method: 'PATCH',
+          body: JSON.stringify({
+              bool_completed: this.state.selectedTask.bool_install,
+              bool_install: true
+          }),
+          headers: {
+              "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+          }
+      }).then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      }).then(data => {window.location.reload()})
   }
   handleSubmit(event) {
     event.preventDefault();
@@ -292,51 +318,6 @@ class PatientProfile extends React.Component {
                 };
               });
             });
-  };
-  pop = props => {
-    var color;
-    color = props.bool_install == 0 ? 1 : 5;
-    var type;
-    switch (color) {
-      case 1:
-        type = "primary";
-        break;
-      case 2:
-        type = "success";
-        break;
-      case 3:
-        type = "danger";
-        break;
-      case 4:
-        type = "warning";
-        break;
-      case 5:
-        type = "info";
-        break;
-      default:
-        break;
-    }
-    var options = {};
-    options = {
-      place: "tr",
-      message: (
-        <AssignmentTaskWindow
-          key={props.pk}
-          pk={props.pk}
-          machine={props.machine}
-          patient={props.patient}
-          bool_install={props.bool_install}
-          machine_model={props.machine_model}
-          patient_name={props.patient_name}
-          machine_location={props.machine_location}
-          patient_location={props.patient_location}
-          date={props.date}
-        />
-      ),
-      type: type,
-      icon: "tim-icons icon-bell-55",
-    };
-    this.refs.notificationAlert.notificationAlert(options);
   };
   render() {
     const t = this.props.translate
@@ -618,15 +599,12 @@ class PatientProfile extends React.Component {
         </Alert>
       );
     } else if (this.state.data_tasks.length > 0) {
-      tasks = this.state.data_tasks.map((props, index) => (
-        <Button
-          key = {props.pk}
-          block
-          color={props.bool_install == 0 ? "primary" : "info"}
-          onClick={() => this.pop(props)}
-        >
-          {props.machine_model} - {props.patient_name}
-        </Button>
+      tasks = this.state.data_tasks.map((entry, index) => (
+        <tr>
+          <td><Link onClick={() => {this.setState({showDialog: true, selectedTask: entry})}}>{entry.bool_install ? t("Remove") : t("Install")}</Link></td>
+          <td><Link to={'/machine/'+entry.machine}>{entry.machine_model}</Link></td>
+          <td>{moment(entry.date).format("HH:mm (DD-MMM-YYYY)")}</td>
+        </tr>
         )
       );
     } else {
@@ -671,11 +649,47 @@ class PatientProfile extends React.Component {
     return (
       <div className="content">
         {this.state.redirect1 && this.state.redirect2 && (<Redirect to={'/patients'} />)}
-        <div className="react-notification-alert-container">
-          <NotificationAlert ref="notificationAlert" />
-        </div>
         <div className="content">
           <Row>
+            {this.state.selectedTask && (
+              <Dialog
+                  open={this.state.showDialog}
+                  onClose={() => this._closeDialog(false)}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+              >
+              <DialogTitle id="alert-dialog-title">
+                <h3 align="center">{this.state.selectedTask.bool_install ? t("Remove") : t("Install")}</h3>
+                <h5 align="center">{moment(this.state.selectedTask.date).format("HH:mm (DD-MMM-YYYY)")}</h5>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Row>
+                    <Col md="5">
+                      <h4 align="center"><Link to={'/patient/'+this.state.selectedTask.patient}>{this.state.selectedTask.patient_name}</Link></h4>
+                    </Col>
+                    <Col md="2">
+                      {" => "}
+                    </Col>
+                    <Col md="5">
+                      <h4 align="center"><Link to={'/machine/'+this.state.selectedTask.machine}>{this.state.selectedTask.machine_model}</Link></h4>
+                    </Col>
+                  </Row>
+                  <Col md="12">
+                    By pressing Ok you confirm that you realized the task.
+                  </Col>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {this.setState({showDialog: false})}} color="primary">
+                  {t("Cancel")}
+                </Button>
+                <Button onClick={this._commit} color="primary">
+                  {t("Ok")}
+                </Button>
+              </DialogActions>
+              </Dialog>
+            )}
             {patient}
             <Col md="4">
               <Card className="card-user">
@@ -683,8 +697,19 @@ class PatientProfile extends React.Component {
                   <h6>{t("Associated tasks")}</h6>
                 </CardHeader>
                 <CardBody>
-                  <div style={{maxHeight: "400px", overflow: "auto"}}>
-                    {tasks}
+                  <div style={{maxHeight: "200px", overflow: "auto"}}>
+                    <Table className="tablesorter" responsive>
+                      <thead className="text-primary">
+                        <tr>
+                          <th>{t("Task")}</th>
+                          <th>{t("Model")}</th>
+                          <th>{t("Date")}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {tasks}
+                      </tbody>
+                    </Table>
                   </div>
                 </CardBody>
               </Card>

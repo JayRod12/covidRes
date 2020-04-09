@@ -104,7 +104,7 @@ class TaskList extends React.Component {
     };
   }
   _commit = () => {
-      fetch('rest/assignment_tasks/' + this.state.selectedTask.pk + "/", {
+      fetch('/rest/assignment_tasks/' + this.state.selectedTask.pk + "/", {
           method: 'PATCH',
           body: JSON.stringify({
               bool_completed: this.state.selectedTask.bool_install,
@@ -121,7 +121,7 @@ class TaskList extends React.Component {
       }).then(data => {window.location.reload()})
   }
   componentDidMount() {
-    fetch("rest/assignment_tasks/query/bool_completed=0/")
+    fetch("/rest/assignment_tasks/query/bool_completed=0/")
       .then(response => {
         if (response.status > 400) {
           throw new Error(response.status);
