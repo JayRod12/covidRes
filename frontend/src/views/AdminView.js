@@ -318,9 +318,9 @@ class AdminView extends React.Component {
                 <CardHeader>
                   <Row>
                     <Col className="text-left" md="6">
-                      <CardTitle tag="h4">{t("Users")}</CardTitle>
+                      <CardTitle tag="h3">{t("Users")}</CardTitle>
                     </Col>
-                    <Col className="px-md-1" md="3">
+                    <Col className="px-md-1" md="6x" textAlign="right">
                       <Button
                         color="secondary"
                         onClick={() => this.setState({
@@ -330,10 +330,8 @@ class AdminView extends React.Component {
                         >
                         {t("Filter users")}
                       </Button>
-                    </Col>
-                    {this.props.me && this.props.me.permission_patient_edit && (
-                      <Col className="px-md-1" md="3">
-                        <Button
+                      {this.props.me && this.props.me.permission_patient_edit && (
+                      <Button
                           color="secondary"
                           onClick={() => this.setState({
                             create_isOpen: !this.state.create_isOpen,
@@ -342,8 +340,9 @@ class AdminView extends React.Component {
                           >
                           {t("Create user")}
                         </Button>
-                      </Col>
-                    )}
+                        )}
+                    </Col>
+
                   </Row>
                   <Collapse isOpen={this.state.filter_isOpen}>
                     <Form>
@@ -460,31 +459,32 @@ class AdminView extends React.Component {
             <Col lg="5">
               <Card className="card-chart">
                 <CardHeader>
-                  <Row>
-                    <Col className="px-md-12" md={{ span: 2, offset: 0 }}>
+                  <Row className="px-md-2">
+                    
                         <Button
                           color="primary"
+                          size="sm"
                           onClick={() => {this.setState({selected_tab: "Roles"})}}
                           >
                           {t("Roles")}
                         </Button>
-                    </Col>
-                    <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
+                   
                         <Button
                           color="primary"
+                          size="sm"
                           onClick={() => {this.setState({selected_tab: "Models"})}}
                           >
                           {t("Models")}
                         </Button>
-                    </Col>
-                    <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
+                   
                         <Button
                           color="primary"
+                          size="sm"
                           onClick={() => {this.setState({selected_tab: "Locations"})}}
                           >
                           {t("Locations")}
                         </Button>
-                    </Col>
+                 
                   </Row>
                 </CardHeader>
                 { this.state.selected_tab == "Roles" && (
@@ -587,7 +587,8 @@ class AdminView extends React.Component {
                               </FormGroup>
                             </Col>
                             <Col className="px-md-1" md="2">
-                              <Button>
+                              <Button
+                                size="md">
                                 {t("Create")}
                               </Button>
                             </Col>

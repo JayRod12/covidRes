@@ -1,8 +1,8 @@
 {
-    "Create user": "Créer utilisateur",
-    "Filter users": "Filtrer utilisateur",
+    "Create user": "Créer",
+    "Filter users": "Filtrer",
     "Loading roles": "Chargement roles",
     "Location name": "Nom emplacement",
-    "Model name": "Nom modèle",
+    "Model name": "Type de ressource",
     "Role name": "Nom role"
 }
