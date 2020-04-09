@@ -147,15 +147,15 @@ class ModelProfile extends React.Component {
         </CardHeader>
       );
     }
-    let role;
+    let model;
     if (this.state.error_message.length > 0) {
-      role = (
+      model = (
         <Alert color="danger">
           {this.state.error_message} Are you <a href="/admin" className="alert-link"> logged in?</a>
         </Alert>
       );
     } else if (this.state.data.pk) {
-      role = (
+      model = (
         <Col md="8">
           <Card>
             <CardHeader>
@@ -212,8 +212,8 @@ class ModelProfile extends React.Component {
         </Col>
       );
     } else {
-      role = (
-        <CardText>{t("No role")}</CardText>
+      model = (
+        <CardText>{t("No model")}</CardText>
       );
     }
     return (
@@ -224,7 +224,7 @@ class ModelProfile extends React.Component {
         </div>
         <div className="content">
           <Row>
-            {role}
+            {model}
           </Row>
         </div>
       </div>
