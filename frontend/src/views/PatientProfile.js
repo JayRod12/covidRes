@@ -654,9 +654,11 @@ class PatientProfile extends React.Component {
               </span>
             </Col>
           </Row>
+          <Col md="11">
           <Alert color="info" style={{ 'padding': '0.4rem 1.25rem' }}>
             <span>{props.message}</span>
           </Alert>
+          </Col>
         </React.Fragment>
         )
       );
