@@ -6,12 +6,13 @@ from django.shortcuts import get_object_or_404
 import io
 from rest_framework.parsers import JSONParser
 
-from .models import Patient, MachineType, Machine, AssignmentTask
+from .models import Patient, MachineType, Location, Machine, AssignmentTask
 from .models import User, Message, Role
 from .serializers import (
     PatientSerializer,
     PatientDetailedSerializer,
     MachineTypeSerializer,
+    LocationSerializer,
     MachineSerializer,
     AssignmentTaskSerializer
 )
@@ -56,6 +57,15 @@ class MachineTypeViewSet(viewsets.ModelViewSet):
     queryset = MachineType.objects.all().order_by('name')
     serializer_class = MachineTypeSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachineType]
+
+class PermissionLocation(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.role.permission_location_edit or (request.user.role.permission_location_see and request.method in permissions.SAFE_METHODS)
+class LocationViewSet(viewsets.ModelViewSet):
+    pagination_class = None
+    queryset = Location.objects.all().order_by('name')
+    serializer_class = LocationSerializer
+    permission_classes = [permissions.IsAuthenticated & PermissionLocation]
 
 class PermissionMachine(permissions.BasePermission):
     def has_permission(self, request, view):

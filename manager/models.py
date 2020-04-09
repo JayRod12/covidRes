@@ -19,6 +19,7 @@ class Role(models.Model):
     permission_user_edit = models.BooleanField(default=False)
     permission_message_edit = models.BooleanField(default=False)
     permission_role_edit = models.BooleanField(default=False)
+    permission_location_edit = models.BooleanField(default=False)
     # See
     permission_patient_see = models.BooleanField(default=False)
     permission_user_see = models.BooleanField(default=False)
@@ -28,6 +29,7 @@ class Role(models.Model):
     permission_user_see = models.BooleanField(default=False)
     permission_message_see = models.BooleanField(default=False)
     permission_role_see = models.BooleanField(default=False)
+    permission_location_see = models.BooleanField(default=False)
     def __str__(self):
     	return self.name
 
@@ -113,9 +115,17 @@ class MachineType(models.Model):
     def __str__(self):
     	return self.name
 
+class Location(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+
 class Machine(models.Model):
     model = models.ForeignKey(MachineType, on_delete=models.CASCADE)
-    location = models.CharField(max_length=100, blank=True)
+    # location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    location =  models.CharField(max_length=100)
     description = models.TextField(blank=True)
     patient_assigned = models.ForeignKey(Patient, null=True, blank=True, on_delete=models.SET_NULL)
     def __str__(self):
