@@ -469,10 +469,10 @@ class AdminView extends React.Component {
                 { this.state.selected_tab == "Roles" && (
                   <CardBody>
                     { true && (//this.props.me && this.props.me.permission_role_edit && (
-                      <Col className="px-md-1" md="5">
+                      <Col className="px-md-1" md="12">
                         <Form onSubmit={this.handleRoleSubmit}>
                           <Row>
-                            <Col className="text-left" md="8">
+                            <Col className="text-left" md="7">
                               <FormGroup>
                                 <Input
                                   placeholder={t("Role name")}
@@ -511,10 +511,10 @@ class AdminView extends React.Component {
                 { this.state.selected_tab == "Models" && (
                   <CardBody>
                     { true && (//this.props.me && this.props.me.permission_role_edit && (
-                      <Col className="px-md-1" md="5">
+                      <Col className="px-md-1" md="12">
                         <Form onSubmit={this.handleModelSubmit}>
                           <Row>
-                            <Col className="text-left" md="8">
+                            <Col className="text-left" md="7">
                               <FormGroup>
                                 <Input
                                   placeholder={t("Model name")}
@@ -553,10 +553,10 @@ class AdminView extends React.Component {
                 { this.state.selected_tab == "Locations" && (
                   <CardBody>
                     { true && (//this.props.me && this.props.me.permission_role_edit && (
-                      <Col className="px-md-1" md="5">
+                      <Col className="px-md-1" md="12">
                         <Form onSubmit={this.handleLocationSubmit}>
                           <Row>
-                            <Col className="text-left" md="8">
+                            <Col className="text-left" md="7">
                               <FormGroup>
                                 <Input
                                   placeholder={t("Location name")}
