@@ -313,7 +313,7 @@ class AdminView extends React.Component {
       <>
         <div className="content">
           <Row>
-            <Col lg="8">
+            <Col lg="7">
               <Card className="card-chart">
                 <CardHeader>
                   <Row>
@@ -457,14 +457,35 @@ class AdminView extends React.Component {
                 </CardBody>
               </Card>
             </Col>
-            <Col lg="4">
+            <Col lg="5">
               <Card className="card-chart">
                 <CardHeader>
-                  <CardTitle tag="h4">
-                    <Link onClick={() => {this.setState({selected_tab: "Roles"})}}>{t("Roles")}</Link>/
-                    <Link onClick={() => {this.setState({selected_tab: "Models"})}}>{t("Models")}</Link>/
-                    <Link onClick={() => {this.setState({selected_tab: "Locations"})}}>{t("Locations")}</Link>
-                  </CardTitle>
+                  <Row>
+                    <Col className="px-md-12" md={{ span: 2, offset: 0 }}>
+                        <Button
+                          color="primary"
+                          onClick={() => {this.setState({selected_tab: "Roles"})}}
+                          >
+                          {t("Roles")}
+                        </Button>
+                    </Col>
+                    <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
+                        <Button
+                          color="primary"
+                          onClick={() => {this.setState({selected_tab: "Models"})}}
+                          >
+                          {t("Models")}
+                        </Button>
+                    </Col>
+                    <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
+                        <Button
+                          color="primary"
+                          onClick={() => {this.setState({selected_tab: "Locations"})}}
+                          >
+                          {t("Locations")}
+                        </Button>
+                    </Col>
+                  </Row>
                 </CardHeader>
                 { this.state.selected_tab == "Roles" && (
                   <CardBody>
