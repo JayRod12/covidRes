@@ -93,6 +93,7 @@ class AdminView extends React.Component {
       redirect: null,
       create_isOpen: false,
       filter_isOpen: false,
+      selected_tab: "Models",
       filter_username: "--(All)--",
       filter_first_name: "--(All)--",
       filter_last_name: "--(All)--",
@@ -261,114 +262,14 @@ class AdminView extends React.Component {
       <>
         <div className="content">
           <Row>
-            <Col lg="6">
+            <Col lg="8">
               <Card className="card-chart">
                 <CardHeader>
                   <Row>
-                    <Col className="text-left" md="2">
-                      <CardTitle tag="h4">{t("Roles")}</CardTitle>
-                    </Col>
-                    { true && (//this.props.me && this.props.me.permission_role_edit && (
-                      <Col className="px-md-1" md="5">
-                        <Form onSubmit={this.handleRoleSubmit}>
-                          <Row>
-                            <Col className="px-md-1" md="8">
-                              <FormGroup>
-                                <Input
-                                  placeholder={t("Role name")}
-                                  name="name"
-                                  type="text"
-                                />
-                              </FormGroup>
-                            </Col>
-                            <Col className="px-md-1" md="2">
-                              <Button>
-                                {t("Create")}
-                              </Button>
-                            </Col>
-                          </Row>
-                        </Form>
-                      </Col>
-                    )}
-                  </Row>
-                </CardHeader>
-                <CardBody>
-                  <Table className="tablesorter" responsive>
-                    <thead className="text-primary">
-                      <tr>
-                        <th>{t("Role name")}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {results_roles.map((item, ii) => {return(
-                        <tr>
-                          <td><Link to={'/role/' + item.id}>{item.name}</Link></td>
-                        </tr>
-                      )})}
-                    </tbody>
-                  </Table>
-                </CardBody>
-              </Card>
-            </Col>
-            <Col lg="6">
-              <Card className="card-chart">
-                <CardHeader>
-                  <Row>
-                    <Col className="text-left" md="2">
-                      <CardTitle tag="h4">{t("Models")}</CardTitle>
-                    </Col>
-                    { true && (//this.props.me && this.props.me.permission_role_edit && (
-                      <Col className="px-md-1" md="5">
-                        <Form onSubmit={this.handleModelSubmit}>
-                          <Row>
-                            <Col className="px-md-1" md="8">
-                              <FormGroup>
-                                <Input
-                                  placeholder={t("Model name")}
-                                  name="name"
-                                  type="text"
-                                />
-                              </FormGroup>
-                            </Col>
-                            <Col className="px-md-1" md="2">
-                              <Button>
-                                {t("Create")}
-                              </Button>
-                            </Col>
-                          </Row>
-                        </Form>
-                      </Col>
-                    )}
-                  </Row>
-                </CardHeader>
-                <CardBody>
-                  <Table className="tablesorter" responsive>
-                    <thead className="text-primary">
-                      <tr>
-                        <th>{t("Model name")}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {results_models.map((item, ii) => {return(
-                        <tr>
-                          <td>{item.name}</td>
-                        </tr>
-                      )})}
-                    </tbody>
-                  </Table>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-          <Row>
-            <Col lg="12">
-              <Card className="card-chart">
-                <CardHeader>
-                  <Row>
-                    <Col className="text-left" md="8">
+                    <Col className="text-left" md="6">
                       <CardTitle tag="h4">{t("Users")}</CardTitle>
                     </Col>
-                    <Col className="px-md-1" md="2">
+                    <Col className="px-md-1" md="3">
                       <Button
                         color="secondary"
                         onClick={() => this.setState({
@@ -380,7 +281,7 @@ class AdminView extends React.Component {
                       </Button>
                     </Col>
                     {this.props.me && this.props.me.permission_patient_edit && (
-                      <Col className="px-md-1" md="2">
+                      <Col className="px-md-1" md="3">
                         <Button
                           color="secondary"
                           onClick={() => this.setState({
@@ -475,32 +376,128 @@ class AdminView extends React.Component {
                   </Collapse>
                 </CardHeader>
                 <CardBody>
-                  <Table className="tablesorter" responsive>
-                    <thead className="text-primary">
-                      <tr>
-                        <th>{t("Username")}</th>
-                        <th>{t("First name")}</th>
-                        <th>{t("Last name")}</th>
-                        <th>{t("Role")}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {results_users.filter(item => (
-                        (this.state.filter_role == "--(All)--" || this.state.filter_role == item.role) &&
-                        (this.state.filter_username == "--(All)--" || this.state.filter_username.length <= item.username.length && this.state.filter_username.toLowerCase() == item.username.substring(0, this.state.filter_username.length).toLowerCase()) &&
-                        (this.state.filter_first_name == "--(All)--" || this.state.filter_first_name.length <= item.first_name.length && this.state.filter_first_name.toLowerCase() == item.first_name.substring(0, this.state.filter_first_name.length).toLowerCase()) &&
-                        (this.state.filter_last_name == "--(All)--" || this.state.filter_last_name.length <= item.last_name.length && this.state.filter_last_name.toLowerCase() == item.last_name.substring(0, this.state.filter_last_name.length).toLowerCase())
-                      )).map((item, ii) => {return(
+                  <div style={{maxHeight: "400px", overflow: "auto"}}>
+                    <Table className="tablesorter" responsive>
+                      <thead className="text-primary">
                         <tr>
-                          <td><Link to={'/user/' + item.pk}>{item.username}</Link></td>
-                          <td>{item.first_name}</td>
-                          <td>{item.last_name}</td>
-                          <td>{item.role_name}</td>
+                          <th>{t("Username")}</th>
+                          <th>{t("First name")}</th>
+                          <th>{t("Last name")}</th>
+                          <th>{t("Role")}</th>
                         </tr>
-                      )})}
-                    </tbody>
-                  </Table>
+                      </thead>
+                      <tbody>
+                        {results_users.filter(item => (
+                          (this.state.filter_role == "--(All)--" || this.state.filter_role == item.role) &&
+                          (this.state.filter_username == "--(All)--" || this.state.filter_username.length <= item.username.length && this.state.filter_username.toLowerCase() == item.username.substring(0, this.state.filter_username.length).toLowerCase()) &&
+                          (this.state.filter_first_name == "--(All)--" || this.state.filter_first_name.length <= item.first_name.length && this.state.filter_first_name.toLowerCase() == item.first_name.substring(0, this.state.filter_first_name.length).toLowerCase()) &&
+                          (this.state.filter_last_name == "--(All)--" || this.state.filter_last_name.length <= item.last_name.length && this.state.filter_last_name.toLowerCase() == item.last_name.substring(0, this.state.filter_last_name.length).toLowerCase())
+                        )).map((item, ii) => {return(
+                          <tr>
+                            <td><Link to={'/user/' + item.pk}>{item.username}</Link></td>
+                            <td>{item.first_name}</td>
+                            <td>{item.last_name}</td>
+                            <td>{item.role_name}</td>
+                          </tr>
+                        )})}
+                      </tbody>
+                    </Table>
+                  </div>
                 </CardBody>
+              </Card>
+            </Col>
+            <Col lg="4">
+              <Card className="card-chart">
+                <CardHeader>
+                  <CardTitle tag="h4">
+                    <Link onClick={() => {this.setState({selected_tab: "Roles"})}}>{t("Roles")}</Link>/
+                    <Link onClick={() => {this.setState({selected_tab: "Models"})}}>{t("Models")}</Link>
+                  </CardTitle>
+                </CardHeader>
+                { this.state.selected_tab == "Roles" && (
+                  <CardBody>
+                    { true && (//this.props.me && this.props.me.permission_role_edit && (
+                      <Col className="px-md-1" md="5">
+                        <Form onSubmit={this.handleRoleSubmit}>
+                          <Row>
+                            <Col className="text-left" md="8">
+                              <FormGroup>
+                                <Input
+                                  placeholder={t("Role name")}
+                                  name="name"
+                                  type="text"
+                                />
+                              </FormGroup>
+                            </Col>
+                            <Col className="px-md-1" md="2">
+                              <Button>
+                                {t("Create")}
+                              </Button>
+                            </Col>
+                          </Row>
+                        </Form>
+                      </Col>
+                    )}
+                    <div style={{maxHeight: "400px", overflow: "auto"}}>
+                      <Table className="tablesorter" responsive>
+                        <thead className="text-primary">
+                          <tr>
+                            <th>{t("Role name")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {results_roles.map((item, ii) => {return(
+                            <tr>
+                              <td><Link to={'/role/' + item.id}>{item.name}</Link></td>
+                            </tr>
+                          )})}
+                        </tbody>
+                      </Table>
+                    </div>
+                  </CardBody>
+                )}
+                { this.state.selected_tab == "Models" && (
+                  <CardBody>
+                    { true && (//this.props.me && this.props.me.permission_role_edit && (
+                      <Col className="px-md-1" md="5">
+                        <Form onSubmit={this.handleModelSubmit}>
+                          <Row>
+                            <Col className="text-left" md="8">
+                              <FormGroup>
+                                <Input
+                                  placeholder={t("Model name")}
+                                  name="name"
+                                  type="text"
+                                />
+                              </FormGroup>
+                            </Col>
+                            <Col className="px-md-1" md="2">
+                              <Button>
+                                {t("Create")}
+                              </Button>
+                            </Col>
+                          </Row>
+                        </Form>
+                      </Col>
+                    )}
+                    <div style={{maxHeight: "400px", overflow: "auto"}}>
+                      <Table className="tablesorter" responsive>
+                        <thead className="text-primary">
+                          <tr>
+                            <th>{t("Model name")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {results_models.map((item, ii) => {return(
+                            <tr>
+                              <td>{item.name}</td>
+                            </tr>
+                          )})}
+                        </tbody>
+                      </Table>
+                    </div>
+                  </CardBody>
+                )}
               </Card>
             </Col>
           </Row>
