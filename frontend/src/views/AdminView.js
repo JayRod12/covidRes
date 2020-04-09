@@ -542,7 +542,7 @@ class AdminView extends React.Component {
                         <tbody>
                           {results_models.map((item, ii) => {return(
                             <tr>
-                              <td>{item.name}</td>
+                              <td><Link to={'/model/' + item.pk}>{item.name}</Link></td>
                             </tr>
                           )})}
                         </tbody>
@@ -584,7 +584,7 @@ class AdminView extends React.Component {
                         <tbody>
                           {results_locations.map((item, ii) => {return(
                             <tr>
-                              <td>{item.name}</td>
+                              <td><Link to={'/location/' + item.pk}>{item.name}</Link></td>
                             </tr>
                           )})}
                         </tbody>
