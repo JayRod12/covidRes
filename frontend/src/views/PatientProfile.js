@@ -408,6 +408,7 @@ class PatientProfile extends React.Component {
                         classNamePrefix="select"
                         isClearable={true}
                         defaultValue={{value: this.state.data.location, label: this.state.data.location_name}}
+                        placeholder={t("Location")}
                         name="location"
                         options={this.state.data_locations.map(item => {return({value: item.pk, label: item.name})})}
                         filterOptions={{
