@@ -119,7 +119,8 @@ class PatientProfile extends React.Component {
         name: data.get('name'),
         severity: data.get('severity'),
         location: data.get('location'),
-        description: data.get('description')
+        description: data.get('description'),
+        id1: data.get('id1')
     })
 
     fetch('/rest/patients/'+this.state.data.pk+"/", {
@@ -430,13 +431,24 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                  <Col className="pl-md-1" md="6">
+                  <Col className="px-md-1" md="6">
                     <FormGroup>
                       <label>{t("Last name")}</label>
                       <Input
                         defaultValue={this.state.data.last_name}
                         placeholder={t("Last Name")}
                         name="last_name"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                   <Col className="pr-md-1" md="3">
+                    <FormGroup>
+                      <label>{t("ID1")}</label>
+                      <Input
+                        defaultValue={this.state.data.id1}
+                        placeholder={t("ID1")}
+                        name="ID1"
                         type="text"
                       />
                     </FormGroup>
