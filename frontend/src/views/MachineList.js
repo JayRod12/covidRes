@@ -365,7 +365,7 @@ class MachineList extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <div style={{maxHeight: "400px", overflow: "auto"}}>
-                    <Table className="tablesorter" responsive>
+                    <Table className="tablesorter" >
                       <thead className="text-primary">
                         <tr>
                           <th>{t("Name")}</th>

@@ -537,7 +537,7 @@ class PatientProfile extends React.Component {
                         footer: function (tooltipItem, data) { return "..."; }
                     }
                   },
-                  responsive: true,
+                  : true,
                   scales: {
                     yAxes: [
                       {
@@ -698,7 +698,7 @@ class PatientProfile extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <div style={{maxHeight: "200px", overflow: "auto"}}>
-                    <Table className="tablesorter" responsive>
+                    <Table className="tablesorter" >
                       <thead className="text-primary">
                         <tr>
                           <th>{t("Task")}</th>

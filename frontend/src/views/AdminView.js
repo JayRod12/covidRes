@@ -428,7 +428,7 @@ class AdminView extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <div style={{maxHeight: "400px", overflow: "auto"}}>
-                    <Table className="tablesorter" responsive>
+                    <Table className="tablesorter">
                       <thead className="text-primary">
                         <tr>
                           <th>{t("Username")}</th>
@@ -514,7 +514,7 @@ class AdminView extends React.Component {
                       </Col>
                     )}
                     <div style={{maxHeight: "400px", overflow: "auto"}}>
-                      <Table className="tablesorter" responsive>
+                      <Table className="tablesorter" >
                         <thead className="text-primary">
                           <tr>
                             <th>{t("Role name")}</th>
@@ -557,7 +557,7 @@ class AdminView extends React.Component {
                       </Col>
                     )}
                     <div style={{maxHeight: "400px", overflow: "auto"}}>
-                      <Table className="tablesorter" responsive>
+                      <Table className="tablesorter" >
                         <thead className="text-primary">
                           <tr>
                             <th>{t("Model name")}</th>
@@ -600,7 +600,7 @@ class AdminView extends React.Component {
                       </Col>
                     )}
                     <div style={{maxHeight: "400px", overflow: "auto"}}>
-                      <Table className="tablesorter" responsive>
+                      <Table className="tablesorter" >
                         <thead className="text-primary">
                           <tr>
                             <th>{t("Location name")}</th>

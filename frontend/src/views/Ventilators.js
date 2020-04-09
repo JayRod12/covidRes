@@ -851,7 +851,7 @@ class Ventilators extends React.Component {
                             </Row>
                           </Form>
                           <div style={{maxHeight: "400px", overflow: "auto"}}>
-                            <Table className="tablesorter" responsive>
+                            <Table className="tablesorter" >
                               <thead className="text-primary">
                                 <tr>
                                   <th>{t("Name")}</th>
