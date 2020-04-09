@@ -75,6 +75,14 @@ class MachineViewSet(viewsets.ModelViewSet):
     queryset = Machine.objects.all().order_by('location', 'model__name')
     serializer_class = MachineSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachine]
+    def create(self, request, *args, **kwargs):
+        if 'number' in request.data:
+            number = int(request.data['number'])
+            request.data.pop('number')
+            for _ in range(number):
+                output = super(MachineViewSet, self).create(request, *args, **kwargs)
+            return output
+        return super(MachineViewSet, self).create(request, *args, **kwargs)
 class MachineQueryViewSet(viewsets.ModelViewSet):
     pagination_class = None
     queryset = Machine.objects.all().order_by('location', 'model__name')
