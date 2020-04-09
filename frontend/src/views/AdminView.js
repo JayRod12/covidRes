@@ -98,9 +98,9 @@ class AdminView extends React.Component {
       create_isOpen: false,
       filter_isOpen: false,
       selected_tab: "Models",
-      filter_username: "--(All)--",
-      filter_first_name: "--(All)--",
-      filter_last_name: "--(All)--",
+      filter_username: "",
+      filter_first_name: "",
+      filter_last_name: "",
       filter_role: "--(All)--"
     };
 
@@ -461,7 +461,7 @@ class AdminView extends React.Component {
               <Card className="card-chart">
                 <CardHeader>
                   <Row className="px-md-2">
-                    
+
                         <Button
                           color="primary"
                           size="sm"
@@ -469,7 +469,7 @@ class AdminView extends React.Component {
                           >
                           {t("Roles")}
                         </Button>
-                   
+
                         <Button
                           color="primary"
                           size="sm"
@@ -477,7 +477,7 @@ class AdminView extends React.Component {
                           >
                           {t("Models")}
                         </Button>
-                   
+
                         <Button
                           color="primary"
                           size="sm"
@@ -485,7 +485,7 @@ class AdminView extends React.Component {
                           >
                           {t("Locations")}
                         </Button>
-                 
+
                   </Row>
                 </CardHeader>
                 { this.state.selected_tab == "Roles" && (
