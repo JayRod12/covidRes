@@ -431,7 +431,7 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                  <Col className="px-md-1" md="3">
+                  <Col className="px-md-1" md="6">
                     <FormGroup>
                       <label>{t("Last name")}</label>
                       <Input
@@ -442,7 +442,7 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                   <Col className="pl-md-1" md="6">
+                   <Col className="pr-md-1" md="3">
                     <FormGroup>
                       <label>{t("ID1")}</label>
                       <Input
