@@ -12,9 +12,9 @@ from django.views.generic import (
 
 from rest_framework import generics, permissions, viewsets
 
-from .models import Patient, MachineType, Machine, AssignmentTask
+from .models import Patient, MachineType, Location, Machine, AssignmentTask
 from .models import User, Message
-from .serializers import PatientSerializer, MachineTypeSerializer, MachineSerializer, AssignmentTaskSerializer
+from .serializers import PatientSerializer, MachineTypeSerializer, LocationSerializer, MachineSerializer, AssignmentTaskSerializer
 from .serializers import UserSerializer, MessageSerializer
 from .serializers import User, Message
 from django.utils import timezone

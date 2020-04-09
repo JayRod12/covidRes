@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Patient, MachineType, Machine, AssignmentTask
+from .models import Patient, MachineType, Location, Machine, AssignmentTask
 from .models import User, Message, Role
 
 # Manage
@@ -25,6 +25,11 @@ class PatientDetailedSerializer(serializers.ModelSerializer):
 class MachineTypeSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = MachineType
+		fields = ('pk', 'name', 'description')
+
+class LocationSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Location
 		fields = ('pk', 'name', 'description')
 
 class MachineSerializer(serializers.ModelSerializer):
