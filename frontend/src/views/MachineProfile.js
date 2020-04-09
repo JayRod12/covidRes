@@ -40,6 +40,12 @@ import {
   Col
 } from "reactstrap";
 
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
 import {
   withLocalize,
   Translate,
@@ -90,6 +96,7 @@ class MachineProfile extends React.Component {
       placeholder_tasks: "Loading",
       error_message_tasks: "",
       redirect: false,
+      showDialog: false,
     };
 
     languages.forEach((language, i) => {
@@ -97,6 +104,7 @@ class MachineProfile extends React.Component {
     });
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleReplicate = this.handleReplicate.bind(this);
   }
   handleSubmit(event) {
     event.preventDefault();
@@ -107,6 +115,26 @@ class MachineProfile extends React.Component {
       body: JSON.stringify({
           location: data.get('location'),
           description: data.get('description')
+      }),
+      headers: {
+          "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+      }
+    }).then(response => {
+      console.log(response)
+      this.setState({redirect: true})
+    });
+  }
+  handleReplicate(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+
+    fetch('/rest/machines/', {
+      method: 'POST',
+      body: JSON.stringify({
+          number: data.get('number'),
+          model: this.state.data.model,
+          location: this.state.data.location,
+          description: this.state.data.description
       }),
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
@@ -308,9 +336,18 @@ class MachineProfile extends React.Component {
                       </CardBody>
                     </Col>
                 </Row>
-                <Button className="btn-fill" color="primary" type="submit" value="Submit">
-                  {t("Save")}
-                </Button>
+                <Row>
+                  <Col md="6">
+                    <Button className="btn-fill" color="primary" type="submit" value="Submit">
+                      {t("Save")}
+                    </Button>
+                  </Col>
+                  <Col md="6">
+                    <Button className="btn-fill" color="primary" onClick={() => {this.setState({showDialog: true})}}>
+                      Replicate
+                    </Button>
+                  </Col>
+                </Row>
               </Form>
             </CardBody>
           </Card>
@@ -362,6 +399,43 @@ class MachineProfile extends React.Component {
         </div>
         <div className="content">
           <Row>
+              <Dialog
+                  open={this.state.showDialog}
+                  onClose={() => this._closeDialog(false)}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+              >
+                <Form onSubmit={this.handleReplicate}>
+                  <DialogTitle id="alert-dialog-title">Replicate machine</DialogTitle>
+                  <DialogContent>
+                      <DialogContentText id="alert-dialog-description">
+                        <Row>
+                          <Col md="8">
+                            This will create machines with the same properties as the one selected
+                          </Col>
+                          <Col md="4">
+                            <FormGroup>
+                              <label>How many?</label>
+                              <Input
+                                defaultValue={1}
+                                name="number"
+                                type="number"
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                      <Button onClick={() => {this.setState({showDialog: false})}} color="primary">
+                          {t("Cancel")}
+                      </Button>
+                      <Button color="primary" type="submit" value="Submit">
+                          {t("Ok")}
+                  </Button>
+                  </DialogActions>
+                </Form>
+              </Dialog>
             {machine}
             <Col md="4">
               <Card className="card-user">
