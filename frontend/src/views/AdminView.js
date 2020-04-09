@@ -90,6 +90,10 @@ class AdminView extends React.Component {
       loaded_models: false,
       placeholder_models: "Loading",
       error_models: "",
+      data_locations: [],
+      loaded_locations: false,
+      placeholder_locations: "Loading",
+      error_locations: "",
       redirect: null,
       create_isOpen: false,
       filter_isOpen: false,
@@ -107,6 +111,7 @@ class AdminView extends React.Component {
 
     this.handleRoleSubmit = this.handleRoleSubmit.bind(this);
     this.handleModelSubmit = this.handleModelSubmit.bind(this);
+    this.handleLocationSubmit = this.handleLocationSubmit.bind(this);
     this.handleUserSubmit = this.handleUserSubmit.bind(this);
   }
   handleRoleSubmit(event) {
@@ -145,6 +150,26 @@ class AdminView extends React.Component {
       var new_data_models = this.state.data_models
       new_data_models = [...new_data_models, data]
       this.setState({data_models: new_data_models})
+    })
+  }
+  handleLocationSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+
+    console.log("LOCATION NAME", data.get('name'));
+
+    fetch('/rest/locations/', {
+      method: 'POST',
+      body: JSON.stringify({
+          name: data.get('name')
+      }),
+      headers: {
+          "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+      }
+    }).then(response => {return response.json()}).then(data => {
+      var new_data_locations = this.state.data_locations
+      new_data_locations = [...new_data_locations, data]
+      this.setState({data_locations: new_data_locations})
     })
   }
   handleUserSubmit(event) {
@@ -219,6 +244,31 @@ class AdminView extends React.Component {
           };
         });
       });
+    fetch("rest/locations/")
+      .then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        this.setState(() => {
+          return {
+            data_locations: data,
+            loaded_locations: true
+          };
+        });
+      })
+      .catch(error => {
+        this.setState(() => {
+          return {
+            loaded_locations: true,
+            placeholder_locations: "Failed to load",
+            error_locations: "You don't have permission to view these locations.",
+          };
+        });
+      });
     fetch("rest/users/")
       .then(response => {
         if (response.status > 400) {
@@ -247,7 +297,7 @@ class AdminView extends React.Component {
   };
   render() {
     const t = this.props.translate
-    if (!(this.state.loaded_roles && this.state.loaded_models && this.state.loaded_users)) {
+    if (!(this.state.loaded_roles && this.state.loaded_models && this.state.loaded_locations && this.state.loaded_users)) {
       return (
         <CardHeader>
           <CardTitle tag="h4">{t("Loading roles")}...</CardTitle>
@@ -256,6 +306,7 @@ class AdminView extends React.Component {
     }
     const results_roles = this.state.data_roles ? this.state.data_roles : [];
     const results_models = this.state.data_models ? this.state.data_models : [];
+    const results_locations = this.state.data_locations ? this.state.data_locations : [];
     const results_users = this.state.data_users ? this.state.data_users : [];
 
     return (
@@ -411,7 +462,8 @@ class AdminView extends React.Component {
                 <CardHeader>
                   <CardTitle tag="h4">
                     <Link onClick={() => {this.setState({selected_tab: "Roles"})}}>{t("Roles")}</Link>/
-                    <Link onClick={() => {this.setState({selected_tab: "Models"})}}>{t("Models")}</Link>
+                    <Link onClick={() => {this.setState({selected_tab: "Models"})}}>{t("Models")}</Link>/
+                    <Link onClick={() => {this.setState({selected_tab: "Locations"})}}>{t("Locations")}</Link>
                   </CardTitle>
                 </CardHeader>
                 { this.state.selected_tab == "Roles" && (
@@ -489,6 +541,48 @@ class AdminView extends React.Component {
                         </thead>
                         <tbody>
                           {results_models.map((item, ii) => {return(
+                            <tr>
+                              <td>{item.name}</td>
+                            </tr>
+                          )})}
+                        </tbody>
+                      </Table>
+                    </div>
+                  </CardBody>
+                )}
+                { this.state.selected_tab == "Locations" && (
+                  <CardBody>
+                    { true && (//this.props.me && this.props.me.permission_role_edit && (
+                      <Col className="px-md-1" md="5">
+                        <Form onSubmit={this.handleLocationSubmit}>
+                          <Row>
+                            <Col className="text-left" md="8">
+                              <FormGroup>
+                                <Input
+                                  placeholder={t("Location name")}
+                                  name="name"
+                                  type="text"
+                                />
+                              </FormGroup>
+                            </Col>
+                            <Col className="px-md-1" md="2">
+                              <Button>
+                                {t("Create")}
+                              </Button>
+                            </Col>
+                          </Row>
+                        </Form>
+                      </Col>
+                    )}
+                    <div style={{maxHeight: "400px", overflow: "auto"}}>
+                      <Table className="tablesorter" responsive>
+                        <thead className="text-primary">
+                          <tr>
+                            <th>{t("Location name")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {results_locations.map((item, ii) => {return(
                             <tr>
                               <td>{item.name}</td>
                             </tr>
