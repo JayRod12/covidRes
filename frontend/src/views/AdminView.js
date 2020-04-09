@@ -407,7 +407,7 @@ class AdminView extends React.Component {
                     <Form onSubmit={this.handleUserSubmit}>
                       {this.renderRedirect()}
                       <Row>
-                        <Col className="px-md-1" md={{ span: 3, offset: 1 }}>
+                        <Col className="px-md-3" md={{ span: 3, offset: 0 }}>
                           <FormGroup>
                             <Input
                               placeholder={t("Username")}
@@ -417,7 +417,8 @@ class AdminView extends React.Component {
                           </FormGroup>
                         </Col>
                         <Col className="px-md-1" md={{ span: 2, offset: 0 }}>
-                          <Button>
+                          <Button
+                            size="sm">
                             {t("Create")}
                           </Button>
                         </Col>
@@ -503,7 +504,8 @@ class AdminView extends React.Component {
                               </FormGroup>
                             </Col>
                             <Col className="px-md-1" md="2">
-                              <Button>
+                              <Button
+                                size="sm">
                                 {t("Create")}
                               </Button>
                             </Col>
@@ -545,7 +547,8 @@ class AdminView extends React.Component {
                               </FormGroup>
                             </Col>
                             <Col className="px-md-1" md="2">
-                              <Button>
+                              <Button
+                                size="sm">
                                 {t("Create")}
                               </Button>
                             </Col>
@@ -588,7 +591,7 @@ class AdminView extends React.Component {
                             </Col>
                             <Col className="px-md-1" md="2">
                               <Button
-                                size="md">
+                                size="sm">
                                 {t("Create")}
                               </Button>
                             </Col>
