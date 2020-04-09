@@ -7,9 +7,11 @@ class PatientSerializer(serializers.ModelSerializer):
 	# Machine-related
 	machine_assigned_model = serializers.CharField(source='machine_assigned.model.name', allow_null=True, read_only=True)
 	location_name = serializers.CharField(source='location.name', allow_null=True, read_only=True)
+	first_name = serializers.CharField(source='user.first_name', allow_null=True)
+	last_name = serializers.CharField(source='user.last_name', allow_null=True)
 	class Meta:
 		model = Patient
-		fields = ('pk', 'name', 'severity', 'location', 'location_name', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'description')
+		fields = ('pk', 'name', 'severity', 'location', 'location_name', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'first_name', 'last_name')
 class PatientDetailedSerializer(serializers.ModelSerializer):
 	# User-related
 	user_pk = serializers.IntegerField(source='user.pk', allow_null=True, read_only=True)
@@ -35,6 +37,13 @@ class LocationSerializer(serializers.ModelSerializer):
 		fields = ('pk', 'name', 'description')
 
 class MachineSerializer(serializers.ModelSerializer):
+	model_name = serializers.CharField(source='model.name', read_only=True)
+	patient_assigned_name = serializers.CharField(source='patient_assigned.name', allow_null=True, read_only=True)
+	location_name = serializers.CharField(source='location.name', allow_null=True, read_only=True)
+	class Meta:
+		model = Machine
+		fields = ('pk', 'model', 'model_name', 'location', 'location_name', 'patient_assigned', 'patient_assigned_name')
+class MachineDetailedSerializer(serializers.ModelSerializer):
 	model_name = serializers.CharField(source='model.name', read_only=True)
 	patient_assigned_name = serializers.CharField(source='patient_assigned.name', allow_null=True, read_only=True)
 	location_name = serializers.CharField(source='location.name', allow_null=True, read_only=True)

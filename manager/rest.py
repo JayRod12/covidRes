@@ -14,6 +14,7 @@ from .serializers import (
     MachineTypeSerializer,
     LocationSerializer,
     MachineSerializer,
+    MachineDetailedSerializer
     AssignmentTaskSerializer
 )
 from .serializers import UserSerializer, MessageSerializer, RoleSerializer
@@ -75,6 +76,10 @@ class MachineViewSet(viewsets.ModelViewSet):
     queryset = Machine.objects.all().order_by('location', 'model__name')
     serializer_class = MachineSerializer
     permission_classes = [permissions.IsAuthenticated & PermissionMachine]
+    def get_serializer_class(self):
+        if 'pk' in self.kwargs:
+            return MachineDetailedSerializer
+        return self.serializer_class
     def create(self, request, *args, **kwargs):
         if 'number' in request.data:
             number = int(request.data['number'])

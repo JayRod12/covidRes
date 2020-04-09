@@ -80,7 +80,7 @@ class PatientRow extends React.Component {
       <React.Fragment>
         <tr>
           <td><Link to={'/patient/' + this.props.pk}>{this.props.name}</Link></td>
-          <td>{this.props.name}</td>
+          <td>{this.props.first_name} {this.props.last_name}</td>
           <td className="text-center">{this.props.severity}</td>
           <td>{this.props.location_name}</td>
           <td>{this.props.machine_assigned_model}</td>
@@ -204,6 +204,8 @@ class PatientList extends React.Component {
             key={entry.pk}
             pk={entry.pk}
             name={entry.name}
+            first_name={entry.first_name}
+            last_name={entry.last_name}
             admission_date={entry.admission_date}
             severity={entry.severity}
             location_name={entry.location_name}
@@ -364,7 +366,7 @@ class PatientList extends React.Component {
                       <thead className="text-primary">
                         <tr>
                           <th>{t("Name")}</th>
-                          <th>{t("Full Name")}</th>
+                          <th>{t("Full name")}</th>
                           <th className="text-center">{t("Severity")}</th>
                           <th>{t("Location")}</th>
                           <th>{t("Machine")}</th>
