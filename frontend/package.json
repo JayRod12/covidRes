@@ -45,6 +45,7 @@
     "react-notification-alert": "0.0.12",
     "react-router-dom": "5.1.2",
     "react-scripts": "3.4.0",
+    "react-select": "^3.1.0",
     "reactstrap": "8.4.1",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.1.3",

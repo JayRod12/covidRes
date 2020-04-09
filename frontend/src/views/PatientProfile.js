@@ -18,6 +18,7 @@
 import React, { useState } from "react";
 import { Redirect } from 'react-router';
 import { NavLink, Link } from "react-router-dom";
+import Select from 'react-select';
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
 import { Line, Bar, Scatter } from "react-chartjs-2";
@@ -94,6 +95,10 @@ class PatientProfile extends React.Component {
       loaded_messages: false,
       placeholder_messages: "Loading",
       error_message_messages: "",
+      data_locations: [],
+      loaded_locations: false,
+      placeholder_locations: "Loading",
+      error_message_locations: "",
       severity_list: ["SEV_0","SEV_1","SEV_2","SEV_3","SEV_4","SEV_5","SEV_6"],
       graph_xy: [],
       redirect: false,
@@ -260,6 +265,32 @@ class PatientProfile extends React.Component {
                 };
               });
             });
+    fetch('/rest/locations/')
+            .then(response => {
+                if (response.status > 400) {
+                  throw new Error(response.status);
+                }
+                return response.json();
+            })
+            .then(data_locations => {
+                console.log(data_locations);
+                const results = data_locations;
+                this.setState(() => {
+                    return {
+                        data_locations: results,
+                        loaded_locations: true
+                    };
+                });
+            })
+            .catch(error => {
+              this.setState(() => {
+                return {
+                  loaded_locations: true,
+                  placeholder_locations: "Failed to load",
+                  error_message_locations: error,
+                };
+              });
+            });
   };
   pop = props => {
     var color;
@@ -372,11 +403,16 @@ class PatientProfile extends React.Component {
                   <Col className="pl-md-1" md="5">
                     <FormGroup>
                       <label>{t("Location")}</label>
-                      <Input
-                        defaultValue={this.state.data.location_name}
-                        placeholder={t("Location")}
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        isClearable={true}
+                        defaultValue={{value: this.state.data.location, label: this.state.data.location_name}}
                         name="location"
-                        type="text"
+                        options={this.state.data_locations.map(item => {return({value: item.pk, label: item.name})})}
+                        filterOptions={{
+                          matchFrom: 'start'
+                        }}
                       />
                     </FormGroup>
                   </Col>
