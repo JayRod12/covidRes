@@ -537,7 +537,7 @@ class PatientProfile extends React.Component {
                         footer: function (tooltipItem, data) { return "..."; }
                     }
                   },
-                  : true,
+                  responsive: true,
                   scales: {
                     yAxes: [
                       {
