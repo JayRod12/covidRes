@@ -448,7 +448,7 @@ class AdminView extends React.Component {
                             <td><Link to={'/user/' + item.pk}>{item.username}</Link></td>
                             <td>{item.first_name}</td>
                             <td>{item.last_name}</td>
-                            <td>{item.role_name}</td>
+                            <td><Link to={'/role/' + item.role}>{item.role_name}</Link></td>
                           </tr>
                         )})}
                       </tbody>
