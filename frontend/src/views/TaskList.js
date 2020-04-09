@@ -16,40 +16,111 @@
 
 */
 import React from "react";
+import { Redirect } from 'react-router';
 import { NavLink, Link } from "react-router-dom";
-// react plugin for creating notifications over the dashboard
-import NotificationAlert from "react-notification-alert";
 
 // reactstrap components
 import {
   Alert,
-  UncontrolledAlert,
   Button,
+  Collapse,
   Card,
   CardHeader,
   CardBody,
   CardFooter,
   CardText,
   CardTitle,
+  Table,
+  FormGroup,
+  Form,
+  Input,
   Row,
   Col
 } from "reactstrap";
 
-import moment from 'moment'
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
-import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
+import {
+  withLocalize,
+  Translate,
+  LocalizeContext,
+  LocalizeProvider
+} from 'react-localize-redux';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import languages from "src/translations/languages.json"
+var lang = {}
+languages.forEach((language, i) => {
+  const common = require('src/translations/' + language.code + '/common.json')
+  const local = require('src/translations/' + language.code + '/tasklist.json')
+  lang[language.code] = Object.assign({}, common, local)
+});
+
+import moment from 'moment'
+import $ from 'jquery';
 
 const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = $.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 class TaskList extends React.Component {
   constructor(props) {
     super(props);
+
+    languages.forEach((language, i) => {
+      props.addTranslationForLanguage(lang[language.code], language.code);
+    });
+
     this.state = {
       data: [],
       loaded: false,
       placeholder: "Loading",
       error_message: "",
+      redirect: 0,
+      filter_isOpen: false,
+      filter_patient: "",
+      filter_machine: "--(All)--",
+      filter_machine_location: "--(All)--",
+      filter_patient_location: "--(All)--",
+      showDialog: false,
+      selectedTask: null,
     };
+  }
+  _commit = () => {
+      fetch('rest/assignment_tasks/' + this.state.selectedTask.pk + "/", {
+          method: 'PATCH',
+          body: JSON.stringify({
+              bool_completed: this.state.selectedTask.bool_install,
+              bool_install: true
+          }),
+          headers: {
+              "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+          }
+      }).then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      }).then(data => {
+        this.setState({showDialog:false, data: this.state.data.map(item => {return(item.pk == data.pk ? data : item)})})
+      })
   }
   componentDidMount() {
     fetch("rest/assignment_tasks/query/bool_completed=0/")
@@ -78,62 +149,21 @@ class TaskList extends React.Component {
         });
       });
   };
-  pop = props => {
-    var color;
-    color = props.bool_install == 0 ? 1 : 5;
-    var type;
-    switch (color) {
-      case 1:
-        type = "primary";
-        break;
-      case 2:
-        type = "success";
-        break;
-      case 3:
-        type = "danger";
-        break;
-      case 4:
-        type = "warning";
-        break;
-      case 5:
-        type = "info";
-        break;
-      default:
-        break;
-    }
-    var options = {};
-    options = {
-      place: "tc",
-      message: (
-        <AssignmentTaskWindow
-          key={props.pk}
-          pk={props.pk}
-          machine={props.machine}
-          patient={props.patient}
-          bool_install={props.bool_install}
-          machine_model={props.machine_model}
-          patient_name={props.patient_name}
-          machine_location={props.machine_location}
-          patient_location={props.patient_location}
-          date={props.date}
-        />
-      ),
-      type: type,
-      icon: "tim-icons icon-bell-55",
-      fade: false,
-    };
-    this.refs.notificationAlert.notificationAlert(options);
-  };
   render() {
+    const t = this.props.translate
     if (!this.state.loaded) {
       return (
         <CardHeader>
-          <CardTitle tag="h4">Loading tasks...</CardTitle>
+          <CardTitle tag="h4">{t("Loading tasks")}...</CardTitle>
         </CardHeader>
       );
     }
     let tasks;
     const results = this.state.data;
+
+    var models = []
+    var patient_locations = []
+    var machine_locations = []
 
     if (this.state.error_message.length > 0) {
       tasks = (
@@ -142,44 +172,197 @@ class TaskList extends React.Component {
         </Alert>
       );
     } else if (results.length > 0) {
-      tasks = results.map((props, index) => (
-        <Button
-          key={props.pk}
-          ref="taskButton"
-          block
-          color={props.bool_install == 0 ? "primary" : "info"}
-          onClick={() => this.pop(props)}
-        >
-          {props.bool_install == 0 ? "Install" : "Remove"} {props.machine_model} {props.bool_install == 0 ? "to" : "from"} {props.patient_name} due {moment(props.date).format("HH:mm (D-MMM-YYYY)")}
-        </Button>
-      )
-      );
+      models = [...new Set(results.map(task => task.machine_model))]
+      patient_locations = [...new Set(results.map(task => task.patient_location))]
+      machine_locations = [...new Set(results.map(task => task.machine_location))]
+      models.sort()
+      patient_locations.sort()
+      machine_locations.sort()
+      tasks = results.map((entry, index) => {
+        if (
+          (this.state.filter_machine_location == "--(All)--" || this.state.filter_machine_location == entry.machine_location) &&
+          (this.state.filter_machine == "--(All)--" || this.state.filter_machine == entry.machine_model || this.state.filter_machine == "" && entry.machin_assigned_model == null) &&
+          (this.state.filter_patient_location == "--(All)--" || this.state.filter_patient_location == entry.patient_location) &&
+          (this.state.filter_patient.length == 0 || this.state.filter_patient.length <= entry.patient_name.length && this.state.filter_patient.toLowerCase() == entry.patient_name.substring(0, this.state.filter_patient.length).toLowerCase())
+        ) {return (
+          <tr>
+            <td><Link onClick={() => {this.setState({showDialog: true, selectedTask: entry})}}>{entry.bool_install ? t("Remove") : t("Install")}</Link></td>
+            <td>{entry.patient_name}</td>
+            <td>{entry.machine_model}</td>
+            <td>{entry.patient_location}</td>
+            <td>{entry.machine_location}</td>
+            <td>{moment(entry.date).format("HH:mm (DD-MMM-YYYY)")}</td>
+          </tr>
+        )}
+      });
     } else {
       tasks = (
-        <CardText>No tasks</CardText>
+        <CardText>{t("No tasks")}</CardText>
       );
     }
-    console.log(tasks);
+
+    console.log(this.state.showDialog);
+    const toggle_sign = (my_bool) => {return(my_bool
+      ? <span style={{ 'font-size': '9px' }}>&#9650;</span>
+      : <span style={{ 'font-size': '9px' }}>&#9660;</span>
+    )};
     return (
-      <div className="content">
-        <div className="react-notification-alert-container">
-          <NotificationAlert ref="notificationAlert" />
+      <>
+        <div className="content">
+          <Row>
+            {this.state.selectedTask && (
+              <Dialog
+                  open={this.state.showDialog}
+                  onClose={() => this._closeDialog(false)}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+              >
+              <DialogTitle id="alert-dialog-title">
+                <h3 align="center">{this.state.selectedTask.bool_install ? t("Remove") : t("Install")}</h3>
+                <h5 align="center">{moment(this.state.selectedTask.date).format("HH:mm (DD-MMM-YYYY)")}</h5>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Row>
+                    <Col md="5">
+                      <h4 align="center"><Link to={'/patient/'+this.state.selectedTask.patient}>{this.state.selectedTask.patient_name}</Link></h4>
+                    </Col>
+                    <Col md="2">
+                      {" => "}
+                    </Col>
+                    <Col md="5">
+                      <h4 align="center"><Link to={'/machine/'+this.state.selectedTask.machine}>{this.state.selectedTask.machine_model}</Link></h4>
+                    </Col>
+                  </Row>
+                  <Col md="12">
+                    By pressing Ok you confirm that you realized the task.
+                  </Col>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {this.setState({showDialog: false})}} color="primary">
+                  {t("Cancel")}
+                </Button>
+                <Button onClick={this._commit} color="primary">
+                  {t("Ok")}
+                </Button>
+              </DialogActions>
+              </Dialog>
+            )}
+            <Col md="12">
+              <Card>
+                <CardHeader>
+                  <Row>
+                    <Col className="px-md-12" md="8">
+                      <CardTitle tag="h3">{t("Tasks")}</CardTitle>
+                    </Col>
+                    <Col className="px-md-1" md="2">
+                      <Button
+                        color="secondary"
+                        onClick={() => this.setState({
+                          filter_isOpen: !this.state.filter_isOpen
+                        })}
+                        >
+                        {t("Filter tasks")}
+                      </Button>
+                    </Col>
+                  </Row>
+                  <Collapse isOpen={this.state.filter_isOpen}>
+                    <Form>
+                      <Row>
+                        <Col className="text-left" md="2">
+                          <FormGroup>
+                            <label>
+                              {t("Patient name")}
+                            </label>
+                            <Input
+                              name="name"
+                              type="text"
+                              onChange={(event) => {this.setState({filter_patient: event.target.value})}}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md="2">
+                          <FormGroup>
+                            <label>
+                              {t("Model")}
+                            </label>
+                            <Input
+                              name="model"
+                              type="select"
+                              onChange={(event) => {this.setState({filter_machine: event.target.value})}}
+                            >
+                              <option key={0} value="--(All)--">--(All)--</option>
+                              {models.map((val, i) => {return (
+                                <option key={i+1} value={val}>{val}</option>
+                              )})}
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md="2">
+                          <FormGroup>
+                            <label>
+                              {t("Patient location")}
+                            </label>
+                            <Input
+                              name="patient_location"
+                              type="select"
+                              onChange={(event) => {this.setState({filter_patient_location: event.target.value})}}
+                            >
+                              <option key={0} value="--(All)--">--(All)--</option>
+                              {patient_locations.map((val, i) => {return (
+                                <option key={i+1} value={val}>{val}</option>
+                              )})}
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-md-1" md="2">
+                          <FormGroup>
+                            <label>
+                              {t("Machine location")}
+                            </label>
+                            <Input
+                              name="machine_location"
+                              type="select"
+                              onChange={(event) => {this.setState({filter_machine_location: event.target.value})}}
+                            >
+                              <option key={0} value="--(All)--">--(All)--</option>
+                              {machine_locations.map((val, i) => {return (
+                                <option key={i+1} value={val}>{val}</option>
+                              )})}
+                            </Input>
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                    </Form>
+                  </Collapse>
+                </CardHeader>
+                <CardBody>
+                  <div style={{maxHeight: "400px", overflow: "auto"}}>
+                    <Table className="tablesorter" responsive>
+                      <thead className="text-primary">
+                        <tr>
+                          <th>{t("Task")}</th>
+                          <th>{t("Patient name")}</th>
+                          <th>{t("Machine model")}</th>
+                          <th>{t("Patient location")}</th>
+                          <th>{t("Machine location")}</th>
+                          <th>{t("Date")}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {tasks}
+                      </tbody>
+                    </Table>
+                  </div>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
         </div>
-        <Row>
-          <Col md="12">
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h3">Tasks</CardTitle>
-              </CardHeader>
-              <CardBody>
-                {tasks}
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-      </div>
+      </>
     );
   }
 }
 
-export default TaskList;
+export default withLocalize(TaskList);
