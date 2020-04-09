@@ -16,6 +16,7 @@
 
 */
 import React, { useState } from "react";
+import { Redirect } from 'react-router';
 import { NavLink, Link } from "react-router-dom";
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
@@ -88,6 +89,7 @@ class MachineProfile extends React.Component {
       loaded_tasks: false,
       placeholder_tasks: "Loading",
       error_message_tasks: "",
+      redirect: false,
     };
 
     languages.forEach((language, i) => {
@@ -109,7 +111,10 @@ class MachineProfile extends React.Component {
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
       }
-    }).then(response => {console.log(response)});
+    }).then(response => {
+      console.log(response)
+      this.setState({redirect: true})
+    });
   }
   componentDidMount() {
     const { pk } = this.props.match.params
@@ -351,6 +356,7 @@ class MachineProfile extends React.Component {
     console.log(tasks);
     return (
       <div className="content">
+        {this.state.redirect && (<Redirect to={'/machines'} />)}
         <div className="react-notification-alert-container">
           <NotificationAlert ref="notificationAlert" />
         </div>

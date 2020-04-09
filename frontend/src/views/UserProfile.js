@@ -16,6 +16,7 @@
 
 */
 import React, { useState } from "react";
+import { Redirect } from 'react-router';
 import { NavLink, Link } from "react-router-dom";
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
@@ -86,6 +87,7 @@ class UserProfile extends React.Component {
       loaded_roles: false,
       placeholder: "Loading",
       error_message: "",
+      redirect: false,
     };
     languages.forEach((language, i) => {
       props.addTranslationForLanguage(lang[language.code], language.code);
@@ -114,7 +116,10 @@ class UserProfile extends React.Component {
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
       }
-    }).then(response => {console.log(response)});
+    }).then(response => {
+      console.log(response)
+      this.setState({redirect: true})
+    });
   }
   componentDidMount() {
     const { pk } = this.props.match.params
@@ -297,6 +302,7 @@ class UserProfile extends React.Component {
     }
     return (
       <div className="content">
+        {this.state.redirect && (<Redirect to={'/adm'} />)}
         <div className="react-notification-alert-container">
           <NotificationAlert ref="notificationAlert" />
         </div>

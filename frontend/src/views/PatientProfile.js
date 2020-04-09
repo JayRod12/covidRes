@@ -16,6 +16,7 @@
 
 */
 import React, { useState } from "react";
+import { Redirect } from 'react-router';
 import { NavLink, Link } from "react-router-dom";
 // react plugin for creating notifications over the dashboard
 import NotificationAlert from "react-notification-alert";
@@ -95,6 +96,7 @@ class PatientProfile extends React.Component {
       error_message_messages: "",
       severity_list: ["SEV_0","SEV_1","SEV_2","SEV_3","SEV_4","SEV_5","SEV_6"],
       graph_xy: [],
+      redirect: false,
     };
 
     languages.forEach((language, i) => {
@@ -126,7 +128,10 @@ class PatientProfile extends React.Component {
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
       }
-    })
+    }).then(response => {
+      console.log(response)
+      this.setState({redirect1: true})
+    });
     this.setState({
       graph_xy: this.state.graph_xy.concat({x: new Date().valueOf(), y: parseInt(data.get('severity'))})
     })
@@ -140,7 +145,12 @@ class PatientProfile extends React.Component {
         headers: {
             "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
         }
-      })
+      }).then(response => {
+        console.log(response)
+        this.setState({redirect2: true})
+      });
+    } else {
+      this.setState({redirect2: true})
     }
   }
   sendMessage(event) {
@@ -609,6 +619,7 @@ class PatientProfile extends React.Component {
     console.log(messages);
     return (
       <div className="content">
+        {this.state.redirect1 && this.state.redirect2 && (<Redirect to={'/patients'} />)}
         <div className="react-notification-alert-container">
           <NotificationAlert ref="notificationAlert" />
         </div>
