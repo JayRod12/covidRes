@@ -29,6 +29,7 @@ import TaskList from "views/TaskList.js";
 import AdminView from "views/AdminView.js";
 import UserProfile from "views/UserProfile.js";
 import RoleProfile from "views/RoleProfile.js";
+import ModelProfile from "views/ModelProfile.js";
 
 
 var routes = [
@@ -121,6 +122,12 @@ var routes = [
     path: "/role/:pk",
     name: "Role-details",
     component: RoleProfile,
+    layout: "/"
+  },
+  {
+    path: "/model/:pk",
+    name: "Model-details",
+    component: ModelProfile,
     layout: "/"
   },
 ];
