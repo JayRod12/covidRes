@@ -118,9 +118,7 @@ class TaskList extends React.Component {
           throw new Error(response.status);
         }
         return response.json();
-      }).then(data => {
-        this.setState({showDialog:false, data: this.state.data.map(item => {return(item.pk == data.pk ? data : item)})})
-      })
+      }).then(data => {window.location.reload()})
   }
   componentDidMount() {
     fetch("rest/assignment_tasks/query/bool_completed=0/")
