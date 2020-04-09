@@ -185,8 +185,8 @@ class TaskList extends React.Component {
         ) {return (
           <tr>
             <td><Link onClick={() => {this.setState({showDialog: true, selectedTask: entry})}}>{entry.bool_install ? t("Remove") : t("Install")}</Link></td>
-            <td>{entry.patient_name}</td>
-            <td>{entry.machine_model}</td>
+            <td><Link to={'/patient/'+entry.patient}>{entry.patient_name}</Link></td>
+            <td><Link to={'/machine/'+entry.machine}>{entry.machine_model}</Link></td>
             <td>{entry.patient_location}</td>
             <td>{entry.machine_location}</td>
             <td>{moment(entry.date).format("HH:mm (DD-MMM-YYYY)")}</td>

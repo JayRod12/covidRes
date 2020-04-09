@@ -45,8 +45,8 @@ class MachineSerializer(serializers.ModelSerializer):
 class AssignmentTaskSerializer(serializers.ModelSerializer):
 	patient_name = serializers.CharField(source='patient.name', read_only=True)
 	machine_model = serializers.CharField(source='machine.model.name', read_only=True)
-	patient_location = serializers.CharField(source='patient.location', read_only=True)
-	machine_location = serializers.CharField(source='machine.location', read_only=True)
+	patient_location = serializers.CharField(source='patient.location.name', read_only=True)
+	machine_location = serializers.CharField(source='machine.location.name', read_only=True)
 	class Meta:
 		model = AssignmentTask
 		fields = ('pk', 'patient', 'machine', 'patient_name', 'machine_model', 'patient_location', 'machine_location', 'start_date', 'end_date', 'date', 'bool_install', 'bool_completed')
