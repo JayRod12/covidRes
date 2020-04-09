@@ -34,7 +34,7 @@ import RoleProfile from "views/RoleProfile.js";
 var routes = [
   {
     path: "/ventilators",
-    name: "Ventilators",
+    name: "Synopsis",
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-chart-pie-36",
     component: Ventilators,

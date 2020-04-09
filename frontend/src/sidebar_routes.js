@@ -34,7 +34,7 @@ import AdminView from "views/AdminView.js";
 var routes = [
   {
     path: "/ventilators",
-    name: "Ventilators",
+    name: "Synopsis",
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-chart-pie-36",
     component: Ventilators,
