@@ -30,6 +30,7 @@ import AdminView from "views/AdminView.js";
 import UserProfile from "views/UserProfile.js";
 import RoleProfile from "views/RoleProfile.js";
 import ModelProfile from "views/ModelProfile.js";
+import LocationProfile from "views/LocationProfile.js";
 
 
 var routes = [
@@ -128,6 +129,12 @@ var routes = [
     path: "/model/:pk",
     name: "Model-details",
     component: ModelProfile,
+    layout: "/"
+  },
+  {
+    path: "/location/:pk",
+    name: "Location-details",
+    component: LocationProfile,
     layout: "/"
   },
 ];
