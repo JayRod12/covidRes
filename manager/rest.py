@@ -14,7 +14,7 @@ from .serializers import (
     MachineTypeSerializer,
     LocationSerializer,
     MachineSerializer,
-    MachineDetailedSerializer
+    MachineDetailedSerializer,
     AssignmentTaskSerializer
 )
 from .serializers import UserSerializer, MessageSerializer, RoleSerializer
