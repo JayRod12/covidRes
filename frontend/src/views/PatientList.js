@@ -81,7 +81,7 @@ class PatientRow extends React.Component {
         <tr>
           <td><Link to={'/patient/' + this.props.pk}>{this.props.name}</Link></td>
           <td className="text-center">{this.props.severity}</td>
-          <td>{this.props.location}</td>
+          <td>{this.props.location_name}</td>
           <td>{this.props.machine_assigned_model}</td>
           <td>{moment(this.props.admission_date).format("HH:mm (DD-MMM-YYYY)")}</td>
         </tr>
@@ -205,7 +205,7 @@ class PatientList extends React.Component {
             name={entry.name}
             admission_date={entry.admission_date}
             severity={entry.severity}
-            location={entry.location}
+            location_name={entry.location_name}
             machine_assigned_model={entry.machine_assigned_model}
           />
         )}

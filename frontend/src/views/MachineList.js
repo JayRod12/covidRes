@@ -79,7 +79,7 @@ class MachineRow extends React.Component {
       <React.Fragment>
         <tr>
           <td><Link to={'/machine/' + this.props.pk}>{this.props.model_name}</Link></td>
-          <td>{this.props.location}</td>
+          <td>{this.props.location_name}</td>
           <td>{this.props.patient_assigned_name}</td>
         </tr>
       </React.Fragment>
@@ -228,7 +228,7 @@ class MachineList extends React.Component {
           key={entry.pk}
           pk={entry.pk}
           model_name={entry.model_name}
-          location={entry.location}
+          location_name={entry.location_name}
           patient_assigned_name={entry.patient_assigned_name}
         />
       )}

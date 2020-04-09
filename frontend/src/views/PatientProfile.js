@@ -373,7 +373,7 @@ class PatientProfile extends React.Component {
                     <FormGroup>
                       <label>{t("Location")}</label>
                       <Input
-                        defaultValue={this.state.data.location}
+                        defaultValue={this.state.data.location_name}
                         placeholder={t("Location")}
                         name="location"
                         type="text"
