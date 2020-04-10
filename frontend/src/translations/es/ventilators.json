@@ -1,0 +1,11 @@
+{
+    "Buffer row": "Fila volatil",
+    "Create assignment": "Crear asignación",
+    "Edit ventilator assignment?": "Editar asignación?",
+    "Filter assignments": "Filtrar Asignaciones",
+    "Follow": "Seguir",
+    "Machine or patient already assigned during this time interval!": "Máquina o paciente ya asignados para este intervalo de tiempo!",
+    "Move ventilator?": "Mover asignación?",
+    "The start date needs to be before the end date.": "La fecha de inicio tiene que ser previa a la de finalización.",
+    "You are about to change the assignment of this ventilator. Please confirm.": "Estas a punto de cambiar la asignación de este ventilador. Confirma, por favor."
+}
