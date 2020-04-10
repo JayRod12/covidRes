@@ -73,23 +73,6 @@ function getCookie(name) {
     return cookieValue;
 }
 
-class MachineRow extends React.Component {
-  render() {
-    return (
-      <React.Fragment>
-        <tr>
-          <td><Link to={'/machine/' + this.props.pk}>{this.props.model_name}</Link></td>
-          <td>{this.props.location_name}</td>
-          <td>{this.props.patient_assigned_name}</td>
-        </tr>
-      </React.Fragment>
-    );
-  }
-}
-function prettifyDate(raw_date) {
-  return new Date(raw_date).toGMTString();
-};
-
 class MachineList extends React.Component {
   constructor(props) {
     super(props);
@@ -223,13 +206,12 @@ class MachineList extends React.Component {
           (this.state.filter_machine == "--(All)--" || this.state.filter_machine == entry.model_name) &&
           (this.state.filter_location == "--(All)--" || this.state.filter_location == entry.location)
         ) {return(
-        <MachineRow
-          key={entry.pk}
-          pk={entry.pk}
-          model_name={entry.model_name}
-          location_name={entry.location_name}
-          patient_assigned_name={entry.patient_assigned_name}
-        />
+          <tr>
+            <td><Link to={'/machine/' + entry.pk}>{entry.model_name}</Link></td>
+            <td>{entry.pk}</td>
+            <td><Link to={'/location/' + entry.location}>{entry.location_name}</Link></td>
+            <td>{entry.patient_assigned_name}</td>
+          </tr>
       )}
       });
     } else {
@@ -369,6 +351,7 @@ class MachineList extends React.Component {
                       <thead className="text-primary">
                         <tr>
                           <th>{t("Name")}</th>
+                          <th>ID</th>
                           <th>{t("Location")}</th>
                           <th>{t("Patient")}</th>
                         </tr>

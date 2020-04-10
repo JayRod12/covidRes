@@ -74,23 +74,6 @@ function getCookie(name) {
     return cookieValue;
 }
 
-class PatientRow extends React.Component {
-  render() {
-    return (
-      <React.Fragment>
-        <tr>
-          <td><Link to={'/patient/' + this.props.pk}>{this.props.name}</Link></td>
-          <td>{this.props.first_name} {this.props.last_name}</td>
-          <td className="text-center">{this.props.severity}</td>
-          <td>{this.props.location_name}</td>
-          <td>{this.props.machine_assigned_model}</td>
-          <td>{moment(this.props.admission_date).format("HH:mm (DD-MMM-YYYY)")}</td>
-        </tr>
-      </React.Fragment>
-    );
-  }
-}
-
 class PatientList extends React.Component {
   constructor(props) {
     super(props);
@@ -200,17 +183,14 @@ class PatientList extends React.Component {
           (this.state.filter_location == "--(All)--" || this.state.filter_location == entry.location) &&
           (this.state.filter_name.length == 0 || this.state.filter_name.length <= entry.name.length && this.state.filter_name.toLowerCase() == entry.name.substring(0, this.state.filter_name.length).toLowerCase())
         ) {return (
-          <PatientRow
-            key={entry.pk}
-            pk={entry.pk}
-            name={entry.name}
-            first_name={entry.first_name}
-            last_name={entry.last_name}
-            admission_date={entry.admission_date}
-            severity={entry.severity}
-            location_name={entry.location_name}
-            machine_assigned_model={entry.machine_assigned_model}
-          />
+          <tr>
+            <td><Link to={'/patient/' + entry.pk}>{entry.name}</Link></td>
+            <td>{entry.first_name} {entry.last_name}</td>
+            <td className="text-center">{entry.severity}</td>
+            <td><Link to={'/location/' + entry.location}>{entry.location_name}</Link></td>
+            <td>{entry.machine_assigned_model}</td>
+            <td>{moment(entry.admission_date).format("HH:mm (DD-MMM-YYYY)")}</td>
+          </tr>
         )}
       });
     } else {
