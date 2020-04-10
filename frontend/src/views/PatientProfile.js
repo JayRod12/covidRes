@@ -48,6 +48,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import TextField from '@material-ui/core/TextField';
+
 import {
   withLocalize,
   Translate,
@@ -143,6 +145,7 @@ class PatientProfile extends React.Component {
         name: data.get('name'),
         severity: data.get('severity'),
         location: data.get('location'),
+        birth: data.get('birth'),
         description: data.get('description'),
         id1: data.get('id1')
     })
@@ -153,6 +156,7 @@ class PatientProfile extends React.Component {
           name: data.get('name'),
           severity: data.get('severity'),
           location: data.get('location'),
+          birth: new Date(data.get('birth')).toISOString(),
           description: data.get('description')
       }),
       headers: {
@@ -160,7 +164,7 @@ class PatientProfile extends React.Component {
       }
     }).then(response => {
       console.log(response)
-      this.setState({redirect1: true})
+      //this.setState({redirect1: true})
     });
     this.setState({
       graph_xy: this.state.graph_xy.concat({x: new Date().valueOf(), y: parseInt(data.get('severity'))})
@@ -429,6 +433,20 @@ class PatientProfile extends React.Component {
                         placeholder={t("ID1")}
                         name="ID1"
                         type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md="4">
+                    <FormGroup>
+                      <TextField
+                        id="date"
+                        name="birth"
+                        label="Birthday"
+                        type="date"
+                        defaultValue={moment(this.state.data.birth).format("YYYY-MM-DD")}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
                       />
                     </FormGroup>
                   </Col>
