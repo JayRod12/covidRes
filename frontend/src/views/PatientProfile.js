@@ -164,7 +164,7 @@ class PatientProfile extends React.Component {
       }
     }).then(response => {
       console.log(response)
-      //this.setState({redirect1: true})
+      this.setState({redirect1: true})
     });
     this.setState({
       graph_xy: this.state.graph_xy.concat({x: new Date().valueOf(), y: parseInt(data.get('severity'))})
