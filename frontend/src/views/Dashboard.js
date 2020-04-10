@@ -279,7 +279,8 @@ class Dashboard extends React.Component {
                 suggestedMin: 50,
                 suggestedMax: 125,
                 padding: 20,
-                fontColor: "#9e9e9e"
+                fontColor: "#9e9e9e",
+                stepSize: 1
               }
             }
           ],
@@ -570,7 +571,8 @@ class Dashboard extends React.Component {
               ticks: {
                 suggestedMin: 0,
                 padding: 2,
-                fontColor: "#9a9a9a"
+                fontColor: "#9a9a9a",
+                stepSize: 1
               }
             }
           ],
@@ -738,7 +740,8 @@ class Dashboard extends React.Component {
                 suggestedMin: 0,
                 suggestedMax: 1,
                 padding: 20,
-                fontColor: "#9e9e9e"
+                fontColor: "#9e9e9e",
+                stepSize: 1
               }
             }
           ],
@@ -848,7 +851,8 @@ class Dashboard extends React.Component {
                 suggestedMin: 0,
                 suggestedMax: 1,
                 padding: 20,
-                fontColor: "#9e9e9e"
+                fontColor: "#9e9e9e",
+                stepSize: 1
               }
             }
           ],
@@ -934,7 +938,8 @@ class Dashboard extends React.Component {
                 suggestedMin: 0,
                 suggestedMax: 3,
                 padding: 20,
-                fontColor: "#9e9e9e"
+                fontColor: "#9e9e9e",
+                stepSize: 1
               }
             }
           ],
