@@ -167,7 +167,7 @@ class Ventilators extends React.Component {
                 const groups = []; const allMachines = [];
                 results.forEach(ventilator => {
                     //const ventilatorName = ventilator.model_name + " #" + ventilator.pk + " (" + ventilator.location + ")";
-                    const ventilatorName = (<>{ventilator.location_name}-<Link to={'/machine/' + ventilator.pk}>{ventilator.model_name}</Link></>)
+                    const ventilatorName = (<>{ventilator.location_name} | <Link to={'/machine/' + ventilator.pk}>{ventilator.model_name}</Link></>)
                     groups.push({ id: ventilator.pk, title: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location_name});
                     allMachines.push({ id: ventilator.pk, name: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location_name})
                 });
