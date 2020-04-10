@@ -114,6 +114,8 @@ class RoleProfile extends React.Component {
           permission_model_edit: 1 < data.get('permission_model'),
           permission_role_see: 0 < data.get('permission_role'),
           permission_role_edit: 1 < data.get('permission_role'),
+          permission_location_see: 0 < data.get('permission_location'),
+          permission_location_edit: 1 < data.get('permission_location'),
       }),
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
@@ -294,6 +296,20 @@ class RoleProfile extends React.Component {
                       <Input
                         defaultValue={this.state.data.permission_role_see+this.state.data.permission_role_edit}
                         name="permission_role"
+                        type="select"
+                      >
+                        <option key={0} value={0}>{t("None")}</option>
+                        <option key={0} value={1}>{t("See")}</option>
+                        <option key={0} value={2}>{t("Edit")}</option>
+                      </Input>
+                    </FormGroup>
+                  </Col>
+                  <Col className="px-md-1" md="2">
+                    <FormGroup>
+                      <label>{t("Locations")}</label>
+                      <Input
+                        defaultValue={this.state.data.permission_role_see+this.state.data.permission_role_edit}
+                        name="permission_location"
                         type="select"
                       >
                         <option key={0} value={0}>{t("None")}</option>
