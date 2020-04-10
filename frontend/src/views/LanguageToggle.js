@@ -3,6 +3,10 @@ import React from 'react';
 // nodejs library that concatenates classes
 import classNames from "classnames";
 
+// Cookies
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
+
 // reactstrap components
 import {
   Button,
@@ -34,6 +38,10 @@ import {
 import { withLocalize } from 'react-localize-redux';
 
 const LanguageToggle = ({languages, activeLanguage, setActiveLanguage}) => {
+  if (cookies.get("Language") && activeLanguage && cookies.get("Language") != activeLanguage.code){
+    setActiveLanguage(cookies.get("Language"))
+  }
+
   const getClass = (languageCode) => {
     return languageCode === activeLanguage.code ? 'active' : ''
   };
@@ -53,7 +61,10 @@ const LanguageToggle = ({languages, activeLanguage, setActiveLanguage}) => {
       <DropdownMenu className="dropdown-navbar" right tag="ul">
         {languages.map((language, ii) => {return(
           <NavLink tag="li">
-            <DropdownItem className="nav-item" onClick={() => setActiveLanguage(language.code)}>
+            <DropdownItem className="nav-item" onClick={() => {
+              cookies.set("Language", language.code)
+              setActiveLanguage(language.code)
+              }}>
               {language.name}
             </DropdownItem>
           </NavLink>
