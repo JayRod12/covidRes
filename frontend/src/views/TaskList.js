@@ -233,7 +233,7 @@ class TaskList extends React.Component {
                     </Col>
                   </Row>
                   <Col md="12">
-                    By pressing Ok you confirm that you realized the task.
+                   {t("By pressing Ok you confirm that you realized the task.")}
                   </Col>
                 </DialogContentText>
               </DialogContent>
@@ -254,7 +254,7 @@ class TaskList extends React.Component {
                     <Col className="px-md-12" md="8">
                       <CardTitle tag="h3">{t("Tasks")}</CardTitle>
                     </Col>
-                    <Col className="px-md-1" md="2">
+                    <Col  className="text-right" md="4" >
                       <Button
                         color="secondary"
                         onClick={() => this.setState({

@@ -12,6 +12,7 @@ import Timeline, {
 } from 'src/react-calendar-timeline'
 
 import {
+    Button,
     Card,
     CardHeader,
     CardBody,
@@ -50,7 +51,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import moment from 'moment'
 
-import Button from '@material-ui/core/Button';
+//import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -166,7 +167,7 @@ class Ventilators extends React.Component {
                 const groups = []; const allMachines = [];
                 results.forEach(ventilator => {
                     //const ventilatorName = ventilator.model_name + " #" + ventilator.pk + " (" + ventilator.location + ")";
-                    const ventilatorName = (<><Link to={'/machine/' + ventilator.pk}>{ventilator.model_name}</Link> - {ventilator.location_name}</>)
+                    const ventilatorName = (<>{ventilator.location_name} | <Link to={'/machine/' + ventilator.pk}>{ventilator.model_name}</Link></>)
                     groups.push({ id: ventilator.pk, title: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location_name});
                     allMachines.push({ id: ventilator.pk, name: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location_name})
                 });
@@ -677,7 +678,7 @@ class Ventilators extends React.Component {
                                 <TimelineHeaders className="sticky">
                                     <SidebarHeader>
                                         {({ _ }) => {
-                                            return <div style={{ alignSelf: "center", color: "white", textAlign: "center", width: "200px" }}>{t("Model")}-{t("Location")}</div>;
+                                            return <div style={{ alignSelf: "center", color: "white", textAlign: "center", width: "200px" }}>{t("Location")}-{t("Model")}</div>;
                                         }}
                                     </SidebarHeader>
                                     <DateHeader unit="primaryHeader" />
@@ -698,35 +699,30 @@ class Ventilators extends React.Component {
                 <Row>
                     <Card>
                         <CardHeader>
-                          <Row>
-                            <Col className="px-md-1" md="8">
-                              <CardTitle tag="h4">{t("Assignments")}</CardTitle>
-                            </Col>
-                            <Col className="px-md-1" md="2">
-                              <Button
-                                color="secondary"
-                                onClick={() => this.setState({
-                                  create_isOpen: false,
-                                  filter_isOpen: !this.state.filter_isOpen
-                                })}
-                                >
-                                {t("Filter assignments")}
-                              </Button>
-                            </Col>
-                            {this.props.me && this.props.me.permission_task_edit && (
-                              <Col className="px-md-1" md="2">
+                            <Row className="px-md-3">
                                 <Button
-                                  color="secondary"
-                                  onClick={() => this.setState({
+                                    size="sm"
+                                    color="primary"
+                                    onClick={() => this.setState({
+                                      create_isOpen: false,
+                                      filter_isOpen: !this.state.filter_isOpen
+                                    })}
+                                    >
+                                    {t("Filter assignments")}
+                                </Button>
+                                {this.props.me && this.props.me.permission_task_edit && (
+                                <Button
+                                    size="sm"
+                                    color="primary"
+                                    onClick={() => this.setState({
                                     create_isOpen: !this.state.create_isOpen,
                                     filter_isOpen: false
-                                  })}
-                                  >
-                                  {t("Create assignment")}
+                                    })}
+                                    >
+                                    {t("Create assignment")}
                                 </Button>
-                              </Col>
-                            )}
-                          </Row>
+                                )}
+                            </Row>
                         </CardHeader>
                         <CardBody>
                         <Collapse isOpen={this.state.filter_isOpen}>
