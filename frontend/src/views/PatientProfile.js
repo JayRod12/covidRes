@@ -335,10 +335,10 @@ class PatientProfile extends React.Component {
       );
     } else if (this.state.data.pk) {
       patient = (
-        <Col md="8">
+        <Col md="7">
           <Card>
             <CardHeader>
-              <h5 className="title">{t("Patient profile")}</h5>
+              <h4 className="title">{t("Patient profile")}</h4>
             </CardHeader>
             <CardBody>
               <Form onSubmit={this.handleSubmit}>
@@ -380,7 +380,7 @@ class PatientProfile extends React.Component {
                       </Input>
                     </FormGroup>
                   </Col>
-                  <Col className="pl-md-1" md="5">
+                  <Col className="pl-md-1" md="4">
                     <FormGroup>
                       <label>{t("Location")}</label>
                       <Select
@@ -399,7 +399,7 @@ class PatientProfile extends React.Component {
                   </Col>
                 </Row>
                 <Row>
-                  <Col className="pr-md-1" md="6">
+                  <Col className="pr-md-1" md="4">
                     <FormGroup>
                       <label>{t("First name")}</label>
                       <Input
@@ -410,7 +410,7 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                  <Col className="px-md-1" md="6">
+                  <Col className="px-md-1" md="4">
                     <FormGroup>
                       <label>{t("Last name")}</label>
                       <Input
@@ -421,7 +421,7 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                   <Col className="pr-md-1" md="3">
+                   <Col className="px-md-1" md="3">
                     <FormGroup>
                       <label>{t("ID1")}</label>
                       <Input
@@ -434,7 +434,7 @@ class PatientProfile extends React.Component {
                   </Col>
                 </Row>
                 <Row>
-                  <Col md="8">
+                  <Col md="6">
                     <FormGroup>
                       <label>{t("Description")}</label>
                       <Input
@@ -472,7 +472,7 @@ class PatientProfile extends React.Component {
           </Card>
           <Card>
             <CardHeader>
-              <h5 className="title">{t("Severity evolution")}</h5>
+              <h4 className="title">{t("Severity evolution")}</h4>
             </CardHeader>
             <CardBody>
               <Scatter
@@ -689,10 +689,10 @@ class PatientProfile extends React.Component {
               </Dialog>
             )}
             {patient}
-            <Col md="4">
+            <Col md="5">
               <Card className="card-user">
                 <CardHeader>
-                  <h6>{t("Associated tasks")}</h6>
+                  <h4>{t("Associated tasks")}</h4>
                 </CardHeader>
                 <CardBody>
                   <div style={{maxHeight: "200px", overflow: "auto"}}>
@@ -713,7 +713,7 @@ class PatientProfile extends React.Component {
               </Card>
               <Card className="card-user">
                 <CardHeader>
-                  <h6>{t("Messages")}</h6>
+                  <h4>{t("Messages")}</h4>
                 </CardHeader>
                 <CardBody>
                   <div style={{maxHeight: "200px", overflow: "auto"}}>
