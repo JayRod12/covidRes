@@ -92,6 +92,8 @@ class PatientList extends React.Component {
       create_isOpen: false,
       filter_isOpen: false,
       filter_name: "",
+      filter_first_name: "",
+      filter_last_name: "",
       filter_severity: "--(All)--",
       filter_machine: "--(All)--",
       filter_location: "--(All)--"
@@ -181,7 +183,9 @@ class PatientList extends React.Component {
           (this.state.filter_severity == "--(All)--" || this.state.filter_severity == entry.severity) &&
           (this.state.filter_machine == "--(All)--" || this.state.filter_machine == entry.machine_assigned_model || this.state.filter_machine == "" && entry.machine_assigned_model == null) &&
           (this.state.filter_location == "--(All)--" || this.state.filter_location == entry.location) &&
-          (this.state.filter_name.length == 0 || this.state.filter_name.length <= entry.name.length && this.state.filter_name.toLowerCase() == entry.name.substring(0, this.state.filter_name.length).toLowerCase())
+          (this.state.filter_name.length == 0 || this.state.filter_name.length <= entry.name.length && this.state.filter_name.toLowerCase() == entry.name.substring(0, this.state.filter_name.length).toLowerCase()) &&
+          (this.state.filter_first_name.length == 0 || this.state.filter_first_name.length <= entry.first_name.length && this.state.filter_first_name.toLowerCase() == entry.first_name.substring(0, this.state.filter_first_name.length).toLowerCase()) &&
+          (this.state.filter_last_name.length == 0 || this.state.filter_last_name.length <= entry.last_name.length && this.state.filter_last_name.toLowerCase() == entry.last_name.substring(0, this.state.filter_last_name.length).toLowerCase())
         ) {return (
           <tr>
             <td><Link to={'/patient/' + entry.pk}>{entry.name}</Link></td>
@@ -252,6 +256,30 @@ class PatientList extends React.Component {
                               name="name"
                               type="text"
                               onChange={(event) => {this.setState({filter_name: event.target.value})}}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="text-left" md="2">
+                          <FormGroup>
+                            <label>
+                              {t("First name")}
+                            </label>
+                            <Input
+                              name="first_name"
+                              type="text"
+                              onChange={(event) => {this.setState({filter_first_name: event.target.value})}}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="text-left" md="2">
+                          <FormGroup>
+                            <label>
+                              {t("Last name")}
+                            </label>
+                            <Input
+                              name="last_name"
+                              type="text"
+                              onChange={(event) => {this.setState({filter_last_name: event.target.value})}}
                             />
                           </FormGroup>
                         </Col>
