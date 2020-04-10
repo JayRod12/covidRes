@@ -38,6 +38,7 @@ import {
   Label,
   Input,
   Row,
+  Table,
   Col
 } from "reactstrap";
 
@@ -63,8 +64,7 @@ languages.forEach((language, i) => {
   lang[language.code] = Object.assign({}, common, local)
 });
 
-import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
-
+import moment from 'moment'
 import $ from 'jquery';
 
 const IS_DEV = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
@@ -101,7 +101,9 @@ class MachineProfile extends React.Component {
       placeholder_locations: "Loading",
       error_message_locations: "",
       redirect: false,
-      showDialog: false,
+      showDialog_replicate: false,
+      showDialog_task: false,
+      selectedTask: null,
     };
 
     languages.forEach((language, i) => {
@@ -110,6 +112,23 @@ class MachineProfile extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleReplicate = this.handleReplicate.bind(this);
+  }
+  _commit = () => {
+      fetch('/rest/assignment_tasks/' + this.state.selectedTask.pk + "/", {
+          method: 'PATCH',
+          body: JSON.stringify({
+              bool_completed: this.state.selectedTask.bool_install,
+              bool_install: true
+          }),
+          headers: {
+              "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
+          }
+      }).then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      }).then(data => {window.location.reload()})
   }
   handleSubmit(event) {
     event.preventDefault();
@@ -229,51 +248,6 @@ class MachineProfile extends React.Component {
               });
             });
   };
-  pop = props => {
-    var color;
-    color = props.bool_install == 0 ? 1 : 5;
-    var type;
-    switch (color) {
-      case 1:
-        type = "primary";
-        break;
-      case 2:
-        type = "success";
-        break;
-      case 3:
-        type = "danger";
-        break;
-      case 4:
-        type = "warning";
-        break;
-      case 5:
-        type = "info";
-        break;
-      default:
-        break;
-    }
-    var options = {};
-    options = {
-      place: "tr",
-      message: (
-        <AssignmentTaskWindow
-          key={props.pk}
-          pk={props.pk}
-          machine={props.machine}
-          patient={props.patient}
-          bool_install={props.bool_install}
-          machine_model={props.machine_model}
-          patient_name={props.patient_name}
-          machine_location={props.machine_location}
-          patient_location={props.patient_location}
-          date={props.date}
-        />
-      ),
-      type: type,
-      icon: "tim-icons icon-bell-55",
-    };
-    this.refs.notificationAlert.notificationAlert(options);
-  };
   render() {
     const t = this.props.translate
     if (!this.state.loaded) {
@@ -380,7 +354,7 @@ class MachineProfile extends React.Component {
                     </Button>
                   </Col>
                   <Col md="6">
-                    <Button className="btn-fill" color="primary" onClick={() => {this.setState({showDialog: true})}}>
+                    <Button className="btn-fill" color="primary" onClick={() => {this.setState({showDialog_replicate: true})}}>
                       Replicate
                     </Button>
                   </Col>
@@ -411,15 +385,12 @@ class MachineProfile extends React.Component {
         </Alert>
       );
     } else if (this.state.data_tasks.length > 0) {
-      tasks = this.state.data_tasks.map((props, index) => (
-        <Button
-          key = {props.pk}
-          block
-          color={props.bool_install == 0 ? "primary" : "info"}
-          onClick={() => this.pop(props)}
-        >
-          {props.machine_model} - {props.patient_name}
-        </Button>
+      tasks = this.state.data_tasks.map((entry, index) => (
+        <tr>
+          <td><Link onClick={() => {this.setState({showDialog_task: true, selectedTask: entry})}}>{entry.bool_install ? t("Remove") : t("Install")}</Link></td>
+          <td><Link to={'/patient/'+entry.patient}>{entry.patient_name}</Link></td>
+          <td>{moment(entry.date).format("HH:mm (DD-MMM-YYYY)")}</td>
+        </tr>
         )
       );
     } else {
@@ -431,13 +402,49 @@ class MachineProfile extends React.Component {
     return (
       <div className="content">
         {this.state.redirect && (<Redirect to={'/machines'} />)}
-        <div className="react-notification-alert-container">
-          <NotificationAlert ref="notificationAlert" />
-        </div>
         <div className="content">
           <Row>
+            {this.state.selectedTask && (
               <Dialog
-                  open={this.state.showDialog}
+                  open={this.state.showDialog_task}
+                  onClose={() => this._closeDialog(false)}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+              >
+              <DialogTitle id="alert-dialog-title">
+                <h3 align="center">{this.state.selectedTask.bool_install ? t("Remove") : t("Install")}</h3>
+                <h5 align="center">{moment(this.state.selectedTask.date).format("HH:mm (DD-MMM-YYYY)")}</h5>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Row>
+                    <Col md="5">
+                      <h4 align="center"><Link to={'/patient/'+this.state.selectedTask.patient}>{this.state.selectedTask.patient_name}</Link></h4>
+                    </Col>
+                    <Col md="2">
+                      {" => "}
+                    </Col>
+                    <Col md="5">
+                      <h4 align="center"><Link to={'/machine/'+this.state.selectedTask.machine}>{this.state.selectedTask.machine_model}</Link></h4>
+                    </Col>
+                  </Row>
+                  <Col md="12">
+                    By pressing Ok you confirm that you realized the task.
+                  </Col>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {this.setState({showDialog: false})}} color="primary">
+                  {t("Cancel")}
+                </Button>
+                <Button onClick={this._commit} color="primary">
+                  {t("Ok")}
+                </Button>
+              </DialogActions>
+              </Dialog>
+            )}
+              <Dialog
+                  open={this.state.showDialog_replicate}
                   onClose={() => this._closeDialog(false)}
                   aria-labelledby="alert-dialog-title"
                   aria-describedby="alert-dialog-description"
@@ -464,7 +471,7 @@ class MachineProfile extends React.Component {
                       </DialogContentText>
                   </DialogContent>
                   <DialogActions>
-                      <Button onClick={() => {this.setState({showDialog: false})}} color="primary">
+                      <Button onClick={() => {this.setState({showDialog_replicate: false})}} color="primary">
                           {t("Cancel")}
                       </Button>
                       <Button color="primary" type="submit" value="Submit">
@@ -480,7 +487,20 @@ class MachineProfile extends React.Component {
                   <h5 className="title">{t("Associated tasks")}</h5>
                 </CardHeader>
                 <CardBody>
-                  {tasks}
+                  <div style={{maxHeight: "200px", overflow: "auto"}}>
+                    <Table className="tablesorter" >
+                      <thead className="text-primary">
+                        <tr>
+                          <th>{t("Task")}</th>
+                          <th>{t("Patient")}</th>
+                          <th>{t("Date")}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {tasks}
+                      </tbody>
+                    </Table>
+                  </div>
                 </CardBody>
               </Card>
             </Col>

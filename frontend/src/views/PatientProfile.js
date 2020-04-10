@@ -64,8 +64,6 @@ languages.forEach((language, i) => {
   lang[language.code] = Object.assign({}, common, local)
 });
 
-import AssignmentTaskWindow from "views/AssignmentTaskWindow.js"
-
 import moment from 'moment'
 import $ from 'jquery';
 
