@@ -419,7 +419,7 @@ class PatientProfile extends React.Component {
                       <label>{t("Last name")}</label>
                       <Input
                         defaultValue={this.state.data.last_name}
-                        placeholder={t("Last Name")}
+                        placeholder={t("Last name")}
                         name="last_name"
                         type="text"
                       />
