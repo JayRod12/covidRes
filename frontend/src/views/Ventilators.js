@@ -123,6 +123,8 @@ class Ventilators extends React.Component {
             filter_location: "--(All)--",
             filter_follow: false,
             filterc_name: "",
+            filterc_first_name: "",
+            filterc_last_name: "",
             filterc_severity: "--(All)--",
             filterc_machine: "--(All)--",
             filterc_location: "--(All)--"
@@ -826,6 +828,30 @@ class Ventilators extends React.Component {
                                   />
                                 </FormGroup>
                               </Col>
+                              <Col className="text-left" md="2">
+                                <FormGroup>
+                                  <label>
+                                    {t("First name")}
+                                  </label>
+                                  <Input
+                                    name="first_namec"
+                                    type="text"
+                                    onChange={(event) => {this.setState({filterc_first_name: event.target.value})}}
+                                  />
+                                </FormGroup>
+                              </Col>
+                              <Col className="text-left" md="2">
+                                <FormGroup>
+                                  <label>
+                                    {t("Last name")}
+                                  </label>
+                                  <Input
+                                    name="last_namec"
+                                    type="text"
+                                    onChange={(event) => {this.setState({filterc_last_name: event.target.value})}}
+                                  />
+                                </FormGroup>
+                              </Col>
                               <Col className="px-md-1" md="2">
                                 <FormGroup>
                                   <label>
@@ -897,6 +923,8 @@ class Ventilators extends React.Component {
                                   (this.state.filterc_machine == "--(All)--" || this.state.filterc_machine == patient.machine_assigned_model || this.state.filterc_machine == "" && patient.machine_assigned_model == null) &&
                                   (this.state.filterc_location == "--(All)--" || this.state.filterc_location == patient.location_name) &&
                                   (this.state.filterc_name.length == 0 || this.state.filterc_name.length <= patient.name.length && this.state.filterc_name.toLowerCase() == patient.name.substring(0, this.state.filterc_name.length).toLowerCase()) &&
+                                  (this.state.filterc_first_name.length == 0 || this.state.filterc_first_name.length <= patient.first_name.length && this.state.filterc_first_name.toLowerCase() == patient.first_name.substring(0, this.state.filterc_first_name.length).toLowerCase()) &&
+                                  (this.state.filterc_last_name.length == 0 || this.state.filterc_last_name.length <= patient.last_name.length && this.state.filterc_last_name.toLowerCase() == patient.last_name.substring(0, this.state.filterc_last_name.length).toLowerCase()) &&
                                   <tr>
                                     <td><Link onClick={this._bufferNewAssignment.bind(this, patient)}>{patient.name}</Link></td>
                                     <td>{patient.first_name} {patient.last_name}</td>
