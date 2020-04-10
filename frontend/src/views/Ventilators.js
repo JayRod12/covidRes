@@ -898,7 +898,7 @@ class Ventilators extends React.Component {
                                   (this.state.filterc_location == "--(All)--" || this.state.filterc_location == patient.location_name) &&
                                   (this.state.filterc_name.length == 0 || this.state.filterc_name.length <= patient.name.length && this.state.filterc_name.toLowerCase() == patient.name.substring(0, this.state.filterc_name.length).toLowerCase()) &&
                                   <tr>
-                                    <td><Link to={'/patient/' + patient.pk}>{patient.name}</Link></td>
+                                    <td><Link onClick={this._bufferNewAssignment.bind(this, patient)}>{patient.name}</Link></td>
                                     <td>{patient.first_name} {patient.last_name}</td>
                                     <td className="text-center">{patient.severity}</td>
                                     <td><Link to={'/location/' + patient.location}>{patient.location_name}</Link></td>
