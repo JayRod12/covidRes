@@ -149,16 +149,18 @@ class PatientProfile extends React.Component {
         description: data.get('description'),
         id1: data.get('id1')
     })
-
+    var body = {
+        name: data.get('name'),
+        severity: data.get('severity'),
+        location: data.get('location'),
+        description: data.get('description')
+    }
+    if(data.get('birth').length > 0){
+      body['birth'] = new Date(data.get('birth')).toISOString()
+    }
     fetch('/rest/patients/'+this.state.data.pk+"/", {
       method: 'PATCH',
-      body: JSON.stringify({
-          name: data.get('name'),
-          severity: data.get('severity'),
-          location: data.get('location'),
-          birth: new Date(data.get('birth')).toISOString(),
-          description: data.get('description')
-      }),
+      body: JSON.stringify(body),
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
       }
