@@ -345,7 +345,7 @@ class PatientList extends React.Component {
                     <Table className="tablesorter" >
                       <thead className="text-primary">
                         <tr>
-                          <th>{t("Name")}</th>
+                          <th>{t("Nickname")}</th>
                           <th>{t("Full name")}</th>
                           <th className="text-center">{t("Severity")}</th>
                           <th>{t("Location")}</th>
