@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from .models import User
+from .models import User, Patient
 from django.http import HttpResponse
 import json
 
@@ -47,6 +47,9 @@ def user_view(request):
                 "username": user.username,
                 "role": None
             }
+        patient = Patient.objects.filter(user=user).first()
+        if patient is not None:
+            answer["patient_pk"] = patient.pk
         return HttpResponse(json.dumps(answer))
     else:
         return HttpResponse("Not logged in")
