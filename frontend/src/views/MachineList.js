@@ -199,12 +199,12 @@ class MachineList extends React.Component {
       );
     } else if (this.state.data.length > 0) {
       models = [...new Set(this.state.data.map(machine => machine.model_name))]
-      locations = [...new Set(this.state.data.map(machine => machine.location))]
+      locations = [...new Set(this.state.data.map(machine => machine.location_name))]
       machines = this.state.data.map((entry, index) => {
         if (
           (this.state.filter_availability == "--(All)--" || this.state.filter_availability == (entry.patient_assigned != null)) &&
           (this.state.filter_machine == "--(All)--" || this.state.filter_machine == entry.model_name) &&
-          (this.state.filter_location == "--(All)--" || this.state.filter_location == entry.location)
+          (this.state.filter_location == "--(All)--" || this.state.filter_location == entry.location_name)
         ) {return(
           <tr>
             <td><Link to={'/machine/' + entry.pk}>{entry.model_name}</Link></td>

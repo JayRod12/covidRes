@@ -177,12 +177,12 @@ class PatientList extends React.Component {
       );
     } else if (results.length > 0) {
       models = [...new Set(results.map(patient => patient.machine_assigned_model))]
-      locations = [...new Set(results.map(patient => patient.location))]
+      locations = [...new Set(results.map(patient => patient.location_name))]
       patients = results.map((entry, index) => {
         if (
           (this.state.filter_severity == "--(All)--" || this.state.filter_severity == entry.severity) &&
           (this.state.filter_machine == "--(All)--" || this.state.filter_machine == entry.machine_assigned_model || this.state.filter_machine == "" && entry.machine_assigned_model == null) &&
-          (this.state.filter_location == "--(All)--" || this.state.filter_location == entry.location) &&
+          (this.state.filter_location == "--(All)--" || this.state.filter_location == entry.location_name) &&
           (this.state.filter_name.length == 0 || this.state.filter_name.length <= entry.name.length && this.state.filter_name.toLowerCase() == entry.name.substring(0, this.state.filter_name.length).toLowerCase()) &&
           (this.state.filter_first_name.length == 0 || this.state.filter_first_name.length <= entry.first_name.length && this.state.filter_first_name.toLowerCase() == entry.first_name.substring(0, this.state.filter_first_name.length).toLowerCase()) &&
           (this.state.filter_last_name.length == 0 || this.state.filter_last_name.length <= entry.last_name.length && this.state.filter_last_name.toLowerCase() == entry.last_name.substring(0, this.state.filter_last_name.length).toLowerCase())
