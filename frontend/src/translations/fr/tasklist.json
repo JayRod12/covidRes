@@ -1,6 +1,9 @@
 {
-    "Create patient": "Create patient",
-    "Filter patients": "Filter patients",
-    "Loading patients": "Loading patients",
-    "No patients": "No patients"
+    "Filter tasks": "Filter tâches",
+    "Loading tasks": "Charchement tâches",
+    "No tasks": "No tâches",
+    "Machine location": "Emplacement Ressource",
+    "Machine model": "Type Ressource",
+    "Patient name": "ID hôpital Patient ",
+    "Patient location": "Emplacement Patient"
 }
