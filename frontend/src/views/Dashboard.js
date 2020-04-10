@@ -481,7 +481,7 @@ class Dashboard extends React.Component {
         return 0;
       })
       const machinetypes = [...new Set(results.map(item => item.model_name))];/// The Set trick is to get unique values
-      const locations = [...new Set(results.map(item => item.location))];
+      const locations = [...new Set(results.map(item => item.location_name))];
       var time_evolution_per_machine = {}
       machinetypes.forEach((model, i) => {
         const used_now = assignmentResults.filter(
@@ -626,15 +626,15 @@ class Dashboard extends React.Component {
       // Fill them
       results.forEach((machine, ii) => {
         if (machine.patient_assigned_name == null) {
-          machines_available_per_location_total[machine.location]++
+          machines_available_per_location_total[machine.location_name]++
           machines_available_per_model_total[machine.model_name]++
-          machines_available_per_location[machine.model_name][machine.location]++
-          machines_available_per_model[machine.location][machine.model_name]++
+          machines_available_per_location[machine.model_name][machine.location_name]++
+          machines_available_per_model[machine.location_name][machine.model_name]++
         } else {
-          machines_taken_per_location_total[machine.location]++
+          machines_taken_per_location_total[machine.location_name]++
           machines_taken_per_model_total[machine.model_name]++
-          machines_taken_per_location[machine.model_name][machine.location]++
-          machines_taken_per_model[machine.location][machine.model_name]++
+          machines_taken_per_location[machine.model_name][machine.location_name]++
+          machines_taken_per_model[machine.location_name][machine.model_name]++
         }
       });
       // Turn into arrays
