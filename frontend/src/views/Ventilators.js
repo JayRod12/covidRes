@@ -491,6 +491,7 @@ class Ventilators extends React.Component {
               "overflow": "hidden",
               "text-overflow": "ellipsis",
             },
+          }
       };
       this.setState({items: [...this.state.items, newItem], create_isOpen: false});
       //window.scrollTo(0, 0)
@@ -565,6 +566,7 @@ class Ventilators extends React.Component {
                     "overflow": "hidden",
                     "text-overflow": "ellipsis",
                   },
+                }
             };
             this.setState(prevState => ({
                 ...prevState,
