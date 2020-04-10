@@ -167,7 +167,7 @@ class Ventilators extends React.Component {
                 const groups = []; const allMachines = [];
                 results.forEach(ventilator => {
                     //const ventilatorName = ventilator.model_name + " #" + ventilator.pk + " (" + ventilator.location + ")";
-                    const ventilatorName = (<><Link to={'/machine/' + ventilator.pk}>{ventilator.model_name}</Link> - {ventilator.location_name}</>)
+                    const ventilatorName = (<>{ventilator.location_name}-<Link to={'/machine/' + ventilator.pk}>{ventilator.model_name}</Link></>)
                     groups.push({ id: ventilator.pk, title: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location_name});
                     allMachines.push({ id: ventilator.pk, name: ventilatorName, machine_model: ventilator.model_name, machine_location: ventilator.location_name})
                 });
@@ -678,7 +678,7 @@ class Ventilators extends React.Component {
                                 <TimelineHeaders className="sticky">
                                     <SidebarHeader>
                                         {({ _ }) => {
-                                            return <div style={{ alignSelf: "center", color: "white", textAlign: "center", width: "200px" }}>{t("Model")}-{t("Location")}</div>;
+                                            return <div style={{ alignSelf: "center", color: "white", textAlign: "center", width: "200px" }}>{t("Location")}-{t("Model")}</div>;
                                         }}
                                     </SidebarHeader>
                                     <DateHeader unit="primaryHeader" />
