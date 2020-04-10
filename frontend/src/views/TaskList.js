@@ -233,7 +233,7 @@ class TaskList extends React.Component {
                     </Col>
                   </Row>
                   <Col md="12">
-                    By pressing Ok you confirm that you realized the task.
+                   {t("By pressing Ok you confirm that you realized the task.")}
                   </Col>
                 </DialogContentText>
               </DialogContent>
