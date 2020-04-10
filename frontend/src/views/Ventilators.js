@@ -203,6 +203,17 @@ class Ventilators extends React.Component {
                             machine_model: assignment.machine_model,
                             canMove: this.props.me && this.props.me.permission_task_edit && assignment.bool_install == 0,
                             canResize: this.props.me && this.props.me.permission_task_edit ? (assignment.bool_install == 0 ? "both" : assignment.bool_completed ? false : "right") : false,
+                            itemProps: {
+                              // these optional attributes are passed to the root <div /> of each item as <div {...itemProps} />
+                              'data-custom-attribute': 'Random content',
+                              'aria-hidden': true,
+                              onDoubleClick: () => { console.log('You clicked double!') },
+                              style: {
+                                "white-space": "nowrap",
+                                "overflow": "hidden",
+                                "text-overflow": "ellipsis",
+                              },
+                            }
                         });
                     });
                     this.setState(prevState => ({
