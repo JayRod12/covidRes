@@ -527,7 +527,8 @@ class Dashboard extends React.Component {
               pointHoverRadius: 4,
               pointHoverBorderWidth: 15,
               pointRadius: 4,
-              data: time_evolution_per_machine[item]
+              data: time_evolution_per_machine[item],
+              steppedLine: 'before'
           })})
         };
       }
@@ -904,6 +905,7 @@ class Dashboard extends React.Component {
               pointHoverBorderWidth: 15,
               pointRadius: 4,
               data: M_used_week,
+              steppedLine: 'before'
             }
           ]
         };
