@@ -883,7 +883,7 @@ class Ventilators extends React.Component {
                             <Table className="tablesorter" >
                               <thead className="text-primary">
                                 <tr>
-                                  <th>{t("Name")}</th>
+                                  <th>{t("Nickname")}</th>
                                   <th className="text-center">{t("Severity")}</th>
                                   <th>{t("Location")}</th>
                                   <th>{t("Machine")}</th>
