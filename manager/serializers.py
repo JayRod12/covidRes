@@ -53,12 +53,14 @@ class MachineDetailedSerializer(serializers.ModelSerializer):
 
 class AssignmentTaskSerializer(serializers.ModelSerializer):
 	patient_name = serializers.CharField(source='patient.name', read_only=True)
+	patient_first_name = serializers.CharField(source='patient.user.first_name', allow_null=True, read_only=True)
+	patient_last_name = serializers.CharField(source='patient.user.last_name', allow_null=True, read_only=True)
 	machine_model = serializers.CharField(source='machine.model.name', read_only=True)
 	patient_location = serializers.CharField(source='patient.location.name', read_only=True)
 	machine_location = serializers.CharField(source='machine.location.name', read_only=True)
 	class Meta:
 		model = AssignmentTask
-		fields = ('pk', 'patient', 'machine', 'patient_name', 'machine_model', 'patient_location', 'machine_location', 'start_date', 'end_date', 'date', 'bool_install', 'bool_completed')
+		fields = ('pk', 'patient', 'machine', 'patient_name', 'patient_first_name', 'patient_last_name', 'machine_model', 'patient_location', 'machine_location', 'start_date', 'end_date', 'date', 'bool_install', 'bool_completed')
 
 # User
 class UserSerializer(serializers.ModelSerializer):

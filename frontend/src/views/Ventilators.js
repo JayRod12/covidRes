@@ -194,7 +194,7 @@ class Ventilators extends React.Component {
                         items.push({
                             id: assignment.pk,
                             group: assignment.machine,
-                            title: assignment.patient_name,
+                            title: assignment.patient+": "+assignment.patient_first_name+" "+assignment.patient_last_name,
                             start_time: moment(assignment.start_date).valueOf(),
                             end_time: moment(assignment.end_date).valueOf(),
                             canChangeGroup: true,
@@ -472,7 +472,7 @@ class Ventilators extends React.Component {
       const newItem = {
           id: Math.max(...this.state.items.map(item => item.id))+1,
           group: 0,
-          title: patient.name,
+          title: patient.pk+": "+patient.first_name+" "+patient.last_name,
           start_time: new Date().valueOf(),
           end_time: new Date().valueOf() + 24*60*60*1000,
           canChangeGroup: true,
@@ -547,7 +547,7 @@ class Ventilators extends React.Component {
             const newItem = {
                 id: json.pk,
                 group: json.machine,
-                title: json.patient_name,
+                title: json.patient+": "+json.patient_first_name+" "+json.patient_last_name,
                 start_time: moment(json.start_date).valueOf(),
                 end_time: moment(json.end_date).valueOf(),
                 canChangeGroup: true,
