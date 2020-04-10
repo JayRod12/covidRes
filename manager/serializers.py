@@ -7,8 +7,8 @@ class PatientSerializer(serializers.ModelSerializer):
 	# Machine-related
 	machine_assigned_model = serializers.CharField(source='machine_assigned.model.name', allow_null=True, read_only=True)
 	location_name = serializers.CharField(source='location.name', allow_null=True, read_only=True)
-	first_name = serializers.CharField(source='user.first_name', allow_null=True)
-	last_name = serializers.CharField(source='user.last_name', allow_null=True)
+	first_name = serializers.CharField(source='user.first_name', allow_null=True, read_only=True)
+	last_name = serializers.CharField(source='user.last_name', allow_null=True, read_only=True)
 	class Meta:
 		model = Patient
 		fields = ('pk', 'name', 'severity', 'location', 'location_name', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'first_name', 'last_name')
