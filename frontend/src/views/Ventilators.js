@@ -481,6 +481,16 @@ class Ventilators extends React.Component {
           machine_model: null,
           canMove: this.props.me && this.props.me.permission_task_edit,
           canResize: this.props.me && this.props.me.permission_task_edit ? "both" : false,
+          itemProps: {
+            // these optional attributes are passed to the root <div /> of each item as <div {...itemProps} />
+            'data-custom-attribute': 'Random content',
+            'aria-hidden': true,
+            onDoubleClick: () => { console.log('You clicked double!') },
+            style: {
+              "white-space": "nowrap",
+              "overflow": "hidden",
+              "text-overflow": "ellipsis",
+            },
       };
       this.setState({items: [...this.state.items, newItem], create_isOpen: false});
       //window.scrollTo(0, 0)
@@ -545,6 +555,16 @@ class Ventilators extends React.Component {
                 machine_model: json.machine_model,
                 canMove: this.props.me && this.props.me.permission_task_edit,
                 canResize: this.props.me && this.props.me.permission_task_edit ? "both" : false,
+                itemProps: {
+                  // these optional attributes are passed to the root <div /> of each item as <div {...itemProps} />
+                  'data-custom-attribute': 'Random content',
+                  'aria-hidden': true,
+                  onDoubleClick: () => { console.log('You clicked double!') },
+                  style: {
+                    "white-space": "nowrap",
+                    "overflow": "hidden",
+                    "text-overflow": "ellipsis",
+                  },
             };
             this.setState(prevState => ({
                 ...prevState,
