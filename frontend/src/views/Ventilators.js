@@ -115,7 +115,7 @@ class Ventilators extends React.Component {
             selectedStartDate: null,
             selectedEndDate: null,
             selectedItem: null,
-            severity_list: ["Healed", "Low", "Moderate", "Medium", "High", "Very high", "Dead"],
+            severity_list: ["SEV_0","SEV_1","SEV_2","SEV_3","SEV_4","SEV_5","SEV_6"],
             create_isOpen: false,
             filter_isOpen: false,
             filter_machine: "--(All)--",
@@ -843,7 +843,7 @@ class Ventilators extends React.Component {
                                   >
                                     <option key={0} value="--(All)--">--(All)--</option>
                                     {this.state.severity_list.map((val, i) => {return (
-                                      <option key={i+1} value={i}>{val}</option>
+                                      <option key={i+1} value={i}>{t(val)}</option>
                                     )})}
                                   </Input>
                                 </FormGroup>
