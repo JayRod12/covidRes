@@ -467,7 +467,7 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                  <Col md="4">
+                  <Col md="2">
                     <label>{t("Assigned machine")}</label>
                     <CardBody>
                       {this.state.data.machine_assigned === null
@@ -479,6 +479,20 @@ class PatientProfile extends React.Component {
                             <h3><Link to={'/machine/'+this.state.data.machine_assigned}>{this.state.data.machine_assigned_model}</Link></h3>
                             <small>ID: {this.state.data.machine_assigned}</small>
                           </Row>
+                        </div>
+                      }
+                    </CardBody>
+                  </Col>
+                  <Col md="1">
+                    <label>{t("Connected")}</label>
+                    <CardBody>
+                      {this.state.data.machine_assigned !== null &&
+                        <div>
+                          <Input
+                            defaultValue={this.state.data.bool_connected}
+                            name="bool_connected"
+                            type="checkbox"
+                          />
                         </div>
                       }
                     </CardBody>

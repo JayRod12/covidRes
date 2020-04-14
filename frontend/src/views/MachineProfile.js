@@ -138,7 +138,8 @@ class MachineProfile extends React.Component {
       method: 'PATCH',
       body: JSON.stringify({
           location: data.get('location'),
-          description: data.get('description')
+          description: data.get('description'),
+          bool_connected: data.get('bool_connected')
       }),
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
@@ -330,22 +331,36 @@ class MachineProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                    <Col md="4">
-                      <label>{t("Assigned to")}</label>
-                      <CardBody>
-                        {this.state.data.patient_assigned === null
-                          ?
-                          <Row><h3>{t("None")}</h3></Row>
-                          :
-                          <div>
-                            <Row>
-                              <h3><Link to={'/patient/'+this.state.data.patient_assigned}>{this.state.data.patient_assigned_name}</Link></h3>
-                              <small>ID: {this.state.data.patient_assigned}</small>
-                            </Row>
-                          </div>
-                        }
-                      </CardBody>
-                    </Col>
+                  <Col md="2">
+                    <label>{t("Assigned to")}</label>
+                    <CardBody>
+                      {this.state.data.patient_assigned === null
+                        ?
+                        <Row><h3>{t("None")}</h3></Row>
+                        :
+                        <div>
+                          <Row>
+                            <h3><Link to={'/patient/'+this.state.data.patient_assigned}>{this.state.data.patient_assigned_name}</Link></h3>
+                            <small>ID: {this.state.data.patient_assigned}</small>
+                          </Row>
+                        </div>
+                      }
+                    </CardBody>
+                  </Col>
+                  <Col md="1">
+                    <label>{t("Connected")}</label>
+                    <CardBody>
+                      {this.state.data.patient_assigned !== null &&
+                        <div>
+                          <Input
+                            defaultValue={this.state.data.bool_connected}
+                            name="bool_connected"
+                            type="checkbox"
+                          />
+                        </div>
+                      }
+                    </CardBody>
+                  </Col>
                 </Row>
                 <Row>
                   <Col md="6">
