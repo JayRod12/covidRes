@@ -42,14 +42,14 @@ class MachineSerializer(serializers.ModelSerializer):
 	location_name = serializers.CharField(source='location.name', allow_null=True, read_only=True)
 	class Meta:
 		model = Machine
-		fields = ('pk', 'model', 'model_name', 'location', 'location_name', 'patient_assigned', 'patient_assigned_name')
+		fields = ('pk', 'model', 'model_name', 'location', 'location_name', 'bool_connected', 'patient_assigned', 'patient_assigned_name')
 class MachineDetailedSerializer(serializers.ModelSerializer):
 	model_name = serializers.CharField(source='model.name', read_only=True)
 	patient_assigned_name = serializers.CharField(source='patient_assigned.name', allow_null=True, read_only=True)
 	location_name = serializers.CharField(source='location.name', allow_null=True, read_only=True)
 	class Meta:
 		model = Machine
-		fields = ('pk', 'model', 'model_name', 'location', 'location_name', 'patient_assigned', 'patient_assigned_name', 'description')
+		fields = ('pk', 'model', 'model_name', 'location', 'location_name', 'bool_connected', 'patient_assigned', 'patient_assigned_name', 'description')
 
 class AssignmentTaskSerializer(serializers.ModelSerializer):
 	patient_name = serializers.CharField(source='patient.name', read_only=True)
