@@ -42,14 +42,12 @@ class User(AbstractUser):
 class MachineType(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-
     def __str__(self):
     	return self.name
 
 class Location(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-
     def __str__(self):
         return self.name
 
@@ -129,6 +127,7 @@ class Machine(models.Model):
     location = models.ForeignKey(Location, default=None, null=True, on_delete=models.SET_NULL)
     description = models.TextField(blank=True)
     patient_assigned = models.ForeignKey(Patient, null=True, blank=True, on_delete=models.SET_NULL)
+    bool_connected = models.BooleanField(default=False)
     def __str__(self):
     	return self.model.name + ' #' + str(self.pk)
     def get_absolute_url(self):
