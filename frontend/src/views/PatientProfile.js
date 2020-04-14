@@ -142,19 +142,12 @@ class PatientProfile extends React.Component {
     event.preventDefault();
     const data = new FormData(event.target);
 
-    console.log("patient_info", {
-        name: data.get('name'),
-        severity: data.get('severity'),
-        location: data.get('location'),
-        birth: data.get('birth'),
-        description: data.get('description'),
-        id1: data.get('id1')
-    })
     var body = {
         name: data.get('name'),
         severity: data.get('severity'),
         location: data.get('location'),
-        description: data.get('description')
+        description: data.get('description'),
+        bool_connected: this.state.bool_connected
     }
     if(data.get('birth').length > 0){
       body['birth'] = new Date(data.get('birth')).toISOString()
