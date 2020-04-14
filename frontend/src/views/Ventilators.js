@@ -737,38 +737,69 @@ class Ventilators extends React.Component {
                 <Collapse isOpen={this.state.patientview_isOpen}>
                 <Row>
                     <Card>
-                        <CardHeader>
-                            <div style={{maxHeight: "400px", overflow: "auto"}}>
-                                <Table className="tablesorter" >
-                                  <thead className="text-primary">
-                                    <tr>
-                                      <th>{t("Nickname")}</th>
-                                      <th>{t("Full name")}</th>
-                                      <th>{t("Description")}</th>
-                                      <th className="text-center">{t("Severity")}</th>
-                                      <th>{t("Location")}</th>
-                                      <th>{t("Machine")}</th>
-                                      <th>{t("Admission date")}</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
+                        <CardBody>
+                        <Row className="px-md-3">
+                            <Col className="px-md-3" md="2" >
+                                <Row>
                                     {this.state.data_patients.map(patient => {return(
-                                        (this.state.selectedItem != null) &&
-                                        (patient.pk == this.state.selectedItem.patient_id) &&
-                                      <tr>
-                                        <td><Link onClick={this._bufferNewAssignment.bind(this, patient)}>{patient.name}</Link></td>
-                                        <td>{patient.first_name} {patient.last_name}</td>
-                                        <td>{patient.description}</td>
-                                        <td className="text-center">{patient.severity}</td>
-                                        <td><Link to={'/location/' + patient.location}>{patient.location_name}</Link></td>
-                                        <td>{patient.machine_assigned_model}</td>
-                                        <td>{moment(patient.admission_date).format("HH:mm (DD-MMM-YYYY)")}</td>
-                                      </tr>
-                                    )})}
-                                  </tbody>
-                                </Table>
-                              </div>                
-                        </CardHeader>
+                                        (this.state.selectedItem != null) && (patient.pk == this.state.selectedItem.patient_id) &&
+                                            <CardTitle tag="h3">{patient.first_name} {patient.last_name}</CardTitle>
+                                        )})}
+                                </Row>
+                                <Row>
+                                    {this.state.data_patients.map(patient => {return(
+                                        (this.state.selectedItem != null) && (patient.pk == this.state.selectedItem.patient_id) &&                                            
+                                            <Link
+                                                to={'/patient/' + patient.pk}>
+                                                Details                                                
+                                            </Link>
+                                        )})}
+                                </Row>
+                                <Row>
+                                    {this.props.me && this.props.me.permission_task_edit && 
+                                            this.state.data_patients.map(patient => {return(
+                                            (this.state.selectedItem != null) && (patient.pk == this.state.selectedItem.patient_id) &&
+                                            <Button
+                                                size="sm"
+                                                color="primary"
+                                                onClick={this._bufferNewAssignment.bind(this, patient)}
+                                                > Assign
+                                            </Button>
+                                        )})}
+                                </Row>
+                            </Col>
+                            <Col className="px-md-3" md="10">
+                                <div style={{maxHeight: "400px", overflow: "auto"}}>
+                                    <Table className="tablesorter" >
+                                      <thead className="text-primary">
+                                        <tr>
+                                          <th>{t("Nickname")}</th>
+                                            <th>{t("Description")}</th>
+                                          <th className="text-center">{t("Severity")}</th>
+                                          <th>{t("Location")}</th>
+                                          <th>{t("Machine")}</th>
+                                          <th>{t("Admission date")}</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {this.state.data_patients.map(patient => {return(
+                                            (this.state.selectedItem != null) &&
+                                            (patient.pk == this.state.selectedItem.patient_id) &&
+                                          <tr>
+                                            <td>{patient.name}</td>
+                                            <td>{patient.description}</td>
+                                            <td className="text-center">{patient.severity}</td>
+                                            <td><Link to={'/location/' + patient.location}>{patient.location_name}</Link></td>
+                                            <td>{patient.machine_assigned_model}</td>
+                                            <td>{moment(patient.admission_date).format("HH:mm (DD-MMM-YYYY)")}</td>
+                                          </tr>
+                                        )})}
+                                      </tbody>
+                                    </Table>
+                                  </div>  
+                            </Col>  
+                            </Row>            
+                        </CardBody>
                         
                     </Card>
                 </Row>
@@ -783,7 +814,8 @@ class Ventilators extends React.Component {
                                     color="primary"
                                     onClick={() => this.setState({
                                       create_isOpen: false,
-                                      filter_isOpen: !this.state.filter_isOpen
+                                      filter_isOpen: !this.state.filter_isOpen,
+                                        patientview_isOpen:false
                                     })}
                                     >
                                     {t("Filter assignments")}
