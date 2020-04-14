@@ -132,6 +132,10 @@ class Machine(models.Model):
     	return self.model.name + ' #' + str(self.pk)
     def get_absolute_url(self):
         return reverse('machine', kwargs={'pk': self.pk})
+    def save(self):
+        if self.patient_assigned is None:
+            self.bool_connected = False
+        return super().save()
 
 class AssignmentTask(models.Model):
     date = models.DateTimeField('Task by:', editable=False, default=timezone.now)
