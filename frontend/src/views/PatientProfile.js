@@ -147,6 +147,7 @@ class PatientProfile extends React.Component {
         severity: data.get('severity'),
         location: data.get('location'),
         description: data.get('description'),
+        id1: data.get('ID1'),
         bool_connected: this.state.bool_connected
     }
     if(data.get('birth').length > 0){

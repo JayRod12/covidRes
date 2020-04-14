@@ -12,7 +12,7 @@ class PatientSerializer(serializers.ModelSerializer):
 	bool_connected = serializers.BooleanField(source='machine_assigned.bool_connected', allow_null=True, read_only=True)
 	class Meta:
 		model = Patient
-		fields = ('pk', 'name', 'severity', 'location', 'location_name', 'bool_connected', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'first_name', 'last_name')
+		fields = ('pk', 'name', 'id1', 'severity', 'location', 'location_name', 'bool_connected', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'first_name', 'last_name')
 class PatientDetailedSerializer(serializers.ModelSerializer):
 	# User-related
 	user_pk = serializers.IntegerField(source='user.pk', allow_null=True, read_only=True)
@@ -26,7 +26,7 @@ class PatientDetailedSerializer(serializers.ModelSerializer):
 	machine_assigned_model = serializers.CharField(source='machine_assigned.model.name', allow_null=True, read_only=True)
 	class Meta:
 		model = Patient
-		fields = ('pk', 'name', 'birth', 'severity', 'location', 'location_name', 'bool_connected', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'description', 'user_pk', 'role', 'username', 'first_name', 'last_name', 'history_severity_x', 'history_severity_y')
+		fields = ('pk', 'name', 'id1', 'birth', 'severity', 'location', 'location_name', 'bool_connected', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'description', 'user_pk', 'role', 'username', 'first_name', 'last_name', 'history_severity_x', 'history_severity_y')
 
 class MachineTypeSerializer(serializers.ModelSerializer):
 	class Meta:

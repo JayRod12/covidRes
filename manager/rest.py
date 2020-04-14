@@ -60,9 +60,9 @@ class PatientViewSet(viewsets.ModelViewSet):
         if 'bool_connected' in request.data:
             patient = Patient.objects.get(pk=kwargs['pk'])
             if patient.machine_assigned is not None:
-                patient.machine_assigned.bool_connected = request.data['bool_connected']
+                patient.machine_assigned.bool_connected = request.data.pop('bool_connected')
                 patient.machine_assigned.save()
-        return super().update(request, *args, **kwargs)
+        return super().partial_update(request, *args, **kwargs)
 
 class PermissionMachineType(permissions.BasePermission):
     def has_permission(self, request, view):
