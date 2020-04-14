@@ -733,6 +733,41 @@ class Ventilators extends React.Component {
 
                 <Row>
                     <Card>
+                    <CardBody>
+                        <div style={{maxHeight: "400px", overflow: "auto"}}>
+                            <Table className="tablesorter" >
+                              <thead className="text-primary">
+                                <tr>
+                                  <th>{t("Nickname")}</th>
+                                  <th>{t("Full name")}</th>
+                                  <th className="text-center">{t("Severity")}</th>
+                                  <th>{t("Location")}</th>
+                                  <th>{t("Machine")}</th>
+                                  <th>{t("Admission date")}</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {this.state.data_patients.map(patient => {return(
+                                    (this.state.selectedItem != null) &&
+                                    (patient.pk == this.state.selectedItem.patient_id) &&
+                                  <tr>
+                                    <td><Link onClick={this._bufferNewAssignment.bind(this, patient)}>{patient.name}</Link></td>
+                                    <td>{patient.first_name} {patient.last_name}</td>
+                                    <td className="text-center">{patient.severity}</td>
+                                    <td><Link to={'/location/' + patient.location}>{patient.location_name}</Link></td>
+                                    <td>{patient.machine_assigned_model}</td>
+                                    <td>{moment(patient.admission_date).format("HH:mm (DD-MMM-YYYY)")}</td>
+                                  </tr>
+                                )})}
+                              </tbody>
+                            </Table>
+                          </div>                
+                    </CardBody>
+                    </Card>
+                </Row>
+
+                <Row>
+                    <Card>
                         <CardHeader>
                             <Row className="px-md-3">
                                 <Button
