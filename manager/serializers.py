@@ -9,9 +9,10 @@ class PatientSerializer(serializers.ModelSerializer):
 	location_name = serializers.CharField(source='location.name', allow_null=True, read_only=True)
 	first_name = serializers.CharField(source='user.first_name', allow_null=True, read_only=True)
 	last_name = serializers.CharField(source='user.last_name', allow_null=True, read_only=True)
+	bool_connected = serializers.BooleanField(source='machine_assigned.bool_connected', allow_null=True, read_only=True)
 	class Meta:
 		model = Patient
-		fields = ('pk', 'name', 'severity', 'location', 'location_name', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'first_name', 'last_name')
+		fields = ('pk', 'name', 'severity', 'location', 'location_name', 'bool_connected', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'first_name', 'last_name')
 class PatientDetailedSerializer(serializers.ModelSerializer):
 	# User-related
 	user_pk = serializers.IntegerField(source='user.pk', allow_null=True, read_only=True)
@@ -20,11 +21,12 @@ class PatientDetailedSerializer(serializers.ModelSerializer):
 	first_name = serializers.CharField(source='user.first_name', allow_null=True)
 	last_name = serializers.CharField(source='user.last_name', allow_null=True)
 	location_name = serializers.CharField(source='location.name', allow_null=True, read_only=True)
+	bool_connected = serializers.BooleanField(source='machine_assigned.bool_connected', allow_null=True, read_only=True)
 	# Machine-related
 	machine_assigned_model = serializers.CharField(source='machine_assigned.model.name', allow_null=True, read_only=True)
 	class Meta:
 		model = Patient
-		fields = ('pk', 'name', 'birth', 'severity', 'location', 'location_name', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'description', 'user_pk', 'role', 'username', 'first_name', 'last_name', 'history_severity_x', 'history_severity_y')
+		fields = ('pk', 'name', 'birth', 'severity', 'location', 'location_name', 'bool_connected', 'admission_date', 'machine_assigned', 'machine_assigned_model', 'description', 'user_pk', 'role', 'username', 'first_name', 'last_name', 'history_severity_x', 'history_severity_y')
 
 class MachineTypeSerializer(serializers.ModelSerializer):
 	class Meta:

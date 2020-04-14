@@ -111,6 +111,7 @@ class PatientProfile extends React.Component {
       redirect: false,
       showDialog: false,
       selectedTask: null,
+      bool_connected: false
     };
 
     languages.forEach((language, i) => {
@@ -231,7 +232,8 @@ class PatientProfile extends React.Component {
                           x: moment(xs).valueOf(),
                           y: parseInt(yy[i])
                         }}),
-                        loaded: true
+                        loaded: true,
+                        bool_connected: (data.machine_assigned ? data.bool_connected : false)
                     };
                 });
             })
@@ -489,7 +491,8 @@ class PatientProfile extends React.Component {
                       {this.state.data.machine_assigned !== null &&
                         <div>
                           <Input
-                            defaultValue={this.state.data.bool_connected}
+                            checked={this.state.bool_connected}
+                            onChange={() => this.setState({bool_connected: !this.state.bool_connected})}
                             name="bool_connected"
                             type="checkbox"
                           />

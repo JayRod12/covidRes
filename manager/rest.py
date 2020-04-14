@@ -49,6 +49,18 @@ class PatientViewSet(viewsets.ModelViewSet):
         if 'pk' in self.kwargs:
             return PatientDetailedSerializer
         return self.serializer_class
+    def update(self, request, *args, **kwargs):
+        if 'bool_connected' in request.data:
+            patient = Patient.objects.get(pk=kwargs['pk'])
+            patient.machine_assigned.bool_connected = request.data['bool_connected']
+            patient.machine_assigned.save()
+        return super().update(request, *args, **kwargs)
+    def partial_update(self, request, *args, **kwargs):
+        if 'bool_connected' in request.data:
+            patient = Patient.objects.get(pk=kwargs['pk'])
+            patient.machine_assigned.bool_connected = request.data['bool_connected']
+            patient.machine_assigned.save()
+        return super().update(request, *args, **kwargs)
 
 class PermissionMachineType(permissions.BasePermission):
     def has_permission(self, request, view):

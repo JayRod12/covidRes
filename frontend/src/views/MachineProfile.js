@@ -104,6 +104,7 @@ class MachineProfile extends React.Component {
       showDialog_replicate: false,
       showDialog_task: false,
       selectedTask: null,
+      bool_connected: false
     };
 
     languages.forEach((language, i) => {
@@ -134,12 +135,13 @@ class MachineProfile extends React.Component {
     event.preventDefault();
     const data = new FormData(event.target);
 
+    console.log("BOOL_CONNECTED: ", data.get('bool_connected'));
     fetch('/rest/machines/'+this.state.data.pk+"/", {
       method: 'PATCH',
       body: JSON.stringify({
           location: data.get('location'),
           description: data.get('description'),
-          bool_connected: data.get('bool_connected')
+          bool_connected: this.state.bool_connected
       }),
       headers: {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
@@ -182,8 +184,9 @@ class MachineProfile extends React.Component {
                 console.log(data);
                 this.setState(() => {
                     return {
-                        data,
-                        loaded: true
+                        data: data,
+                        loaded: true,
+                        bool_connected: data.bool_connected
                     };
                 });
             })
@@ -353,7 +356,8 @@ class MachineProfile extends React.Component {
                       {this.state.data.patient_assigned !== null &&
                         <div>
                           <Input
-                            defaultValue={this.state.data.bool_connected}
+                            checked={this.state.bool_connected}
+                            onChange={() => this.setState({bool_connected: !this.state.bool_connected})}
                             name="bool_connected"
                             type="checkbox"
                           />
