@@ -200,6 +200,7 @@ class AssignmentTaskViewSet(viewsets.ModelViewSet):
                 else:
                     task.patient.machine_assigned = None
                     task.machine.patient_assigned = None
+                    task.machine.bool_connected = False
                 task.patient.save()
                 task.machine.save()
                 task.save()
