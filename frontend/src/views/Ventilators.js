@@ -119,6 +119,7 @@ class Ventilators extends React.Component {
             severity_list: ["SEV_0","SEV_1","SEV_2","SEV_3","SEV_4","SEV_5","SEV_6"],
             create_isOpen: false,
             filter_isOpen: false,
+            patientview_isOpen:false,
             filter_machine: "--(All)--",
             filter_location: "--(All)--",
             filter_follow: false,
@@ -440,6 +441,7 @@ class Ventilators extends React.Component {
         var selected = this.state.items.filter(item => item.patient_id === selectedItem.patient_id);
         selected = selected.map(item => item.id);
 
+        this.setState({patientview_isOpen: true});
         // select all items with the same patient, so we highlight the history of the patient
         this.setState(prevState => ({
             ...prevState,
@@ -449,6 +451,7 @@ class Ventilators extends React.Component {
     }
 
     _handleItemDeselect = (e) => {
+        this.setState({patientview_isOpen: false});
         this.setState(prevState => ({
             ...prevState,
             selected: [],
@@ -731,40 +734,45 @@ class Ventilators extends React.Component {
                     </div>
                 </Row>
 
+                <Collapse isOpen={this.state.patientview_isOpen}>
                 <Row>
                     <Card>
-                    <CardBody>
-                        <div style={{maxHeight: "400px", overflow: "auto"}}>
-                            <Table className="tablesorter" >
-                              <thead className="text-primary">
-                                <tr>
-                                  <th>{t("Nickname")}</th>
-                                  <th>{t("Full name")}</th>
-                                  <th className="text-center">{t("Severity")}</th>
-                                  <th>{t("Location")}</th>
-                                  <th>{t("Machine")}</th>
-                                  <th>{t("Admission date")}</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {this.state.data_patients.map(patient => {return(
-                                    (this.state.selectedItem != null) &&
-                                    (patient.pk == this.state.selectedItem.patient_id) &&
-                                  <tr>
-                                    <td><Link onClick={this._bufferNewAssignment.bind(this, patient)}>{patient.name}</Link></td>
-                                    <td>{patient.first_name} {patient.last_name}</td>
-                                    <td className="text-center">{patient.severity}</td>
-                                    <td><Link to={'/location/' + patient.location}>{patient.location_name}</Link></td>
-                                    <td>{patient.machine_assigned_model}</td>
-                                    <td>{moment(patient.admission_date).format("HH:mm (DD-MMM-YYYY)")}</td>
-                                  </tr>
-                                )})}
-                              </tbody>
-                            </Table>
-                          </div>                
-                    </CardBody>
+                        <CardHeader>
+                            <div style={{maxHeight: "400px", overflow: "auto"}}>
+                                <Table className="tablesorter" >
+                                  <thead className="text-primary">
+                                    <tr>
+                                      <th>{t("Nickname")}</th>
+                                      <th>{t("Full name")}</th>
+                                      <th>{t("Description")}</th>
+                                      <th className="text-center">{t("Severity")}</th>
+                                      <th>{t("Location")}</th>
+                                      <th>{t("Machine")}</th>
+                                      <th>{t("Admission date")}</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {this.state.data_patients.map(patient => {return(
+                                        (this.state.selectedItem != null) &&
+                                        (patient.pk == this.state.selectedItem.patient_id) &&
+                                      <tr>
+                                        <td><Link onClick={this._bufferNewAssignment.bind(this, patient)}>{patient.name}</Link></td>
+                                        <td>{patient.first_name} {patient.last_name}</td>
+                                        <td>{patient.description}</td>
+                                        <td className="text-center">{patient.severity}</td>
+                                        <td><Link to={'/location/' + patient.location}>{patient.location_name}</Link></td>
+                                        <td>{patient.machine_assigned_model}</td>
+                                        <td>{moment(patient.admission_date).format("HH:mm (DD-MMM-YYYY)")}</td>
+                                      </tr>
+                                    )})}
+                                  </tbody>
+                                </Table>
+                              </div>                
+                        </CardHeader>
+                        
                     </Card>
                 </Row>
+                </Collapse>
 
                 <Row>
                     <Card>
@@ -786,7 +794,8 @@ class Ventilators extends React.Component {
                                     color="primary"
                                     onClick={() => this.setState({
                                     create_isOpen: !this.state.create_isOpen,
-                                    filter_isOpen: false
+                                    filter_isOpen: false,
+                                    patientview_isOpen:false
                                     })}
                                     >
                                     {t("Create assignment")}
