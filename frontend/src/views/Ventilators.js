@@ -763,7 +763,7 @@ class Ventilators extends React.Component {
                                                 size="sm"
                                                 color="primary"
                                                 onClick={this._bufferNewAssignment.bind(this, patient)}
-                                                > Assign
+                                                > {t("Assign")}
                                             </Button>
                                         )})}
                                 </Row>
@@ -773,12 +773,13 @@ class Ventilators extends React.Component {
                                     <Table className="tablesorter" >
                                       <thead className="text-primary">
                                         <tr>
-                                          <th>{t("Nickname")}</th>
+                                              <th>{t("Nickname")}</th>
+                                              <th>{t("ID1")}</th>
                                             <th>{t("Description")}</th>
-                                          <th className="text-center">{t("Severity")}</th>
-                                          <th>{t("Location")}</th>
-                                          <th>{t("Machine")}</th>
-                                          <th>{t("Admission date")}</th>
+                                              <th className="text-center">{t("Severity")}</th>
+                                              <th>{t("Location")}</th>
+                                              <th>{t("Machine")}</th>
+                                              <th>{t("Admission date")}</th>
                                         </tr>
                                       </thead>
                                       <tbody>
@@ -787,6 +788,7 @@ class Ventilators extends React.Component {
                                             (patient.pk == this.state.selectedItem.patient_id) &&
                                           <tr>
                                             <td>{patient.name}</td>
+                                            <td>{patient.id1}</td>
                                             <td>{patient.description}</td>
                                             <td className="text-center">{patient.severity}</td>
                                             <td><Link to={'/location/' + patient.location}>{patient.location_name}</Link></td>
@@ -811,7 +813,7 @@ class Ventilators extends React.Component {
                             <Row className="px-md-3">
                                 <Button
                                     size="sm"
-                                    color="primary"
+                                    //color="primary"
                                     onClick={() => this.setState({
                                       create_isOpen: false,
                                       filter_isOpen: !this.state.filter_isOpen,
@@ -823,7 +825,7 @@ class Ventilators extends React.Component {
                                 {this.props.me && this.props.me.permission_task_edit && (
                                 <Button
                                     size="sm"
-                                    color="primary"
+                                    //color="primary"
                                     onClick={() => this.setState({
                                     create_isOpen: !this.state.create_isOpen,
                                     filter_isOpen: false,

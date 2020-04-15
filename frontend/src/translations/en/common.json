@@ -1,5 +1,6 @@
 {
     "Admission date": "Admission date",
+    "Assign": "Assign",
     "Assigned to": "Assigned to",
     "Assignments": "Assignments",
     "Available": "Available",
@@ -14,6 +15,7 @@
     "Error": "Error",
     "First name": "First name",
     "Full name":"Full name",
+    "ID1": "ID1",
     "Install": "Install",
     "Last name": "Last name",
     "Loading": "Loading",

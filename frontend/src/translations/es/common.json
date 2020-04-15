@@ -1,5 +1,6 @@
 {
     "Admission date": "Fecha de admissión",
+    "Assign": "Asignar",
     "Assigned to": "Asignado a",
     "Assignments": "Asignaciones",
     "Available": "Disponible",
@@ -14,6 +15,7 @@
     "Error": "Error",
     "First name": "Nombre",
     "Full name":"Nombre completo",
+    "ID1": "ID1",
     "Install": "Instalar",
     "Last name": "Apellido",
     "Loading": "Cargando",

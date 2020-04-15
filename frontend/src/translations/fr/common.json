@@ -1,6 +1,7 @@
 {
     "Admission date": "Date d'admission",
     "Assigned to": "Attribué à",
+    "Assign": "Attribuer",
     "Assignments": "Attribution",
     "Available": "Disponible",
     "By pressing Ok you confirm that you realized the task.":"Confirmer si tâche a été effectuée",
@@ -14,6 +15,7 @@
     "Error": "Erreur",
     "First name": "Prénom",
     "Full name": "Nom entier",
+    "ID1":"ID PEC",
     "Install": "Mettre en place",
     "Last name": "Nom famille",
     "Loading": "Loading",
