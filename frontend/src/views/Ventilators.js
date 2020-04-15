@@ -197,7 +197,7 @@ class Ventilators extends React.Component {
                         items.push({
                             id: assignment.pk,
                             group: assignment.machine,
-                            title: assignment.patient+": "+assignment.patient_first_name+" "+assignment.patient_last_name,
+                            title: assignment.patient_last_name+" "+assignment.patient_first_name,//+" ("+assignment.patient+")",
                             start_time: moment(assignment.start_date).valueOf(),
                             end_time: moment(assignment.end_date).valueOf(),
                             canChangeGroup: true,
@@ -552,7 +552,7 @@ class Ventilators extends React.Component {
             const newItem = {
                 id: json.pk,
                 group: json.machine,
-                title: json.patient+": "+json.patient_first_name+" "+json.patient_last_name,
+                title: json.patient_last_name+" "+json.patient_first_name,//+" ("+json.patient+")",
                 start_time: moment(json.start_date).valueOf(),
                 end_time: moment(json.end_date).valueOf(),
                 canChangeGroup: true,
