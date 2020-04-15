@@ -3,12 +3,12 @@
   color: 'white',
   cursor: 'pointer',
   background: '#2196f3',
-  border: '1px solid #1a6fb3',
+  border: '2px solid #1a6fb3',
   zIndex: 80
 }
 export const selectedStyle = {
-  background: '#ffc107',
-  border: '1px solid #ff9800',
+  background: '#db4fd1',
+  border: '2px solid #be53f1',
   zIndex: 82
 }
 export const selectedAndCanMove = {
