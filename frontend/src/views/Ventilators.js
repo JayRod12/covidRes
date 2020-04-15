@@ -739,7 +739,7 @@ class Ventilators extends React.Component {
                     <Card>
                         <CardBody>
                         <Row className="px-md-3">
-                            <Col className="px-md-3" md="2" >
+                            <Col className="px-md-3" md="3" >
                                 <Row>
                                     {this.state.data_patients.map(patient => {return(
                                         (this.state.selectedItem != null) && (patient.pk == this.state.selectedItem.patient_id) &&
@@ -768,7 +768,7 @@ class Ventilators extends React.Component {
                                         )})}
                                 </Row>
                             </Col>
-                            <Col className="px-md-3" md="10">
+                            <Col className="px-md-3" md="9">
                                 <div style={{maxHeight: "400px", overflow: "auto"}}>
                                     <Table className="tablesorter" >
                                       <thead className="text-primary">
