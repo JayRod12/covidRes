@@ -146,6 +146,7 @@ class PatientProfile extends React.Component {
         name: data.get('name'),
         severity: data.get('severity'),
         location: data.get('location'),
+        treatment_plan: data.get('treatment_plan'),
         description: data.get('description'),
         id1: data.get('ID1'),
         bool_connected: this.state.bool_connected
@@ -430,6 +431,17 @@ class PatientProfile extends React.Component {
                         defaultValue={this.state.data.id1}
                         placeholder={t("ID1")}
                         name="ID1"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col className="px-md-1" md="7">
+                    <FormGroup>
+                      <label>{t("Treatment Plan")}</label>
+                      <Input
+                        defaultValue={this.state.data.treatment_plan}
+                        placeholder={t("Treatment Plan")}
+                        name="Treatment Plan"
                         type="text"
                       />
                     </FormGroup>
