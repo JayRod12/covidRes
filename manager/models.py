@@ -126,17 +126,17 @@ class Patient(models.Model):
 class Machine(models.Model):
     model = models.ForeignKey(MachineType, on_delete=models.CASCADE)
     location = models.ForeignKey(Location, default=None, null=True, on_delete=models.SET_NULL)
-    description = models.TextField(blank=True)
-    patient_assigned = models.ForeignKey(Patient, null=True, blank=True, on_delete=models.SET_NULL)
+    description = models.TextField(default=True, blank=True, null=True)
+    patient_assigned = models.ForeignKey(Patient, default=None, null=True, blank=True, on_delete=models.SET_NULL)
     bool_connected = models.BooleanField(default=False)
     def __str__(self):
     	return self.model.name + ' #' + str(self.pk)
     def get_absolute_url(self):
         return reverse('machine', kwargs={'pk': self.pk})
-    def save(self):
+    def save(self, *arg, **kwargs):
         if self.patient_assigned is None:
             self.bool_connected = False
-        return super().save()
+        return super().save(*arg, **kwargs)
 
 class AssignmentTask(models.Model):
     date = models.DateTimeField('Task by:', editable=False, default=timezone.now)
