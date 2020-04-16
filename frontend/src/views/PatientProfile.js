@@ -154,6 +154,8 @@ class PatientProfile extends React.Component {
     if(data.get('birth').length > 0){
       body['birth'] = new Date(data.get('birth')).toISOString()
     }
+    console.log("Body:");
+    console.log(body); //until here the data is properly contained in body
     fetch('/rest/patients/'+this.state.data.pk+"/", {
       method: 'PATCH',
       body: JSON.stringify(body),
@@ -161,7 +163,7 @@ class PatientProfile extends React.Component {
           "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
       }
     }).then(response => {
-      console.log(response)
+      //console.log(response)
       this.setState({redirect1: true})
     });
     this.setState({
@@ -178,7 +180,7 @@ class PatientProfile extends React.Component {
             "Content-type": "application/json; charset=UTF-8", 'X-CSRFToken': getCookie('csrftoken'),
         }
       }).then(response => {
-        console.log(response)
+        //console.log(response)
         this.setState({redirect2: true})
       });
     } else {
@@ -667,11 +669,11 @@ class PatientProfile extends React.Component {
         <React.Fragment>
           <Row>
             <Col md="6">
-              <CardText style={{ 'font-size': '11px' }}>{props.sender_role} {props.sender_lastname}</CardText>
+              <CardText style={{ 'fontSize': '11px' }}>{props.sender_role} {props.sender_lastname}</CardText>
             </Col>
             <Col md="5">
               <span className="pull-right">
-                <CardText style={{ 'font-size': '11px' }}>{moment(props.date).format("HH:mm (D-MMM-YYYY)")}</CardText>
+                <CardText style={{ 'fontSize': '11px' }}>{moment(props.date).format("HH:mm (D-MMM-YYYY)")}</CardText>
               </span>
             </Col>
           </Row>
