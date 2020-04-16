@@ -477,7 +477,7 @@ class Ventilators extends React.Component {
       const newItem = {
           id: Math.max(...this.state.items.map(item => item.id))+1,
           group: 0,
-          title: patient.pk+": "+patient.first_name+" "+patient.last_name,
+          title: patient.last_name+" "+patient.first_name,
           start_time: new Date().valueOf(),
           end_time: new Date().valueOf() + 24*60*60*1000,
           canChangeGroup: true,
@@ -748,15 +748,15 @@ class Ventilators extends React.Component {
                                 </Row>
                                 <Row>
                                     {this.state.data_patients.map(patient => {return(
-                                        (this.state.selectedItem != null) && (patient.pk == this.state.selectedItem.patient_id) &&                                            
+                                        (this.state.selectedItem != null) && (patient.pk == this.state.selectedItem.patient_id) &&
                                             <Link
                                                 to={'/patient/' + patient.pk}>
-                                                Details                                                
+                                                Details
                                             </Link>
                                         )})}
                                 </Row>
                                 <Row>
-                                    {this.props.me && this.props.me.permission_task_edit && 
+                                    {this.props.me && this.props.me.permission_task_edit &&
                                             this.state.data_patients.map(patient => {return(
                                             (this.state.selectedItem != null) && (patient.pk == this.state.selectedItem.patient_id) &&
                                             <Button
@@ -798,11 +798,11 @@ class Ventilators extends React.Component {
                                         )})}
                                       </tbody>
                                     </Table>
-                                  </div>  
-                            </Col>  
-                            </Row>            
+                                  </div>
+                            </Col>
+                            </Row>
                         </CardBody>
-                        
+
                     </Card>
                 </Row>
                 </Collapse>
