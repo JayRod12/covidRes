@@ -55,7 +55,7 @@ class Patient(models.Model):
     name = models.CharField(max_length=100)
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     id1  = models.CharField(max_length=20, blank=True, null=True)
-    treatment_plan = models.TextField(null=True)
+    treatment_plan = models.TextField(blank=True, null=True)
     default_pass = models.CharField(max_length=20, editable=False)
     SEVERITY = (
     	(0, 'Healed'),

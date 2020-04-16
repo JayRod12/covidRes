@@ -445,7 +445,7 @@ class PatientProfile extends React.Component {
                       <Input
                         defaultValue={this.state.data.treatment_plan}
                         placeholder={t("Treatment Plan")}
-                        name="Treatment Plan"
+                        name="treatment_plan"
                         type="text"
                       />
                     </FormGroup>
