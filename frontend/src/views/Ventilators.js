@@ -739,11 +739,11 @@ class Ventilators extends React.Component {
                     <Card>
                         <CardBody>
                         <Row className="px-md-3">
-                            <Col className="px-md-3" md="3" >
+                            <Col className="px-md-3" md="2" >
                                 <Row>
                                     {this.state.data_patients.map(patient => {return(
                                         (this.state.selectedItem != null) && (patient.pk == this.state.selectedItem.patient_id) &&
-                                            <CardTitle tag="h3">{patient.first_name} {patient.last_name}</CardTitle>
+                                            <CardTitle tag="h4">{patient.first_name} {patient.last_name}</CardTitle>
                                         )})}
                                 </Row>
                                 <Row>
@@ -768,14 +768,14 @@ class Ventilators extends React.Component {
                                         )})}
                                 </Row>
                             </Col>
-                            <Col className="px-md-3" md="9">
+                            <Col className="px-md-3" md="10">
                                 <div style={{maxHeight: "400px", overflow: "auto"}}>
                                     <Table className="tablesorter" >
                                       <thead className="text-primary">
                                         <tr>
                                               <th>{t("Nickname")}</th>
                                               <th>{t("ID1")}</th>
-                                            <th>{t("Description")}</th>
+                                            <th>{t("Treatment Plan")}</th>
                                               <th className="text-center">{t("Severity")}</th>
                                               <th>{t("Location")}</th>
                                               <th>{t("Machine")}</th>
@@ -789,7 +789,7 @@ class Ventilators extends React.Component {
                                           <tr>
                                             <td>{patient.name}</td>
                                             <td>{patient.id1}</td>
-                                            <td>{patient.description}</td>
+                                            <td>{patient.treatment_plan}</td>
                                             <td className="text-center">{patient.severity}</td>
                                             <td><Link to={'/location/' + patient.location}>{patient.location_name}</Link></td>
                                             <td>{patient.machine_assigned_model}</td>
