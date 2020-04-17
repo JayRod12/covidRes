@@ -545,12 +545,12 @@ class PatientProfile extends React.Component {
                       {t("Create")}
                     </Button>
                     <div style={{maxHeight: "200px", overflow: "auto"}}>
-                      <Table className="tablesorter" >
+                      <Table className="tablesorter">
                         <thead className="text-primary">
                           <tr>
                             <th>{t("Model")}</th>
-                            <th>{t("Start")}</th>
-                            <th>{t("End")}</th>
+                            <th className="text-center">{t("Start")}</th>
+                            <th className="text-center">{t("End")}</th>
                           </tr>
                         </thead>
                         <tbody>
