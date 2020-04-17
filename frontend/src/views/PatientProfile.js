@@ -87,6 +87,9 @@ function getCookie(name) {
 }
 
 function plan_text2array(plan_text) {
+  if (plan_text.length == 0) {
+    return []
+  }
   return(
     plan_text.split(';').map(item => {
       const fields = item.split(',');
@@ -100,6 +103,9 @@ function plan_text2array(plan_text) {
 }
 
 function plan_array2text(plan_array) {
+  if (plan_array.length == 0) {
+    return ""
+  }
   return(
     plan_array.map(item => {
       return(item.join(','))
@@ -371,7 +377,7 @@ class PatientProfile extends React.Component {
             <CardBody>
               <Form onSubmit={this.handleSubmit}>
               <Row>
-                <Col md="8">
+                <Col md="6">
                   <Row>
                     <Col className="pr-md-1" md="3">
                       <FormGroup>
@@ -480,7 +486,7 @@ class PatientProfile extends React.Component {
                     </Col>
                   </Row>
                 </Col>
-                <Col md="4">
+                <Col md="6">
                   <FormGroup>
                     <label>{t("Treatment Plan")}</label>
                     <Input
@@ -489,6 +495,32 @@ class PatientProfile extends React.Component {
                       name="treatment_plan"
                       type="text"
                     />
+                    {this.state.plan_array.map((item, iter) => {return(
+                      <tr>
+                        <td>
+                          <TextField
+                            id={iter}
+                            label="Start"
+                            type="date"
+                            defaultValue={moment(item.start).format("YYYY-MM-DD")}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <TextField
+                            id={iter}
+                            label="End"
+                            type="date"
+                            defaultValue={moment(item.start).format("YYYY-MM-DD")}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    )})}
                   </FormGroup>
                 </Col>
                 </Row>
