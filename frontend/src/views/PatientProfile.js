@@ -108,7 +108,7 @@ function plan_array2text(plan_array) {
   }
   return(
     plan_array.map(item => {
-      return(item.join(','))
+      return(item.model + ',' + item.start + ',' + item.end)
     }).join(';')
   )
 }
@@ -176,7 +176,7 @@ class PatientProfile extends React.Component {
         name: data.get('name'),
         severity: data.get('severity'),
         location: data.get('location'),
-        treatment_plan: data.get('treatment_plan'),
+        treatment_plan: plan_array2text(this.state.plan_array),
         description: data.get('description'),
         id1: data.get('ID1'),
         bool_connected: this.state.bool_connected
