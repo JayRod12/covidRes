@@ -86,6 +86,27 @@ function getCookie(name) {
     return cookieValue;
 }
 
+function plan_text2array(plan_text) {
+  return(
+    plan_text.split(';').map(item => {
+      const fields = item.split(',');
+      return({
+        model: fields[0],
+        start: moment(fields[1]).format("YYYY-MM-DD"),
+        end: moment(fields[2]).format("YYYY-MM-DD")
+      })
+    })
+  )
+}
+
+function plan_array2text(plan_array) {
+  return(
+    plan_array.map(item => {
+      return(item.join(','))
+    }).join(';')
+  )
+}
+
 class PatientProfile extends React.Component {
   constructor(props) {
     super(props);
@@ -108,6 +129,7 @@ class PatientProfile extends React.Component {
       error_message_locations: "",
       severity_list: ["SEV_0","SEV_1","SEV_2","SEV_3","SEV_4","SEV_5","SEV_6"],
       graph_xy: [],
+      plan_array: [],
       redirect: false,
       showDialog: false,
       selectedTask: null,
@@ -230,7 +252,8 @@ class PatientProfile extends React.Component {
                           y: parseInt(yy[i])
                         }}),
                         loaded: true,
-                        bool_connected: (data.machine_assigned ? data.bool_connected : false)
+                        bool_connected: (data.machine_assigned ? data.bool_connected : false),
+                        plan_array: plan_text2array(data.treatment_plan)
                     };
                 });
             })
@@ -347,123 +370,127 @@ class PatientProfile extends React.Component {
             </CardHeader>
             <CardBody>
               <Form onSubmit={this.handleSubmit}>
-                <Row>
-                  <Col className="pr-md-1" md="2">
-                    <FormGroup>
-                      <label>ID</label>
-                      <Input
-                        defaultValue={this.state.data.pk}
-                        disabled
-                        placeholder="ID"
-                        name="pk"
-                        type="text"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col className="px-md-1" md="3">
-                    <FormGroup>
-                      <label>{t("Nickname")}</label>
-                      <Input
-                        defaultValue={this.state.data.name}
-                        placeholder={t("Nickname")}
-                        name="name"
-                        type="text"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col className="px-md-1" md="2">
-                    <FormGroup>
-                      <label>{t("Severity")}</label>
-                      <Input
-                        defaultValue={this.state.data.severity}
-                        name="severity"
-                        type="select"
-                      >
-                        {this.state.severity_list.map((val, i) => {return (
-                          <option key={i+1} value={i}>{t(val)}</option>
-                        )})}
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                  <Col className="pl-md-1" md="4">
-                    <FormGroup>
-                      <label>{t("Location")}</label>
-                      <Select
-                        className="basic-single"
-                        classNamePrefix="select"
-                        isClearable={true}
-                        defaultValue={{value: this.state.data.location, label: this.state.data.location_name}}
-                        placeholder={t("Location")}
-                        name="location"
-                        options={this.state.data_locations.map(item => {return({value: item.pk, label: item.name})})}
-                        filterOptions={{
-                          matchFrom: 'start'
-                        }}
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col className="pr-md-1" md="4">
-                    <FormGroup>
-                      <label>{t("First name")}</label>
-                      <Input
-                        defaultValue={this.state.data.first_name}
-                        placeholder={t("First name")}
-                        name="first_name"
-                        type="text"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col className="px-md-1" md="4">
-                    <FormGroup>
-                      <label>{t("Last name")}</label>
-                      <Input
-                        defaultValue={this.state.data.last_name}
-                        placeholder={t("Last name")}
-                        name="last_name"
-                        type="text"
-                      />
-                    </FormGroup>
-                  </Col>
-                   <Col className="px-md-1" md="3">
-                    <FormGroup>
-                      <label>{t("ID1")}</label>
-                      <Input
-                        defaultValue={this.state.data.id1}
-                        placeholder={t("ID1")}
-                        name="ID1"
-                        type="text"
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md="8">
-                    <FormGroup>
-                      <label>{t("Treatment Plan")}</label>
-                      <Input
-                        defaultValue={this.state.data.treatment_plan}
-                        placeholder={t("Treatment Plan")}
-                        name="treatment_plan"
-                        type="text"
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <TextField
-                        id="date"
-                        name="birth"
-                        label="Birthday"
-                        type="date"
-                        defaultValue={moment(this.state.data.birth).format("YYYY-MM-DD")}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                      />
-                    </FormGroup>
-                  </Col>
+              <Row>
+                <Col md="8">
+                  <Row>
+                    <Col className="pr-md-1" md="3">
+                      <FormGroup>
+                        <label>ID</label>
+                        <Input
+                          defaultValue={this.state.data.pk}
+                          disabled
+                          placeholder="ID"
+                          name="pk"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col className="px-md-1" md="3">
+                      <FormGroup>
+                        <label>{t("Severity")}</label>
+                        <Input
+                          defaultValue={this.state.data.severity}
+                          name="severity"
+                          type="select"
+                        >
+                          {this.state.severity_list.map((val, i) => {return (
+                            <option key={i+1} value={i}>{t(val)}</option>
+                          )})}
+                        </Input>
+                      </FormGroup>
+                    </Col>
+                    <Col className="pl-md-1" md="6">
+                      <FormGroup>
+                        <label>{t("Location")}</label>
+                        <Select
+                          className="basic-single"
+                          classNamePrefix="select"
+                          isClearable={true}
+                          defaultValue={{value: this.state.data.location, label: this.state.data.location_name}}
+                          placeholder={t("Location")}
+                          name="location"
+                          options={this.state.data_locations.map(item => {return({value: item.pk, label: item.name})})}
+                          filterOptions={{
+                            matchFrom: 'start'
+                          }}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col className="pr-md-1" md="6">
+                      <FormGroup>
+                        <label>{t("First name")}</label>
+                        <Input
+                          defaultValue={this.state.data.first_name}
+                          placeholder={t("First name")}
+                          name="first_name"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col className="px-md-1" md="6">
+                      <FormGroup>
+                        <label>{t("Last name")}</label>
+                        <Input
+                          defaultValue={this.state.data.last_name}
+                          placeholder={t("Last name")}
+                          name="last_name"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col className="pr-md-1" md="4">
+                      <FormGroup>
+                        <label>{t("Nickname")}</label>
+                        <Input
+                          defaultValue={this.state.data.name}
+                          placeholder={t("Nickname")}
+                          name="name"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                     <Col className="px-md-1" md="4">
+                      <FormGroup>
+                        <label>{t("ID1")}</label>
+                        <Input
+                          defaultValue={this.state.data.id1}
+                          placeholder={t("ID1")}
+                          name="ID1"
+                          type="text"
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col md="4">
+                      <FormGroup>
+                        <TextField
+                          id="date"
+                          name="birth"
+                          label="Birthday"
+                          type="date"
+                          defaultValue={moment(this.state.data.birth).format("YYYY-MM-DD")}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                </Col>
+                <Col md="4">
+                  <FormGroup>
+                    <label>{t("Treatment Plan")}</label>
+                    <Input
+                      defaultValue={this.state.data.treatment_plan}
+                      placeholder={t("Treatment Plan")}
+                      name="treatment_plan"
+                      type="text"
+                    />
+                  </FormGroup>
+                </Col>
                 </Row>
                 <Row>
                   <Col md="9">
