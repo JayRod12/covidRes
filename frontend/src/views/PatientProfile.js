@@ -466,7 +466,7 @@ class PatientProfile extends React.Component {
                   </Col>
                 </Row>
                 <Row>
-                  <Col md="6">
+                  <Col md="9">
                     <FormGroup>
                       <label>{t("Description")}</label>
                       <Input
