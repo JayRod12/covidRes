@@ -417,7 +417,7 @@ class PatientProfile extends React.Component {
       );
     } else if (this.state.data.pk) {
       patient = (
-        <Col md="7">
+        <Col md="8">
           <Card>
             <CardHeader>
               <h4 className="title">{t("Patient profile")}</h4>
@@ -864,7 +864,7 @@ class PatientProfile extends React.Component {
               </Dialog>
             )}
             {patient}
-            <Col md="5">
+            <Col md="4">
               <Card className="card-user">
                 <CardHeader>
                   <h4>{t("Associated tasks")}</h4>
