@@ -121,6 +121,8 @@ class PatientProfile extends React.Component {
       loaded: false,
       placeholder: "Loading",
       error_message: "",
+      data_machinetype: [],
+      loaded_machinetype: false,
       data_tasks: [],
       loaded_tasks: false,
       placeholder_tasks: "Loading",
@@ -139,7 +141,7 @@ class PatientProfile extends React.Component {
       redirect: false,
       showDialog: false,
       selectedTask: null,
-      bool_connected: false
+      bool_connected: false,
     };
 
     languages.forEach((language, i) => {
@@ -272,6 +274,31 @@ class PatientProfile extends React.Component {
                 };
               });
             });
+    fetch("/rest/machinetypes/")
+      .then(response => {
+        if (response.status > 400) {
+          throw new Error(response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        this.setState(() => {
+          return {
+            loaded_machinetype: true,
+            data_machinetype: data,
+          };
+        });
+      })
+      .catch(error => {
+        this.setState(() => {
+          return {
+            loaded_machinetype: true,
+            placeholder: "Failed to load",
+            error_message: this.state.error_message + " You don't have permission to view these machines.",
+          };
+        });
+      });
     fetch('/rest/assignment_tasks/query/bool_completed=0&patient='+pk+'/')
             .then(response => {
                 if (response.status > 400) {
@@ -352,6 +379,12 @@ class PatientProfile extends React.Component {
             });
   };
   render() {
+    var models = []
+    if (this.state.loaded_machinetype) {
+      models = [<option value={null}></option>, ...this.state.data_machinetype.map(model => {return(
+        <option value={model.pk}>{model.name}</option>
+      )})]
+    }
     const t = this.props.translate
     if (!this.state.loaded) {
       return (
@@ -489,38 +522,63 @@ class PatientProfile extends React.Component {
                 <Col md="6">
                   <FormGroup>
                     <label>{t("Treatment Plan")}</label>
-                    <Input
-                      defaultValue={this.state.data.treatment_plan}
-                      placeholder={t("Treatment Plan")}
-                      name="treatment_plan"
-                      type="text"
-                    />
-                    {this.state.plan_array.map((item, iter) => {return(
-                      <tr>
-                        <td>
-                          <TextField
-                            id={iter}
-                            label="Start"
-                            type="date"
-                            defaultValue={moment(item.start).format("YYYY-MM-DD")}
-                            InputLabelProps={{
-                              shrink: true,
-                            }}
-                          />
-                        </td>
-                        <td>
-                          <TextField
-                            id={iter}
-                            label="End"
-                            type="date"
-                            defaultValue={moment(item.start).format("YYYY-MM-DD")}
-                            InputLabelProps={{
-                              shrink: true,
-                            }}
-                          />
-                        </td>
-                      </tr>
-                    )})}
+                    <Button onClick={() => {
+                      var plan_array = this.state.plan_array
+                      plan_array.push({model: null, start: new Date(), end: new Date()})
+                      this.setState({plan_array: plan_array})
+                    }}>
+                      {t("Create")}
+                    </Button>
+                    <div style={{maxHeight: "200px", overflow: "auto"}}>
+                      <Table className="tablesorter" >
+                        <thead className="text-primary">
+                          <tr>
+                            <th>{t("Model")}</th>
+                            <th>{t("Start")}</th>
+                            <th>{t("End")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {this.state.plan_array.map((item, iter) => {return(
+                            <tr>
+                              <td>
+                                 <FormGroup>
+                                   <label>{t("Model")}</label>
+                                   <Input
+                                     defaultValue={item.model}
+                                     type="select"
+                                   >
+                                    {models}
+                                   </Input>
+                                 </FormGroup>
+                              </td>
+                              <td>
+                                <TextField
+                                  id={iter}
+                                  label="Start"
+                                  type="date"
+                                  defaultValue={moment(item.start).format("YYYY-MM-DD")}
+                                  InputLabelProps={{
+                                    shrink: true,
+                                  }}
+                                />
+                              </td>
+                              <td>
+                                <TextField
+                                  id={iter}
+                                  label="End"
+                                  type="date"
+                                  defaultValue={moment(item.start).format("YYYY-MM-DD")}
+                                  InputLabelProps={{
+                                    shrink: true,
+                                  }}
+                                />
+                              </td>
+                            </tr>
+                          )})}
+                        </tbody>
+                      </Table>
+                    </div>
                   </FormGroup>
                 </Col>
                 </Row>
@@ -683,7 +741,6 @@ class PatientProfile extends React.Component {
         <CardText>{t("No patient")}</CardText>
       );
     }
-    console.log(patient);
     if (!this.state.loaded_tasks) {
       return (
         <CardHeader>
@@ -745,7 +802,6 @@ class PatientProfile extends React.Component {
         <CardText>{t("No messages")}</CardText>
       );
     }
-    console.log(messages);
     return (
       <div className="content">
         {this.state.redirect1 && this.state.redirect2 && (<Redirect to={'/patients'} />)}
