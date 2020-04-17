@@ -479,33 +479,29 @@ class PatientProfile extends React.Component {
                       />
                     </FormGroup>
                   </Col>
-                  <Col md="2">
+                  <Col md="3">
                     <label>{t("Assigned machine")}</label>
                     <CardBody>
                       {this.state.data.machine_assigned === null
                         ?
-                        <Row><h3>{t("None")}</h3></Row>
+                        <h3>{t("None")}</h3>
                         :
                         <div>
-                          <Row>
                             <h3><Link to={'/machine/'+this.state.data.machine_assigned}>{this.state.data.machine_assigned_model}</Link></h3>
-                            <small>ID: {this.state.data.machine_assigned}</small>
-                          </Row>
-                        </div>
-                      }
-                    </CardBody>
-                  </Col>
-                  <Col md="1">
-                    <label>{t("Connected")}</label>
-                    <CardBody>
-                      {this.state.data.machine_assigned !== null &&
-                        <div>
-                          <Input
-                            checked={this.state.bool_connected}
-                            onChange={() => this.setState({bool_connected: !this.state.bool_connected})}
-                            name="bool_connected"
-                            type="checkbox"
-                          />
+                            <Row>
+                              <Col md="6">
+                                <small>ID: {this.state.data.machine_assigned}</small>
+                              </Col>
+                              <Col md="6">
+                                <Input
+                                  checked={this.state.bool_connected}
+                                  onChange={() => this.setState({bool_connected: !this.state.bool_connected})}
+                                  name="bool_connected"
+                                  type="checkbox"
+                                />
+                                <label>{t("Connected")}</label>
+                              </Col>
+                            </Row>
                         </div>
                       }
                     </CardBody>
