@@ -809,7 +809,7 @@ class PatientProfile extends React.Component {
                           size="sm"
                           onClick={() => {this.setState({selected_tab: "Treatment"})}}
                           >
-                          {t("Treatment  Plan")}
+                          {t("Treatment plan")}
                         </Button>
 
                         <Button
