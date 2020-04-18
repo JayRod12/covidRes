@@ -80,6 +80,33 @@ function getCookie(name) {
     return cookieValue;
 }
 
+function plan_text2array(plan_text) {
+  if (plan_text.length == 0) {
+    return []
+  }
+  return(
+    plan_text.split(';').map(item => {
+      const fields = item.split(',');
+      return({
+        model: fields[0],
+        start: moment(fields[1]).format("YYYY-MM-DD"),
+        end: moment(fields[2]).format("YYYY-MM-DD")
+      })
+    })
+  )
+}
+
+function plan_array2text(plan_array) {
+  if (plan_array.length == 0) {
+    return ""
+  }
+  return(
+    plan_array.map(item => {
+      return(item.model + ',' + item.start + ',' + item.end)
+    }).join(';')
+  )
+}
+
 class PatientRow extends React.Component {
   render() {
     return (
@@ -763,6 +790,39 @@ class Ventilators extends React.Component {
                                         )})}
                                 </Col>
                               </Row>
+                              <div style={{maxHeight: "200px", overflow: "auto"}}>
+                                <Table className="tablesorter">
+                                  <thead className="text-primary">
+                                    <tr>
+                                      <th>{t("Model")}</th>
+                                      <th className="text-center">{t("Start")}</th>
+                                      <th className="text-center">{t("End")}</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {this.state.data_patients.map(patient => {return(
+                                      (this.state.selectedItem != null) && (patient.pk == this.state.selectedItem.patient_id) &&
+                                          plan_text2array(patient.treatment_plan).map(item => {return(
+                                            <tr>
+                                              <td>
+                                                {item.model}
+                                              </td>
+                                              <td>
+                                                {item.start}
+                                              </td>
+                                              <td>
+                                                {item.end}
+                                              </td>
+                                            </tr>
+                                          )})
+                                      )})}
+                                    <tr>
+                                      <td>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </Table>
+                              </div>
                             </CardBody>
                         </Card>
                       </Collapse>
