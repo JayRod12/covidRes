@@ -775,7 +775,7 @@ class Ventilators extends React.Component {
                                         <tr>
                                               <th>{t("Nickname")}</th>
                                               <th>{t("ID1")}</th>
-                                            <th>{t("Treatment Plan")}</th>
+                                            <th>{t("Treatment plan")}</th>
                                               <th className="text-center">{t("Severity")}</th>
                                               <th>{t("Location")}</th>
                                               <th>{t("Machine")}</th>
