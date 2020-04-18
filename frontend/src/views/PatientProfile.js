@@ -142,6 +142,7 @@ class PatientProfile extends React.Component {
       showDialog: false,
       selectedTask: null,
       bool_connected: false,
+      selected_tab: "Treatment"
     };
 
     languages.forEach((language, i) => {
@@ -417,187 +418,119 @@ class PatientProfile extends React.Component {
       );
     } else if (this.state.data.pk) {
       patient = (
-        <Col md="8">
+        <Col md="7">
           <Card>
             <CardHeader>
               <h4 className="title">{t("Patient profile")}</h4>
             </CardHeader>
             <CardBody>
               <Form onSubmit={this.handleSubmit}>
-              <Row>
-                <Col md="6">
-                  <Row>
-                    <Col className="pr-md-1" md="3">
-                      <FormGroup>
-                        <label>ID</label>
-                        <Input
-                          defaultValue={this.state.data.pk}
-                          disabled
-                          placeholder="ID"
-                          name="pk"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="px-md-1" md="3">
-                      <FormGroup>
-                        <label>{t("Severity")}</label>
-                        <Input
-                          defaultValue={this.state.data.severity}
-                          name="severity"
-                          type="select"
-                        >
-                          {this.state.severity_list.map((val, i) => {return (
-                            <option key={i+1} value={i}>{t(val)}</option>
-                          )})}
-                        </Input>
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-md-1" md="6">
-                      <FormGroup>
-                        <label>{t("Location")}</label>
-                        <Select
-                          className="basic-single"
-                          classNamePrefix="select"
-                          isClearable={true}
-                          defaultValue={{value: this.state.data.location, label: this.state.data.location_name}}
-                          placeholder={t("Location")}
-                          name="location"
-                          options={this.state.data_locations.map(item => {return({value: item.pk, label: item.name})})}
-                          filterOptions={{
-                            matchFrom: 'start'
-                          }}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-md-1" md="6">
-                      <FormGroup>
-                        <label>{t("First name")}</label>
-                        <Input
-                          defaultValue={this.state.data.first_name}
-                          placeholder={t("First name")}
-                          name="first_name"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="px-md-1" md="6">
-                      <FormGroup>
-                        <label>{t("Last name")}</label>
-                        <Input
-                          defaultValue={this.state.data.last_name}
-                          placeholder={t("Last name")}
-                          name="last_name"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-md-1" md="4">
-                      <FormGroup>
-                        <label>{t("Nickname")}</label>
-                        <Input
-                          defaultValue={this.state.data.name}
-                          placeholder={t("Nickname")}
-                          name="name"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                     <Col className="px-md-1" md="4">
-                      <FormGroup>
-                        <label>{t("ID1")}</label>
-                        <Input
-                          defaultValue={this.state.data.id1}
-                          placeholder={t("ID1")}
-                          name="ID1"
-                          type="text"
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col md="4">
-                      <FormGroup>
-                        <TextField
-                          id="date"
-                          name="birth"
-                          label="Birthday"
-                          type="date"
-                          defaultValue={moment(this.state.data.birth).format("YYYY-MM-DD")}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                </Col>
-                <Col md="6">
-                  <FormGroup>
-                    <label>{t("Treatment Plan")}</label>
-                    <Button onClick={() => {
-                      var plan_array = this.state.plan_array
-                      plan_array.push({model: null, start: new Date(), end: new Date()})
-                      this.setState({plan_array: plan_array})
-                    }}>
-                      {t("Create")}
-                    </Button>
-                    <div style={{maxHeight: "200px", overflow: "auto"}}>
-                      <Table className="tablesorter">
-                        <thead className="text-primary">
-                          <tr>
-                            <th>{t("Model")}</th>
-                            <th className="text-center">{t("Start")}</th>
-                            <th className="text-center">{t("End")}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {this.state.plan_array.map((item, iter) => {return(
-                            <tr>
-                              <td>
-                               <Input
-                                 id={'m' + iter}
-                                 defaultValue={item.model}
-                                 name="plan_model"
-                                 onChange={this.handlePlanChanges}
-                                 type="select"
-                               >
-                                {models}
-                               </Input>
-                              </td>
-                              <td>
-                                <TextField
-                                  id={'s' + iter}
-                                  type="date"
-                                  defaultValue={moment(item.start).format("YYYY-MM-DD")}
-                                  name="plan_start"
-                                  onChange={this.handlePlanChanges}
-                                  InputLabelProps={{
-                                    shrink: true,
-                                  }}
-                                />
-                              </td>
-                              <td>
-                                <TextField
-                                  id={'e' + iter}
-                                  type="date"
-                                  defaultValue={moment(item.end).format("YYYY-MM-DD")}
-                                  name="plan_end"
-                                  onChange={this.handlePlanChanges}
-                                  InputLabelProps={{
-                                    shrink: true,
-                                  }}
-                                />
-                              </td>
-                            </tr>
-                          )})}
-                        </tbody>
-                      </Table>
-                    </div>
-                  </FormGroup>
-                </Col>
+                <Row>
+                  <Col className="pr-md-1" md="3">
+                    <FormGroup>
+                      <label>ID</label>
+                      <Input
+                        defaultValue={this.state.data.pk}
+                        disabled
+                        placeholder="ID"
+                        name="pk"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col className="px-md-1" md="3">
+                    <FormGroup>
+                      <label>{t("Severity")}</label>
+                      <Input
+                        defaultValue={this.state.data.severity}
+                        name="severity"
+                        type="select"
+                      >
+                        {this.state.severity_list.map((val, i) => {return (
+                          <option key={i+1} value={i}>{t(val)}</option>
+                        )})}
+                      </Input>
+                    </FormGroup>
+                  </Col>
+                  <Col className="pl-md-1" md="6">
+                    <FormGroup>
+                      <label>{t("Location")}</label>
+                      <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        isClearable={true}
+                        defaultValue={{value: this.state.data.location, label: this.state.data.location_name}}
+                        placeholder={t("Location")}
+                        name="location"
+                        options={this.state.data_locations.map(item => {return({value: item.pk, label: item.name})})}
+                        filterOptions={{
+                          matchFrom: 'start'
+                        }}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="pr-md-1" md="6">
+                    <FormGroup>
+                      <label>{t("First name")}</label>
+                      <Input
+                        defaultValue={this.state.data.first_name}
+                        placeholder={t("First name")}
+                        name="first_name"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col className="px-md-1" md="6">
+                    <FormGroup>
+                      <label>{t("Last name")}</label>
+                      <Input
+                        defaultValue={this.state.data.last_name}
+                        placeholder={t("Last name")}
+                        name="last_name"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="pr-md-1" md="4">
+                    <FormGroup>
+                      <label>{t("Nickname")}</label>
+                      <Input
+                        defaultValue={this.state.data.name}
+                        placeholder={t("Nickname")}
+                        name="name"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                   <Col className="px-md-1" md="4">
+                    <FormGroup>
+                      <label>{t("ID1")}</label>
+                      <Input
+                        defaultValue={this.state.data.id1}
+                        placeholder={t("ID1")}
+                        name="ID1"
+                        type="text"
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md="4">
+                    <FormGroup>
+                      <TextField
+                        id="date"
+                        name="birth"
+                        label="Birthday"
+                        type="date"
+                        defaultValue={moment(this.state.data.birth).format("YYYY-MM-DD")}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                    </FormGroup>
+                  </Col>
                 </Row>
                 <Row>
                   <Col md="9">
@@ -864,26 +797,117 @@ class PatientProfile extends React.Component {
               </Dialog>
             )}
             {patient}
-            <Col md="4">
+            <Col md="5">
               <Card className="card-user">
                 <CardHeader>
-                  <h4>{t("Associated tasks")}</h4>
+                  <Row className="px-md-2">
+
+                        <Button
+                          color="primary"
+                          size="sm"
+                          onClick={() => {this.setState({selected_tab: "Treatment"})}}
+                          >
+                          {t("Treatment")}
+                        </Button>
+
+                        <Button
+                          color="primary"
+                          size="sm"
+                          onClick={() => {this.setState({selected_tab: "Tasks"})}}
+                          >
+                          {t("Tasks")}
+                        </Button>
+
+                  </Row>
                 </CardHeader>
                 <CardBody>
-                  <div style={{maxHeight: "200px", overflow: "auto"}}>
-                    <Table className="tablesorter" >
-                      <thead className="text-primary">
-                        <tr>
-                          <th>{t("Task")}</th>
-                          <th>{t("Model")}</th>
-                          <th>{t("Date")}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {tasks}
-                      </tbody>
-                    </Table>
-                  </div>
+                  { this.state.selected_tab == "Treatment" &&
+                    <div style={{maxHeight: "200px", overflow: "auto"}}>
+                      <Table className="tablesorter">
+                        <thead className="text-primary">
+                          <tr>
+                            <th>{t("Model")}</th>
+                            <th className="text-center">{t("Start")}</th>
+                            <th className="text-center">{t("End")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {this.state.plan_array.map((item, iter) => {return(
+                            <tr>
+                              <td>
+                               <Input
+                                 id={'m' + iter}
+                                 defaultValue={item.model}
+                                 name="plan_model"
+                                 onChange={this.handlePlanChanges}
+                                 type="select"
+                               >
+                                {models}
+                               </Input>
+                              </td>
+                              <td>
+                                <TextField
+                                  id={'s' + iter}
+                                  type="date"
+                                  defaultValue={moment(item.start).format("YYYY-MM-DD")}
+                                  name="plan_start"
+                                  onChange={this.handlePlanChanges}
+                                  InputLabelProps={{
+                                    shrink: true,
+                                  }}
+                                />
+                              </td>
+                              <td>
+                                <TextField
+                                  id={'e' + iter}
+                                  type="date"
+                                  defaultValue={moment(item.end).format("YYYY-MM-DD")}
+                                  name="plan_end"
+                                  onChange={this.handlePlanChanges}
+                                  InputLabelProps={{
+                                    shrink: true,
+                                  }}
+                                />
+                              </td>
+                            </tr>
+                          )})}
+                          <tr>
+                            <td>
+                            </td>
+                            <td>
+                              <Button
+                                color="primary"
+                                size="sm"
+                                onClick={() => {
+                                  var plan_array = this.state.plan_array
+                                  plan_array.push({model: null, start: new Date(), end: new Date()})
+                                  this.setState({plan_array: plan_array})
+                                }}
+                                >
+                                {t("Create")}
+                              </Button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </Table>
+                    </div>
+                  }
+                  { this.state.selected_tab == "Tasks" &&
+                    <div style={{maxHeight: "200px", overflow: "auto"}}>
+                      <Table className="tablesorter" >
+                        <thead className="text-primary">
+                          <tr>
+                            <th>{t("Task")}</th>
+                            <th>{t("Model")}</th>
+                            <th>{t("Date")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {tasks}
+                        </tbody>
+                      </Table>
+                    </div>
+                  }
                 </CardBody>
               </Card>
               <Card className="card-user">
