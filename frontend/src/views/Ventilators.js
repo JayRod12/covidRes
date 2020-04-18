@@ -692,7 +692,7 @@ class Ventilators extends React.Component {
                         </DialogActions>
                     </Dialog>
 
-
+                    <Col md="9">
                     <div style={{maxHeight: "400px", overflow: "auto"}}>
                     <Card className="card-chart" style={{ zIndex: 1 }}>
                         {!isLoaded ? <div>{t("Loading")}...</div> :
@@ -732,6 +732,41 @@ class Ventilators extends React.Component {
                             </Timeline>}
                     </Card>
                     </div>
+                    </Col>
+                    <Col md="3">
+
+                    <Collapse isOpen={this.state.patientview_isOpen}>
+                        <Card>
+                            <CardBody>
+                              <Row>
+                                <Col className="px-md-3" md="7" >
+                                    {this.state.data_patients.map(patient => {return(
+                                        (this.state.selectedItem != null) && (patient.pk == this.state.selectedItem.patient_id) &&
+                                            <CardTitle tag="h4">
+                                              <Link
+                                                  to={'/patient/' + patient.pk}>
+                                                  {patient.first_name + ' ' + patient.last_name}
+                                              </Link>
+                                            </CardTitle>
+                                        )})}
+                                </Col>
+                                <Col className="px-md-3" md="5" >
+                                    {this.props.me && this.props.me.permission_task_edit &&
+                                            this.state.data_patients.map(patient => {return(
+                                            (this.state.selectedItem != null) && (patient.pk == this.state.selectedItem.patient_id) &&
+                                            <Button
+                                                size="sm"
+                                                color="primary"
+                                                onClick={this._bufferNewAssignment.bind(this, patient)}
+                                                > {t("Assign")}
+                                            </Button>
+                                        )})}
+                                </Col>
+                              </Row>
+                            </CardBody>
+                        </Card>
+                      </Collapse>
+                    </Col>
                 </Row>
 
                 <Collapse isOpen={this.state.patientview_isOpen}>
