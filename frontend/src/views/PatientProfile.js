@@ -171,15 +171,17 @@ class PatientProfile extends React.Component {
   }
   handlePlanChanges = (event) => {
     event.preventDefault();
-    console.log("PLANCHANGE");
-    console.log(event);
-    console.log(event.target);
-    console.log(event.target.id);
     var plan_array = this.state.plan_array
     const index = event.target.id.slice(1)
     var item = plan_array[index]
+    if (event.target.id[0] == 'c') {
+      console.log(index);
+      plan_array.splice(index, 1)
+      this.setState({plan_array: plan_array})
+      console.log(plan_array);
+      return
+    }
     item[event.target.name.slice(5)] = event.target.value
-    console.log(item);
     plan_array[index] = item
     this.setState({plan_array: plan_array})
   }
@@ -807,7 +809,7 @@ class PatientProfile extends React.Component {
                           size="sm"
                           onClick={() => {this.setState({selected_tab: "Treatment"})}}
                           >
-                          {t("Treatment")}
+                          {t("Treatment  Plan")}
                         </Button>
 
                         <Button
@@ -837,7 +839,7 @@ class PatientProfile extends React.Component {
                               <td>
                                <Input
                                  id={'m' + iter}
-                                 defaultValue={item.model}
+                                 value={item.model}
                                  name="plan_model"
                                  onChange={this.handlePlanChanges}
                                  type="select"
@@ -849,7 +851,7 @@ class PatientProfile extends React.Component {
                                 <TextField
                                   id={'s' + iter}
                                   type="date"
-                                  defaultValue={moment(item.start).format("YYYY-MM-DD")}
+                                  value={moment(item.start).format("YYYY-MM-DD")}
                                   name="plan_start"
                                   onChange={this.handlePlanChanges}
                                   InputLabelProps={{
@@ -861,13 +863,23 @@ class PatientProfile extends React.Component {
                                 <TextField
                                   id={'e' + iter}
                                   type="date"
-                                  defaultValue={moment(item.end).format("YYYY-MM-DD")}
+                                  value={moment(item.end).format("YYYY-MM-DD")}
                                   name="plan_end"
                                   onChange={this.handlePlanChanges}
                                   InputLabelProps={{
                                     shrink: true,
                                   }}
                                 />
+                              </td>
+                              <td>
+                                <Button
+                                  id={'c' + iter}
+                                  color="primary"
+                                  size="sm"
+                                  onClick={this.handlePlanChanges}
+                                >
+                                  X
+                                </Button>
                               </td>
                             </tr>
                           )})}
